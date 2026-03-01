@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JLPT N4 에이스 팀장 단어장</title>
+    <style>
+        :root { --primary: #4A90E2; --bg: #f5f7fa; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        h1 { color: #333; margin-bottom: 10px; }
+        .container { width: 100%; max-width: 400px; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 250px; display: flex; flex-direction: column; justify-content: center; }
+        .card:active { transform: scale(0.98); }
+        .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        .answer { display: none; border-top: 1px solid #eee; pt: 20px; margin-top: 20px; text-align: left; }
+        .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; }
+        .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; }
+        .example { font-size: 1rem; color: var(--primary); margin-top: 15px; font-weight: 500; }
+        .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
+        .prev { background: #ccc; color: white; }
+        .next { background: var(--primary); color: white; flex-grow: 1; }
+        .status { margin-top: 15px; font-size: 0.9rem; color: #999; }
+    </style>
+</head>
+<body>
+
+    <h1>🎴 오늘의 단어 카드</h1>
+    <div class="container">
+        <div class="card" onclick="toggleAnswer()">
+            <div id="question" class="question">最近</div>
+            <div id="answer" class="answer">
+                <div id="reading" class="reading">さいきん</div>
+                <div id="meaning" class="meaning">요즘, 최근</div>
+                <div id="usage" class="usage">품사: 부사 / 뉘앙스: 한국어 "요즘"에 가장 가깝고 문장 어디에도 자연스럽게 들어감.</div>
+                <div id="example" class="example">最近(さいきん)、忙(いそが)しいです。</div>
+            </div>
+        </div>
+
+        <div class="nav">
+            <button class="prev" onclick="prevCard()">이전</button>
+            <button class="next" onclick="nextCard()">다음 카드</button>
+        </div>
+        <div class="status"><span id="current">1</span> / <span id="total">12</span></div>
+    </div>
+
+    <script>
+        const words = [
+            { q: "最近", r: "さいきん", m: "요즘, 최근", u: "부사 / 한국어 '요즘'에 가장 가깝고 문장 어디든 자연스러움.", e: "最近(さいきん)、忙(いそ가)しいです。" },
+            { q: "若者", r: "わかもの", m: "젊은이, 청년", u: "명사 / '젊은 사람'을 뜻하며 주로 집단을 지칭할 때 사용.", e: "最近(さいきん)の 若者(わかもの)은 活発(かっぱつ)です。" },
+            { q: "考え", r: "かんがえ", m: "생각, 의견", u: "명사 / 동사 '考える(생각하다)'의 명사형.", e: "いい 考え(かんがえ)가 あります。" },
+            { q: "傾向", r: "けいこう", m: "경향, 추세", u: "명사 / 어떤 방향으로 기울어지는 현상을 뜻함.", e: "そういう 傾向(けいこう)가 あります。" },
+            { q: "事件", r: "じけん", m: "사건", u: "명사 / 사회적 문제나 사고 등을 지칭.", e: "大変(たいへん)な 事件(じけん)이 起(お)きました。" },
+            { q: "環境", r: "かんきょう", m: "환경", u: "명사 / 자연 환경이나 주변 여건을 의미.", e: "環境(かんきょう)을 守(まも)りましょう。" },
+            { q: "解決", r: "かいけつ", m: "해결", u: "명사/동사 / 문제나 사건을 풀어서 끝냄.", e: "問題(もんだい)을 解決(かいけつ)했습니다。" },
+            { q: "日々", r: "ひび", m: "나날, 매일매일", u: "명사 / '하루하루'의 반복을 강조하는 느낌.", e: "日々(ひび)의 生活(せいかつ)을 즐깁니다." },
+            { q: "患者", r: "かんじゃ", m: "환자", u: "명사 / 병원에서 치료를 받는 사람.", e: "患者(かんじゃ)가 増(ふ)えています。" },
+            { q: "救う", r: "すくう", m: "구하다, 살리다", u: "동사 / 위험에 빠진 사람을 도움.", e: "命(いのち)을 救(すく)いました。" },
+            { q: "重要性", r: "じゅうようせい", m: "중요성", u: "명사 / 어떤 것이 중요한 정도나 성질.", e: "睡眠(すいみん)의 重要性(じゅうようせい)을 압니다." },
+            { q: "集中力", r: "しゅうちゅうりょく", m: "집중력", u: "명사 / 한곳에 모으는 힘. 장음에 주의!", e: "集中力(しゅうちゅうりょく)이 떨어졌습니다." }
+        ];
+
+        let currentIndex = 0;
+        const totalSpan = document.getElementById('total');
+        totalSpan.innerText = words.length;
+
+        function updateCard() {
+            const word = words[currentIndex];
+            document.getElementById('question').innerText = word.q;
+            document.getElementById('reading').innerText = word.r;
+            document.getElementById('meaning').innerText = word.m;
+            document.getElementById('usage').innerText = "품사/역할: " + word.u;
+            document.getElementById('example').innerText = "예시) " + word.e;
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('current').innerText = currentIndex + 1;
+        }
+
+        function toggleAnswer() {
+            const ans = document.getElementById('answer');
+            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % words.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + words.length) % words.length;
+            updateCard();
+        }
+    </script>
+</body>
+</html>
