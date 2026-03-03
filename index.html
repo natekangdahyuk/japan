@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JLPT N4 학습 카테고리</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: grid;
+            /* 가로로 4개의 버튼을 배치 */
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 400px; /* 모바일 폭에 맞춤 */
+        }
+        .btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 0;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .btn:active {
+            transform: scale(0.95);
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>JLPT N4 단어 학습</h1>
+
+    <div class="container">
+        <a href="1.html" class="btn">1번</a>
+        <a href="2.html" class="btn">2번</a>
+        <a href="3.html" class="btn">3번</a>
+        <a href="4.html" class="btn">4번</a>
+        
+        <a href="5.html" class="btn">5번</a>
+        <a href="6.html" class="btn">6번</a>
+        <a href="7.html" class="btn">7번</a>
+        <a href="8.html" class="btn">8번</a>
+    </div>
+
+</body>
+</html>
