@@ -29,12 +29,11 @@
     <h1>🎴 오늘의 단어 카드</h1>
     <div class="container">
         <div class="card" onclick="toggleAnswer()">
-            <div id="question" class="question">立つ</div>
-            <div id="answer" class="answer">
-                <div id="reading" class="reading">たつ</div>
-                <div id="meaning" class="meaning">서다, 일어서다</div>
-                <div id="usage" class="usage">동사 / 사람이나 사물이 수직으로 위치하는 상태나 동작.</div>
-                <div id="example" class="example">あそこに 立って(たって) いる 人(ひと)は だれですか。<br/>저기 서 있는 사람은 누구입니까?<br/><br/>[팁] '일어서다'라는 동작을 시킬 때는 '立ってください'라고 합니다.</div>
+            <div id="question" class="question"></div> <div id="answer" class="answer">
+                <div id="reading" class="reading"></div>
+                <div id="meaning" class="meaning"></div>
+                <div id="usage" class="usage"></div>
+                <div id="example" class="example"></div>
             </div>
         </div>
 
@@ -47,6 +46,13 @@
 
     <script>
         const words = [    
+    { 
+        q: "立つ", 
+        r: "たつ", 
+        m: "서다, 일어서다", 
+        u: "동사 / 사람이나 사물이 수직으로 위치함..", 
+        e: "あそこに 立って(たって) いる 人(ひと)는 先生(せんせい)입니다.\n저기 서 있는 사람은 선생님입니다.\n\n[연관 팁]\n1. 반대말: 座る(すわる, 앉다)\n2. 사역: 立たせる(たたせる, 세우다/일으키다)\n3. 세트: 立つ ↔ 倒れる" 
+    },            
     { 
         q: "倒れる", 
         r: "たおれる", 
