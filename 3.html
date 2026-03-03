@@ -137,13 +137,21 @@
         const totalSpan = document.getElementById('total');
         totalSpan.innerText = words.length;
 
+        // 핵심: 페이지가 로드되자마자 첫 번째 카드를 그려라!
+        updateCard();
+
         function updateCard() {
             const word = words[currentIndex];
+            const word = words[currentIndex];
+            // .innerText 대신 .innerHTML을 쓰면 <br/>이나 \n 줄바꿈이 더 잘 먹힐 수 있어
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
             document.getElementById('usage').innerText = "품사/역할: " + word.u;
-            document.getElementById('example').innerText = "예시) " + word.e;
+    
+            // 줄바꿈(\n)을 HTML 태그(<br>)로 바꿔서 출력하면 훨씬 보기 좋아
+            document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
+    
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
         }
