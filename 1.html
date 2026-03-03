@@ -3,38 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JLPT N4 에이스 팀장 단어장</title>
+    <title>1번 학습 페이지 - N4 단어장</title>
     <style>
         :root { --primary: #4A90E2; --bg: #f5f7fa; }
-        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        h1 { color: #333; margin-bottom: 10px; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; }
         .container { width: 100%; max-width: 400px; }
-        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 250px; display: flex; flex-direction: column; justify-content: center; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 280px; display: flex; flex-direction: column; justify-content: center; }
         .card:active { transform: scale(0.98); }
         .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
-        .answer { display: none; border-top: 1px solid #eee; pt: 20px; margin-top: 20px; text-align: left; }
+        .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
         .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
         .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; }
-        .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; }
-        .example { font-size: 1rem; color: var(--primary); margin-top: 15px; font-weight: 500; }
+        .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        .example { font-size: 0.95rem; color: var(--primary); font-weight: 500; line-height: 1.6; }
         .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
         button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
         .prev { background: #ccc; color: white; }
         .next { background: var(--primary); color: white; flex-grow: 1; }
-        .status { margin-top: 15px; font-size: 0.9rem; color: #999; }
+        .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
+        .back-home { margin-top: 20px; text-decoration: none; color: #888; font-size: 0.9rem; display: block; text-align: center; }
     </style>
 </head>
 <body>
 
-    <h1>🎴 오늘의 단어 카드</h1>
+    <h1>🎴 오늘의 단어 카드 (N4)</h1>
     <div class="container">
         <div class="card" onclick="toggleAnswer()">
-            <div id="question" class="question">最近</div>
+            <div id="question" class="question"></div> 
             <div id="answer" class="answer">
-                <div id="reading" class="reading">さいきん</div>
-                <div id="meaning" class="meaning">요즘, 최근</div>
-                <div id="usage" class="usage">품사: 부사 / 뉘앙스: 한국어 "요즘"에 가장 가깝고 문장 어디에도 자연스럽게 들어감.</div>
-                <div id="example" class="example">最近(さいきん)、忙(いそが)しいです。</div>
+                <div id="reading" class="reading"></div>
+                <div id="meaning" class="meaning"></div>
+                <div id="usage" class="usage"></div>
+                <div id="example" class="example"></div>
             </div>
         </div>
 
@@ -42,18 +43,21 @@
             <button class="prev" onclick="prevCard()">이전</button>
             <button class="next" onclick="nextCard()">다음 카드</button>
         </div>
-        <div class="status"><span id="current">1</span> / <span id="total">12</span></div>
+        <div class="status"><span id="current">1</span> / <span id="total">0</span></div>
+        <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
     </div>
 
     <script>
-        const words = [
-    { 
-        q: "最近", 
-        r: "さいきん", 
-        m: "요즘, 최근", 
-        u: "부사 / 시간의 흐름상 '요즘'을 나타내며 문장 앞부분에 자주 쓰임.", 
-        e: "最近(さいきん)、あまり 暑(あつ)く ありません。\n요즘 별로 덥지 않습니다.\n\n[팁] '요즘'이라는 뜻으로 문장 어디에나 자연스럽게 들어갑니다." 
-    },
+        const words = [    
+            { 
+                q: "最近", 
+                r: "さいきん", 
+                m: "요즘, 최근", 
+                u: "부사 / 뉘앙스: 한국어 "요즘"에 가장 가깝고 문장 어디에도 자연스럽게 들어감.", 
+                e: `最近(さいきん)、忙(いそが)しいです。
+                
+                最近、あまり 暑く ありません。\n요즘 별로 덥지 않습니다.\n\n[팁] '요즘'이라는 뜻으로 문장 어디에나 자연스럽게 들어갑니다.`
+            },            
     { 
         q: "若者", 
         r: "わかもの", 
@@ -131,20 +135,27 @@
         u: "명사 / 공부나 일에 몰입하는 힘. 장음(う) 발음에 주의.", 
         e: "夜(よる)は 集中力(しゅうちゅうりょく)が 高くなります。\n밤에는 집중력이 높아집니다.\n\n[팁] 슈우-츄우-료쿠! 두 번의 장음을 정확히 발음하는 것이 중요합니다." 
     }
-];
-
+        ];
 
         let currentIndex = 0;
         const totalSpan = document.getElementById('total');
         totalSpan.innerText = words.length;
 
+        // 초기 로드 시 첫 카드 표시
+        updateCard();
+
         function updateCard() {
+            if (words.length === 0) return;
+            
             const word = words[currentIndex];
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
             document.getElementById('usage').innerText = "품사/역할: " + word.u;
-            document.getElementById('example').innerText = "예시) " + word.e;
+            
+            // 백틱의 줄바꿈을 화면에 적용
+            document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
+            
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
         }
