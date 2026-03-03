@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3</title>
+    <title>3번 학습 페이지</title>
     <style>
         :root { --primary: #4A90E2; --bg: #f5f7fa; }
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
@@ -12,7 +12,7 @@
         .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 250px; display: flex; flex-direction: column; justify-content: center; }
         .card:active { transform: scale(0.98); }
         .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
-        .answer { display: none; border-top: 1px solid #eee; pt: 20px; margin-top: 20px; text-align: left; }
+        .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
         .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
         .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; }
         .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; }
@@ -22,6 +22,7 @@
         .prev { background: #ccc; color: white; }
         .next { background: var(--primary); color: white; flex-grow: 1; }
         .status { margin-top: 15px; font-size: 0.9rem; color: #999; }
+        .back-home { margin-top: 20px; text-decoration: none; color: #888; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -29,7 +30,8 @@
     <h1>🎴 오늘의 단어 카드</h1>
     <div class="container">
         <div class="card" onclick="toggleAnswer()">
-            <div id="question" class="question"></div> <div id="answer" class="answer">
+            <div id="question" class="question"></div> 
+            <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
                 <div id="meaning" class="meaning"></div>
                 <div id="usage" class="usage"></div>
@@ -41,117 +43,117 @@
             <button class="prev" onclick="prevCard()">이전</button>
             <button class="next" onclick="nextCard()">다음 카드</button>
         </div>
-        <div class="status"><span id="current">1</span> / <span id="total">12</span></div>
+        <div class="status"><span id="current">1</span> / <span id="total">0</span></div>
+        <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
     </div>
 
     <script>
         const words = [    
-    { 
-        q: "立つ", 
-        r: "たつ", 
-        m: "서다, 일어서다", 
-        u: "동사 / 사람이나 사물이 수직으로 위치함..", 
-        e: "あそこに 立って(たって) いる 人(ひと)는 先生(せんせい)입니다.\n저기 서 있는 사람은 선생님입니다.\n\n[연관 팁]\n1. 반대말: 座る(すわる, 앉다)\n2. 사역: 立たせる(たたせる, 세우다/일으키다)\n3. 세트: 立つ ↔ 倒れる" 
-    },            
-    { 
-        q: "倒れる", 
-        r: "たおれる", 
-        m: "넘어지다, 쓰러지다", 
-        u: "동사 / 서 있던 것이 중심을 잃고 쓰러짐 (건물, 나무, 사람 등).", 
-        e: "台風(たいふう)で 家(いえ)が 倒れ(たおれ)ました。\n태풍으로 집이 쓰러졌습니다.\n\n[팁] '立つ'와 반대되는 물리적 변화 상황에서 자주 쓰이는 자동사입니다." 
-    },
-    { 
-        q: "台風", 
-        r: "たいふう", 
-        m: "태풍", 
-        u: "명사 / 강한 비바람을 동반하는 기상 현상.", 
-        e: "台風(たいふう)が 来(き)て いますから、外(そと)に 出(で)ないで ください。\n태풍이 오고 있으니 밖에 나가지 마세요.\n\n[팁] 태풍이 '오다'라고 할 때는 동사 '来る'를 사용합니다." 
-    },
-    { 
-        q: "台所", 
-        r: "だいどころ", 
-        m: "부엌", 
-        u: "명사 / 음식을 만드는 장소.", 
-        e: "お母(かあ)さんは 台所(だいどころ)で 料理(りょうり)を 作って(つくって) います。\n어머니는 부엌에서 요리를 만들고 있습니다.\n\n[팁] '키친(キッチン)'이라는 외래어도 함께 많이 쓰입니다." 
-    },
-    { 
-        q: "消す", 
-        r: "けす", 
-        m: "끄다, 지우다", 
-        u: "동사 / 불을 끄거나 글씨를 지울 때 사용하는 1형 타동사.", 
-        e: "部屋(へや)を 出(で)る 時(とき)は、電気(でんき)を 消して(けして) ください。\n방을 나갈 때는 불을 꺼 주세요.\n\n[팁] 전등뿐만 아니라 가스 불을 끌 때도 사용합니다." 
-    },
-    { 
-        q: "増える", 
-        r: "ふえる", 
-        m: "늘다, 늘어나다 (자동사)", 
-        u: "동사 / 수나 양이 자연스럽게 많아짐 (주어 + が).", 
-        e: "この 町(まち)は 人(ひと)が 増えて(ふえて) います。\n이 마을은 사람이 늘어나고 있습니다.\n\n[팁] 내가 의도하지 않아도 무언가가 늘어나는 상황에 씁니다." 
-    },
-    { 
-        q: "増やす", 
-        r: "ふやす", 
-        m: "늘리다 (타동사)", 
-        u: "동사 / 사람이 의지를 가지고 수나 양을 많게 함 (목적어 + を).", 
-        e: "貯金(ちょきん)を 増やす(ふやす) ために、アルバイト(あるばいと)を します。\n저금을 늘리기 위해 아르바이트를 합니다.\n\n[팁] 내가 무언가를 직접 늘리는 행동을 강조할 때 씁니다." 
-    },
-    { 
-        q: "以前", 
-        r: "いぜん", 
-        m: "이전, 전", 
-        u: "명사 / 지금보다 앞선 시점이나 상태.", 
-        e: "以前(いぜん)、日本(にほん)に 住んで(すんで) いた ことが あります。\n이전에 일본에 살았던 적이 있습니다.\n\n[팁] '昔(むかし, 옛날)'보다 조금 더 가까운 과거를 나타낼 때가 많습니다." 
-    },
-    { 
-        q: "文章", 
-        r: "ぶんしょう", 
-        m: "문장, 글", 
-        u: "명사 / 단어들이 모여 이루어진 하나의 글 전체.", 
-        e: "この 文章(ぶんしょう)を 読んで(よんで)、質問(しつもん)に 答えて(こたえて) ください。\n이 문장을 읽고 질문에 대답해 주세요.\n\n[팁] 독해 문제의 지시문에 단골로 등장하는 어휘입니다." 
-    },
-    { 
-        q: "内容", 
-        r: "ないよう", 
-        m: "내용", 
-        u: "명사 / 말이나 글에 담긴 핵심적인 정보.", 
-        e: "話(はなし)の 内容(ないよう)を よく 聞い(きい)て ください。\n이야기 내용을 잘 들어 주세요.\n\n[팁] 독해나 청해에서 '일치하는 내용'을 찾을 때 필수적으로 쓰입니다." 
-    },
-    { 
-        q: "合う", 
-        r: "あう", 
-        m: "맞다, 어울리다", 
-        u: "동사 / 두 가지가 일치하거나 서로 잘 어울릴 때 사용.", 
-        e: "この 靴(くつ)は、足(あし)の サイズ(さいず)に 合い(あい)ません。\n이 구두는 발 사이즈에 맞지 않습니다.\n\n[팁] '일치하다'라는 뜻으로 시험 지문에 '合っているもの'로 자주 나옵니다." 
-    },
-    { 
-        q: "結構", 
-        r: "けっこう", 
-        m: "괜찮음, 충분함", 
-        u: "명사/나형용사 / 만족스럽거나 더 이상 필요 없음을 정중히 표현.", 
-        e: "いいえ、もう 結構(けっこう)です。\n아니요, 이제 괜찮습니다(충분합니다).\n\n[팁] 거절할 때와 긍정할 때 두 상황 모두 쓰이므로 문맥이 중요합니다." 
-    }
-];
-
+            { 
+                q: "立つ", 
+                r: "たつ", 
+                m: "서다, 일어서다", 
+                u: "동사 / 사람이나 사물이 수직으로 위치함.", 
+                e: "あそこに 立って(たって) いる 人(ひと)は 先生(せんせい)です。\n저기 서 있는 사람은 선생님입니다.\n\n[연관 팁]\n1. 반대말: 座る(すわる, 앉다)\n2. 사역: 立たせる(たたせる, 세우다/일으키다)\n3. 세트: 立つ ↔ 倒れる" 
+            },            
+            { 
+                q: "倒れる", 
+                r: "たおれる", 
+                m: "넘어지다, 쓰러지다", 
+                u: "동사 / 서 있던 것이 중심을 잃고 쓰러짐 (건물, 나무, 사람 등).", 
+                e: "台風(たいふう)で 家(いえ)が 倒れ(たおれ)ました。\n태풍으로 집이 쓰러졌습니다.\n\n[팁] '立つ'와 반대되는 물리적 변화 상황에서 자주 쓰이는 자동사입니다." 
+            },
+            { 
+                q: "台風", 
+                r: "たいふう", 
+                m: "태풍", 
+                u: "명사 / 강한 비바람을 동반하는 기상 현상.", 
+                e: "台風(たいふう)が 来(き)て いますから、外(そ도)에 出(で)ないで ください。\n태풍이 오고 있으니 밖에 나가지 마세요.\n\n[팁] 태풍이 '오다'라고 할 때는 동사 '来る'를 사용합니다." 
+            },
+            { 
+                q: "台所", 
+                r: "だいどころ", 
+                m: "부엌", 
+                u: "명사 / 음식을 만드는 장소.", 
+                e: "お母(かあ)さんは 台所(だいどころ)で 料理(りょうり)を 作って(つくって) います。\n어머니는 부엌에서 요리를 만들고 있습니다.\n\n[팁] '키친(キッチン)'이라는 외래어도 함께 많이 쓰입니다." 
+            },
+            { 
+                q: "消す", 
+                r: "けす", 
+                m: "끄다, 지우다", 
+                u: "동사 / 불을 끄거나 글씨를 지울 때 사용하는 1형 타동사.", 
+                e: "部屋(へや)を 出(で)る 時(とき)は、電気(전기)를 消して(けして) ください。\n방을 나갈 때는 불을 꺼 주세요.\n\n[팁] 전등뿐만 아니라 가스 불을 끌 때도 사용합니다." 
+            },
+            { 
+                q: "増える", 
+                r: "ふえる", 
+                m: "늘다, 늘어나다 (자동사)", 
+                u: "동사 / 수나 양이 자연스럽게 많아짐 (주어 + が).", 
+                e: "この 町(まち)は 人(ひと)が 増えて(ふえて) います。\n이 마을은 사람이 늘어나고 있습니다.\n\n[팁] 내가 의도하지 않아도 무언가가 늘어나는 상황에 씁니다." 
+            },
+            { 
+                q: "増やす", 
+                r: "ふやす", 
+                m: "늘리다 (타동사)", 
+                u: "동사 / 사람이 의지를 가지고 수나 양을 많게 함 (목적어 + 를).", 
+                e: "貯金(ちょきん)を 増やす(후야스) ために、アルバ이트(あるばいと)를 줍니다.\n저금을 늘리기 위해 아르바이트를 합니다.\n\n[팁] 내가 무언가를 직접 늘리는 행동을 강조할 때 씁니다." 
+            },
+            { 
+                q: "以前", 
+                r: "이전", 
+                m: "이전, 전", 
+                u: "명사 / 지금보다 앞선 시점이나 상태.", 
+                e: "以前(いぜん)、日本(にほん)に 住んで(すんで) いた ことが あります。\n이전에 일본에 살았던 적이 있습니다.\n\n[팁] '昔(むかし, 옛날)'보다 조금 더 가까운 과거를 나타낼 때가 많습니다." 
+            },
+            { 
+                q: "文章", 
+                r: "ぶんしょう", 
+                m: "문장, 글", 
+                u: "명사 / 단어들이 모여 이루어진 하나의 글 전체.", 
+                e: "この 文章(ぶんしょう)을 読んで(よんで)、質問(しつもん)에 答えて(こたえて) ください。\n이 문장을 읽고 질문에 대답해 주세요.\n\n[팁] 독해 문제의 지시문에 단골로 등장하는 어휘입니다." 
+            },
+            { 
+                q: "内容", 
+                r: "ないよう", 
+                m: "내용", 
+                u: "명사 / 말이나 글에 담긴 핵심적인 정보.", 
+                e: "話(はなし)の 内容(ないよう)을 よく 聞い(きい)て ください。\n이야기 내용을 잘 들어 주세요.\n\n[팁] 독해나 청해에서 '일치하는 내용'을 찾을 때 필수적으로 쓰입니다." 
+            },
+            { 
+                q: "合う", 
+                r: "あう", 
+                m: "맞다, 어울리다", 
+                u: "동사 / 두 가지가 일치하거나 서로 잘 어울릴 때 사용.", 
+                e: "この 靴(くつ)는、足(あし)의 사이즈에 合い(あい)ません。\n이 구두는 발 사이즈에 맞지 않습니다.\n\n[팁] '일치하다'라는 뜻으로 시험 지문에 '合っているもの'로 자주 나옵니다." 
+            },
+            { 
+                q: "結構", 
+                r: "けっこう", 
+                m: "괜찮음, 충분함", 
+                u: "명사/나형용사 / 만족스럽거나 더 이상 필요 없음을 정중히 표현.", 
+                e: "いいえ、もう 結構(けっこう)です。\n아니요, 이제 괜찮습니다(충분합니다).\n\n[팁] 거절할 때와 긍정할 때 두 상황 모두 쓰이므로 문맥이 중요합니다." 
+            }
+        ];
 
         let currentIndex = 0;
         const totalSpan = document.getElementById('total');
         totalSpan.innerText = words.length;
 
-        // 핵심: 페이지가 로드되자마자 첫 번째 카드를 그려라!
+        // 페이지 로드 시 즉시 실행
         updateCard();
 
         function updateCard() {
+            if (words.length === 0) return;
+            
             const word = words[currentIndex];
-            const word = words[currentIndex];
-            // .innerText 대신 .innerHTML을 쓰면 <br/>이나 \n 줄바꿈이 더 잘 먹힐 수 있어
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
             document.getElementById('usage').innerText = "품사/역할: " + word.u;
-    
-            // 줄바꿈(\n)을 HTML 태그(<br>)로 바꿔서 출력하면 훨씬 보기 좋아
+            
+            // \n을 <br>로 변환하여 HTML로 삽입
             document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
-    
+            
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
         }
