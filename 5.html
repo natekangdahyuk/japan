@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5번 학습 페이지 - N4 단어장</title>
+    <style>
+        :root { --primary: #4A90E2; --bg: #f5f7fa; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; }
+        .container { width: 100%; max-width: 400px; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 280px; display: flex; flex-direction: column; justify-content: center; }
+        .card:active { transform: scale(0.98); }
+        .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
+        .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; }
+        .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        .example { font-size: 0.95rem; color: var(--primary); font-weight: 500; line-height: 1.6; }
+        .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
+        .prev { background: #ccc; color: white; }
+        .next { background: var(--primary); color: white; flex-grow: 1; }
+        .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
+        .back-home { margin-top: 20px; text-decoration: none; color: #888; font-size: 0.9rem; display: block; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <h1>🎴 오늘의 단어 카드 (N4)</h1>
+    <div class="container">
+        <div class="card" onclick="toggleAnswer()">
+            <div id="question" class="question"></div> 
+            <div id="answer" class="answer">
+                <div id="reading" class="reading"></div>
+                <div id="meaning" class="meaning"></div>
+                <div id="usage" class="usage"></div>
+                <div id="example" class="example"></div>
+            </div>
+        </div>
+
+        <div class="nav">
+            <button class="prev" onclick="prevCard()">이전</button>
+            <button class="next" onclick="nextCard()">다음 카드</button>
+        </div>
+        <div class="status"><span id="current">1</span> / <span id="total">0</span></div>
+        <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
+    </div>
+
+    <script>
+        const words = [    
+            { 
+                q: "入る", 
+                r: "はいる", 
+                m: "들어가다", 
+                u: "동사 / 1형 자동사", 
+                e: `部屋に入りました。
+방에 들어갔습니다.
+
+[연관 팁]
+1. 반대말: 出(で)る (나가다)
+2. 타동사 세트: 入(い)れる (넣다)` 
+            },            
+            { 
+                q: "出す", 
+                r: "だす", 
+                m: "꺼내다, 내다", 
+                u: "동사 / 1형 타동사", 
+                e: `かばんから財布(さいふ)を出しました。
+가방에서 지갑을 꺼냈습니다.
+
+[연관 팁]
+1. 세트: 宿題を 出(だ)す (숙제를 내다)
+2. 반대말: 入(い)れる (넣다)` 
+            },
+            { 
+                q: "開ける", 
+                r: "あける", 
+                m: "열다", 
+                u: "동사 / 2형 타동사", 
+                e: `暑(あつ)いので、窓(まど)を開けてください。
+더우니까 창문을 열어 주세요.
+
+[연관 팁]
+1. 반대말: 閉(し)める (닫다)
+2. 자동사 세트: 開(あ)く (열리다)` 
+            },
+            { 
+                q: "閉める", 
+                r: "しめる", 
+                m: "닫다", 
+                u: "동사 / 2형 타동사", 
+                e: `寒(さむ)いので、ドアを閉めてください。
+추우니까 문을 닫아 주세요.
+
+[연관 팁]
+1. 반대말: 開(あ)ける (열다)
+2. 자동사 세트: 閉(し)まる (닫히다)` 
+            },
+            { 
+                q: "不便だ", 
+                r: "ふべんだ", 
+                m: "불편하다", 
+                u: "나형용사", 
+                e: `この町(まち)はバスがないので、不便です。
+이 마을은 버스가 없어서 불편합니다.
+
+[연관 팁]
+1. 반대말: 便利(べんり)だ (편리하다)` 
+            },
+            { 
+                q: "急ぐ", 
+                r: "いそぐ", 
+                m: "서두르다", 
+                u: "동사 / 1형 자동사", 
+                e: `時間(じかん)がないので、急ぎましょう。
+시간이 없으니까 서두릅시다.
+
+[연관 팁]
+1. 활용: 急(いそ)いで (서둘러서)` 
+            },
+            { 
+                q: "遅れる", 
+                r: "おくれる", 
+                m: "늦다, 지각하다", 
+                u: "동사 / 2형 자동사", 
+                e: `授業(じゅぎょう)に10分(じゅっぷん)くらい遅れました。
+수업에 10분 정도 늦었습니다.
+
+[연관 팁]
+1. 세트: 時間(じかん)에 遅(おく)れる
+2. 반대말: 間に合う (まにあう, 시간에 대다)` 
+            },
+            { 
+                q: "Nに 間に合う", 
+                r: "Nに まにあう", 
+                m: "N 시간 안에 맞추다, 늦지 않다", 
+                u: "동사 / 1형 자동사", 
+                e: `走(はし)れば電車(でんしゃ)に間(ま)に合(あ)います。 
+뛰면 전철(시간)에 맞출 수 있습니다(시간에 맞추는게 아니라 전철에 맞춘다는 의미).
+
+[연관 팁]
+1. 반대말: 遅(おく)れる (늦다)` 
+            },
+            { 
+                q: "故障", 
+                r: "こしょう", 
+                m: "고장", 
+                u: "명사 / 기계 등이 작동하지 않음", 
+                e: `エアコンが 故障しました。
+에어컨이 고장 났습니다. (일본어는 N + しました 를 사용해서 했습니다-> (발생)했습니다.)
+
+[연관 팁]
+1. 동사: 故障(こしょう)する (고장 나다)
+2. 세트: 修理(しゅうり)します(수리하다)` 
+            },
+            { 
+                q: "修理", 
+                r: "しゅうり", 
+                m: "수리", 
+                u: "명사 / 고치는 일", 
+                e: `時計(とけい)を修理しました。 
+시계를 수리했습니다.
+
+[연관 팁]
+1. 유의어: 直(なお)す (고치다)
+2. 동사: 修理(しゅうり)する (수리하다)` 
+            },
+            { 
+                q: "直す", 
+                r: "なおす", 
+                m: "고치다, 수리하다", 
+                u: "동사 / 1형 타동사", 
+                e: `自転車(じてんしゃ)を直(なお)しました。 
+자전거를 고쳤습니다.
+전문적인수리는 自転車を修理しました。
+
+[연관 팁]
+1. 자동사 세트: 直(なお)る (고쳐지다/낫다)` 
+            },
+            { 
+                q: "用意", 
+                r: "ようい", 
+                m: "준비", 
+                u: "명사 / 어떤 목적을 위한 채비", 
+                e: `旅行(りょこう)の用意(ようい)をしました。
+여행 준비를 했습니다.
+旅行(りょこう)の準備(じゅんび)をした
+
+[연관 팁]
+1. 유의어: 準備(じゅんび) - 거의 같은 뜻으로 쓰임` 
+            }
+        ];
+
+        let currentIndex = 0;
+        const totalSpan = document.getElementById('total');
+        totalSpan.innerText = words.length;
+
+        updateCard();
+
+        function updateCard() {
+            if (words.length === 0) return;
+            
+            const word = words[currentIndex];
+            document.getElementById('question').innerText = word.q;
+            document.getElementById('reading').innerText = word.r;
+            document.getElementById('meaning').innerText = word.m;
+            document.getElementById('usage').innerText = "품사/역할: " + word.u;
+            
+            document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
+            
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('current').innerText = currentIndex + 1;
+        }
+
+        function toggleAnswer() {
+            const ans = document.getElementById('answer');
+            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % words.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + words.length) % words.length;
+            updateCard();
+        }
+    </script>
+</body>
+</html>
