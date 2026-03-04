@@ -9,7 +9,7 @@
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
         h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; }
         .container { width: 100%; max-width: 400px; }
-        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 280px; display: flex; flex-direction: column; justify-content: center; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 320px; display: flex; flex-direction: column; justify-content: center; }
         .card:active { transform: scale(0.98); }
         .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
         .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
@@ -26,8 +26,7 @@
     </style>
 </head>
 <body>
-
-    <h1>🎴 오늘의 단어 카드 (N4)</h1>
+    <h1>🎴 오늘의 단어 카드 (4번)</h1>
     <div class="container">
         <div class="card" onclick="toggleAnswer()">
             <div id="question" class="question"></div> 
@@ -38,7 +37,6 @@
                 <div id="example" class="example"></div>
             </div>
         </div>
-
         <div class="nav">
             <button class="prev" onclick="prevCard()">이전</button>
             <button class="next" onclick="nextCard()">다음 카드</button>
@@ -49,30 +47,160 @@
 
     <script>
         const words = [    
-            { q: "選ぶ", r: "えらぶ", m: "고르다, 선택하다", u: "동사 / 1형 타동사", e: "一番(いちばん) いい もの를 하나 選んで ください。\n가장 좋은 것을 하나 골라 주세요." },
-            { q: "送信", r: "そうしん", m: "송신, 보내기", u: "명사 / IT 어휘", e: "メール(めーる)를 送信했습니다.\n메일을 송신했습니다." },
-            { q: "押す", r: "おす", m: "누르다, 밀다", u: "동사 / 1형 타동사", e: "あそこの ボタン(ぼたん)을 押して ください。\n저기 있는 버튼을 눌러 주세요." },
-            { q: "アルバ이트", r: "あるば이토", m: "아르바이트", u: "명사 / 외래어", e: "来週(らいしゅう)부터 새로운 アルバイト를 시작(はじ)합니다.\n다음 주부터 새로운 아르바이트를 시작합니다." },
-            { q: "雇う", r: "やとう", m: "고용하다, 채용하다", u: "동사 / 1형 타동사", e: "店長(てんちょう)가 새로운 사람(ひと)을 雇いました。\n점장님이 새로운 사람을 고용했습니다." },
-            { q: "受ける", r: "うける", m: "받다, (시험을) 치르다", u: "동사 / 2형 타동사", e: "明日(あした) 일본어(にほんご) 시험(시けん)을 受けます。\n내일 일본어 시험을 봅니다." },
-            { q: "受信", r: "じゅしん", m: "수신, 받음", u: "명사 / IT 어휘", e: "重要(じゅうよう)한 메일(めーる)을 受信했습니다.\n중요한 메일을 수신했습니다." },
-            { q: "引く", r: "ひく", m: "당기다, 긋다", u: "동사 / 1형 타동사", e: "ドア(どあ)를 引いて ください.\n문을 당겨 주세요." },
-            { q: "始める", r: "はじめる", m: "시작하다", u: "동사 / 2형 타동사", e: "今日(きょう)부터 일기(에끼)를 始めます。\n오늘부터 일기를 시작합니다." },
-            { q: "終わる", r: "おわる", m: "끝나다", u: "동사 / 1형 자동사", e: "授業(じゅぎょう)가 終わりました。\n수업이 끝났습니다." },
-            { q: "雇われる", r: "야토와레루", m: "고용되다", u: "동사 / 2형 수동형", e: "会社(かいしゃ)에 雇われました。\n회사에 고용되었습니다." },
-            { q: "座る", r: "すわる", m: "앉다", u: "동사 / 1형 자동사", e: "椅子(いす)에 座って ください。\n의자에 앉아 주세요." }
+            { 
+                q: "選ぶ", 
+                r: "えらぶ", 
+                m: "고르다, 선택하다", 
+                u: "동사 / 1형 타동사", 
+                e: `一番(いちばん) いい もの를 하나 選んで ください。
+가장 좋은 것을 하나 골라 주세요.
+
+[연관 팁]
+1. 명사형: 選び (선택/고름)
+2. 정중형: 選ぶ → 選びます (고릅니다)
+3. 과거형: 選(えら)びました (고르셨습니다/골랐습니다)` 
+            },
+            { 
+                q: "送信", 
+                r: "そうしん", 
+                m: "송신, 보내기", 
+                u: "명사 / IT 및 통신 어휘", 
+                e: `メール(めーる)를 送信했습니다.
+메일을 송신했습니다.
+
+[연관 팁]
+1. 정중과거: 送信しました)
+2. 반대말: 受信 (じゅしん, 수신)
+3. 세트: 송신 버튼(ぼたん)을 누르다(おす)` 
+            },
+            { 
+                q: "押す", 
+                r: "おす", 
+                m: "누르다, 밀다", 
+                u: "동사 / 1형 타동사", 
+                e: `아소코의 버튼(ぼたん)을 押して ください。
+저기 있는 버튼을 눌러 주세요.
+
+[연관 팁]
+1. 반대말: 引く (ひく, 당기다)
+2. 과거형: 押しました (눌렀습니다)` 
+            },
+            { 
+                q: "アルバイト", 
+                r: "あるばいと", 
+                m: "아르바이트", 
+                u: "명사 / 외래어 (독일어 유래)", 
+                e: `来週(らいしゅう)から新(あたら)しいアルバイトを始(はじ)めます。
+다음 주부터 새로운 아르바이트를 시작합니다.
+
+[연관 팁]
+1. 줄임말: バイト - 일상 대화용
+2. 고용되다: 雇(やと)われる (수동)` 
+            },
+            { 
+                q: "雇う", 
+                r: "야토우", 
+                m: "고용하다, 채용하다", 
+                u: "동사 / 1형 타동사 (능동)", 
+                e: `店長(てんちょう)が新人(しんじん)を雇(やと)いました。
+점장님이 새로운 사람을 고용했습니다.
+
+[연관 팁]
+1. 수동형: 雇(야토)われる (고용되다)
+2. 정중과거: 雇(やと)いました (고용했습니다)` 
+            },
+            { 
+                q: "受ける", 
+                r: "うける", 
+                m: "받다, (시험을) 치르다", 
+                u: "동사 / 2형 타동사", 
+                e: `明日、日本語の試験(しけん)を受けます。
+내일 일본어 시험을 봅니다.
+
+[연관 팁]
+1. 정중형: 受けます (받습니다/봅니다)
+2. 과거형: 受けました (받았습니다/봤습니다)` 
+            },
+            { 
+                q: "受信", 
+                r: "じゅしん", 
+                m: "수신, 받음", 
+                u: "명사 / IT 통신", 
+                e: `重要(じゅうよう)なメールを受信しました。
+중요한 메일을 수신했습니다.
+
+[연관 팁]
+1. 반대말: 送信(そうしん)
+2. 동사: 受信しました)` 
+            },
+            { 
+                q: "引く", 
+                r: "ひく", 
+                m: "당기다, (선 등을) 긋다", 
+                u: "동사 / 1형 타동사", 
+                e: `ドアを引いてください。
+문을 당겨 주세요.
+
+[연관 팁]
+1. 반대말: 押す (おす, 밀다/누르다)
+2. 활용: 선(せん)을 引(ひ)く (선을 긋다)` 
+            },
+            { 
+                q: "始める", 
+                r: "はじめる", 
+                m: "시작하다", 
+                u: "동사 / 2형 타동사 (의지)", 
+                e: `来週からアルバイトを 始めます。
+다음 주부터 아르바이트를 시작합니다.
+
+[연관 팁]
+1. 자동사 세트: 始(はじ)まる (시작되다)
+2. 과거형: 始めました (시작했습니다)` 
+            },
+            { 
+                q: "終わる", 
+                r: "おわる", 
+                m: "끝나다, 마치다", 
+                u: "동사 / 1형 자동사", 
+                e: `授業(じゅぎょう)が 終わりました.
+수업이 끝났습니다.
+
+[연관 팁]
+1. 타동사 세트: 終える (마치다)
+2. 과거형: 終わりました (끝났습니다)` 
+            },
+            { 
+                q: "雇われる", 
+                r: "雇(やと)われる", 
+                m: "고용되다", 
+                u: "동사 / 2형 수동형", 
+                e: `会社(かいしゃ)に雇(やと)われました。
+회사에 고용되었습니다.
+
+[연관 팁]
+1. 능동: 雇(やと)う (고용하다)
+2. 정중형: 雇われます (고용됩니다)` 
+            },
+            { 
+                q: "座る", 
+                r: "すわる", 
+                m: "앉다", 
+                u: "동사 / 1형 자동사", 
+                e: `椅子(いす)に座ってください。
+의자에 앉아 주세요.
+
+[연관 팁]
+1. 반대말: 立つ (たつ, 서다)
+2. 과거형: 座りました (앉았습니다)` 
+            }
         ];
 
         let currentIndex = 0;
-
-        // [추가] 초기 로드 시 URL 해시 확인
         window.onload = function() {
             const hash = window.location.hash;
             if (hash && hash.startsWith('#card')) {
                 const index = parseInt(hash.replace('#card', '')) - 1;
-                if (index >= 0 && index < words.length) {
-                    currentIndex = index;
-                }
+                if (index >= 0 && index < words.length) { currentIndex = index; }
             }
             document.getElementById('total').innerText = words.length;
             updateCard();
@@ -80,18 +208,14 @@
 
         function updateCard() {
             if (words.length === 0) return;
-            
             const word = words[currentIndex];
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
             document.getElementById('usage').innerText = "품사/역할: " + word.u;
             document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
-            
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
-
-            // [추가] URL 해시 업데이트 (히스토리에 남기지 않고 교체)
             history.replaceState(null, null, "#card" + (currentIndex + 1));
         }
 
@@ -100,15 +224,8 @@
             ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
         }
 
-        function nextCard() {
-            currentIndex = (currentIndex + 1) % words.length;
-            updateCard();
-        }
-
-        function prevCard() {
-            currentIndex = (currentIndex - 1 + words.length) % words.length;
-            updateCard();
-        }
+        function nextCard() { currentIndex = (currentIndex + 1) % words.length; updateCard(); }
+        function prevCard() { currentIndex = (currentIndex - 1 + words.length) % words.length; updateCard(); }
     </script>
 </body>
 </html>
