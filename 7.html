@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7번 학습 페이지 - 바쁜 하루의 루틴</title>
+    <style>
+        :root { --primary: #4A90E2; --bg: #f5f7fa; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; }
+        .container { width: 100%; max-width: 400px; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 320px; display: flex; flex-direction: column; justify-content: center; }
+        .card:active { transform: scale(0.98); }
+        .question { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
+        .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; }
+        .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        .example { font-size: 0.95rem; color: var(--primary); font-weight: 500; line-height: 1.6; }
+        .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
+        .prev { background: #ccc; color: white; }
+        .next { background: var(--primary); color: white; flex-grow: 1; }
+        .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>📅 바쁜 하루 (7번 스토리 카드)</h1>
+    <div class="container">
+        <div class="card" onclick="toggleAnswer()">
+            <div id="question" class="question"></div> 
+            <div id="answer" class="answer">
+                <div id="reading" class="reading"></div>
+                <div id="meaning" class="meaning"></div>
+                <div id="usage" class="usage"></div>
+                <div id="example" class="example"></div>
+            </div>
+        </div>
+        <div class="nav">
+            <button class="prev" onclick="prevCard()">이전</button>
+            <button class="next" onclick="nextCard()">다음 카드</button>
+        </div>
+        <div class="status"><span id="current">1</span> / <span id="total">15</span></div>
+    </div>
+
+    <script>
+        const words = [    
+            { 
+                q: "届く", r: "とどく", m: "도착하다, 배달되다", u: "동사 / 1형 자동사", 
+                e: `さっき 荷物(にもつ)が 届きました。
+방금 짐이 도착했습니다.
+
+[연관 팁]
+1. 과거형: 届(とど)いた (도착한) -> 동사 수식 구조 활용
+2. 덩어리: 届(とど)いた メール (도착한 메일)` 
+            },
+            { 
+                q: "薄い", r: "うすい", m: "얇다, (맛 등이) 연하다", u: "이형용사", 
+                e: `この 雑誌(ざっし)は とても 薄いです。
+이 잡지는 매우 얇습니다.
+
+[연관 팁]
+1. 반대말: 厚(あつ)い (두껍다)
+2. 과거정중: 薄(うす)かったです` 
+            },
+            { 
+                q: "ことになっている", r: "ことになっている", m: "~하기로 되어 있다", u: "문법 / 상태", 
+                e: `今日(きょう)は 友達を 迎えに 行く ことに なっています。
+오늘은 친구를 마중 나가기로 되어 있습니다.
+
+[연관 팁]
+1. 뉘앙스: 개인의 의지보다 '정해진 일정/규칙' 강조.
+2. 예: ここでは 煙草(たばこ)を 吸(す)わない ことに なっている。` 
+            },
+            { 
+                q: "代わりに", r: "かわりに", m: "대신에", u: "명사/조사", 
+                e: `部長(ぶちょう)の 代わりに 私が 行きます。
+부장님 대신에 제가 갑니다.
+
+[연관 팁]
+1. 접속: 명사 + の 代わりに / 동사 보통형 + 代わりに
+2. 활용: 私(わたし)の 代わりに (나 대신에)` 
+            },
+            { 
+                q: "かどうか", r: "かどうか", m: "~인지 어떤지", u: "접속사", 
+                e: `明日(あした) 行けるか どうか 分かりません。
+내일 갈 수 있을지 어떨지 모르겠습니다.
+
+[연관 팁]
+1. 활용: 동사/형용사 보통형 + かどうか
+2. 예: 美味(おい)しいか どうか 食(た)べて みます。` 
+            },
+            { 
+                q: "スポーツ用品店", r: "すぽーつようひんてん", m: "스포츠 용품점", u: "명사", 
+                e: `スポーツ用品店で 新しい 靴を 買いました。
+스포츠 용품점에서 새 신발을 샀습니다.
+
+[연관 팁]
+1. 구성: 스포츠 + 용품 + 점(가게)
+2. 발음 주의: 외래어 가타카나 표기.` 
+            },
+            { 
+                q: "開く", r: "ひらく", m: "열다, 개최하다", u: "동사 / 1형 타동사", 
+                e: `来週(らいしゅう) パーティーを 開きます。
+다음 주에 파티를 엽니다.
+
+[연관 팁]
+1. 용도: 이벤트, 회의, 가게, 책 등을 '시작하거나 벌릴 때'.
+2. 덩어리: イベントを 開(ひら)く` 
+            },
+            { 
+                q: "もし", r: "もし", m: "만약, 혹시", u: "부사", 
+                e: `もし 時間が あれば、一緒(いっしょ)に 行きましょう。
+만약 시간이 있다면, 같이 갑시다.
+
+[연관 팁]
+1. 세트: 주로 문장 끝에 ~たら, ~바(조건형)와 함께 쓰임.
+2. 예: もし 雨(あめ)が 降(ふ)ったら...` 
+            },
+            { 
+                q: "散歩する", r: "さんぽする", m: "산책하다", u: "동사 / 3형", 
+                e: `公園(こうえん)を 30分(さんじゅっぷん) 散歩しました。
+공원을 30분 산책했습니다.
+
+[연관 팁]
+1. 조사 주의: 공원을 산책할 때 'を'를 씀 (이동 통과).
+2. 덩어리: 犬(いぬ)と 散歩(さんぽ)する` 
+            },
+            { 
+                q: "磨く", r: "みがく", m: "닦다, 갈고 닦다", u: "동사 / 1형 타동사", 
+                e: `寝る 前に 歯を 磨きます。
+자기 전에 이를 닦습니다.
+
+[연관 팁]
+1. 덩어리: 歯(は)を 磨(みが)く (이를 닦다)
+2. 구두(くつ)를 닦다.` 
+            },
+            { 
+                q: "授業を受ける", r: "じゅぎょうをうける", m: "수업을 듣다(받다)", u: "동사구", 
+                e: `毎日(まいにち) 日本語の 授業を 受けて います。
+매일 일본어 수업을 듣고 있습니다.
+
+[연관 팁]
+1. 주의: 한국어는 '듣다'지만 일본어는 '받다(受ける)'를 씀.
+2. 授業(じゅぎょう)の 前(まえ)に (수업 전에)` 
+            },
+            { 
+                q: "開ける", r: "あける", m: "열다 (문, 창문 등)", u: "동사 / 2형 타동사", 
+                e: `暑(あつ)いので 窓を 開けました。
+더워서 창문을 열었습니다.
+
+[연관 팁]
+1. 반대말: 閉(し)める (닫다)
+2. 대상: 문, 창문, 상자 등 물리적인 구멍을 내서 여는 것.` 
+            },
+            { 
+                q: "閉める", r: "しめる", m: "닫다 (문, 창문 등)", u: "동사 / 2형 타동사", 
+                e: `部屋(へや)を 出る 時、ドアを 閉めて ください。
+방을 나갈 때, 문을 닫아 주세요.
+
+[연관 팁]
+1. 반대말: 開(あ)ける (열다)
+2. 주의: '締(し)める(매다)'와 발음이 같으니 한자 주의.` 
+            },
+            { 
+                q: "閉じる", r: "とじる", m: "닫다, 덮다 (책, 눈 등)", u: "동사 / 2형 타동사", 
+                e: `教科書(きょうかしょ)を 閉じて ください。
+교과서를 덮어 주세요.
+
+[연관 팁]
+1. 대상: 책, 눈, 파일, 입 등 합쳐서 닫는 느낌.
+2. 덩어리: 目(め)を 閉(と)じる` 
+            },
+            { 
+                q: "迎えに行く", r: "むかえにいく", m: "마중 나가다", u: "동사구", 
+                e: `駅(えき)まで 友達を 迎えに 行きます。
+역까지 친구를 마중 나갑니다.
+
+[연관 팁]
+1. 구성: 迎え(마중) + に(하러) + 行く(가다)
+2. 반대: 迎えに 来(く)る (마중 나오다)` 
+            }
+        ];
+
+        let currentIndex = 0;
+        window.onload = function() {
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#card')) {
+                const index = parseInt(hash.replace('#card', '')) - 1;
+                if (index >= 0 && index < words.length) { currentIndex = index; }
+            }
+            document.getElementById('total').innerText = words.length;
+            updateCard();
+        };
+
+        function updateCard() {
+            if (words.length === 0) return;
+            const word = words[currentIndex];
+            document.getElementById('question').innerText = word.q;
+            document.getElementById('reading').innerText = word.r;
+            document.getElementById('meaning').innerText = word.m;
+            document.getElementById('usage').innerText = "품사/역할: " + word.u;
+            document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('current').innerText = currentIndex + 1;
+            history.replaceState(null, null, "#card" + (currentIndex + 1));
+        }
+
+        function toggleAnswer() {
+            const ans = document.getElementById('answer');
+            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function nextCard() { currentIndex = (currentIndex + 1) % words.length; updateCard(); }
+        function prevCard() { currentIndex = (currentIndex - 1 + words.length) % words.length; updateCard(); }
+    </script>
+</body>
+</html>
