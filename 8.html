@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8번 학습 페이지 - 태풍과 규칙</title>
+    <style>
+        :root { --primary: #4A90E2; --bg: #f5f7fa; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; }
+        .container { width: 100%; max-width: 400px; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 320px; display: flex; flex-direction: column; justify-content: center; }
+        .card:active { transform: scale(0.98); }
+        .question { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
+        .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; }
+        .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        .example { font-size: 0.95rem; color: var(--primary); font-weight: 500; line-height: 1.6; }
+        .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
+        .prev { background: #ccc; color: white; }
+        .next { background: var(--primary); color: white; flex-grow: 1; }
+        .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
+        .back-home { margin-top: 25px; text-decoration: none; color: #888; font-size: 0.9rem; display: block; text-align: center; font-weight: 500; }
+        .back-home:hover { color: var(--primary); text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>🌪️ 태풍과 규칙 (8번 스토리 카드)</h1>
+    <div class="container">
+        <div class="card" onclick="toggleAnswer()">
+            <div id="question" class="question"></div> 
+            <div id="answer" class="answer">
+                <div id="reading" class="reading"></div>
+                <div id="meaning" class="meaning"></div>
+                <div id="usage" class="usage"></div>
+                <div id="example" class="example"></div>
+            </div>
+        </div>
+        <div class="nav">
+            <button class="prev" onclick="prevCard()">이전</button>
+            <button class="next" onclick="nextCard()">다음 카드</button>
+        </div>
+        <div class="status"><span id="current">1</span> / <span id="total">12</span></div>
+        <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
+    </div>
+
+    <script>
+        const words = [    
+            { 
+                q: "靴", r: "くつ", m: "신발", u: "명사", 
+                e: `新しい 靴(くつ)を 履(は)いて 出(で)かけます。
+새 신발을 신고 나갑니다.
+[연관 팁]
+1. 세트: 靴を 履(は)く (신발을 신다)
+2. 靴を 脱(ぬ)ぐ (신발을 벗다)` 
+            },
+            { 
+                q: "脱ぐ", r: "ぬぐ", m: "벗다", u: "동사 / 1형 타동사", 
+                e: `玄関(げんかん)で 靴(くつ)を 脱(ぬ)いで ください。
+현관에서 신발을 벗어 주세요.
+[연관 팁]
+1. 규칙: 탈의실에서 옷을 벗는 상황 등에도 사용.
+2. 반대말: 履(は)く / 着(き)る` 
+            },
+            { 
+                q: "台風", r: "たいふう", m: "태풍", u: "명사", 
+                e: `台風(たいふう)が 来(く)るので 外(そと)は 危(あぶ)ないです。
+태풍이 오기 때문에 밖은 위험합니다.
+[연관 팁]
+1. 발음: '타이후-' 장음에 주의!` 
+            },
+            { 
+                q: "倒れる", r: "たおれる", m: "쓰러지다", u: "동사 / 2형 자동사", 
+                e: `強(つよ)い 風(かぜ)で 木(き)が 倒れました。
+강한 바람으로 나무가 쓰러졌습니다.
+[연관 팁]
+1. 상태: 倒(たお)れている (쓰러져 있다)` 
+            },
+            { 
+                q: "増える", r: "ふえる", m: "늘다, 증가하다", u: "동사 / 2형 자동사", 
+                e: `勉強(べんきょう)の 時間(じかん)が どんどん 増えました。
+공부 시간이 점점 늘었습니다.
+[연관 팁]
+1. 타동사: 増(ふ)やす (늘리다)` 
+            },
+            { 
+                q: "消す", r: "けす", m: "끄다, 지우다", u: "동사 / 1형 타동사", 
+                e: `部屋(へや)を 出(で)る 時(とき)は 電気(でんき)を 消します。
+방을 나갈 때는 불을 끕니다.
+[연관 팁]
+1. 자동사: 消(き)える (꺼지다)` 
+            },
+            { 
+                q: "文章", r: "ぶんしょう", m: "문장", u: "명사", 
+                e: `短(みじか)い 文章(ぶんしょう)を 作(つく)って ください。
+짧은 문장을 만들어 주세요.` 
+            },
+            { 
+                q: "以前", r: "いぜん", m: "이전, 예전", u: "명사/부사", 
+                e: `以前(いぜん)より 漢字(かんじ)が 読(よ)めるように なりました。
+예전보다 한자를 읽을 수 있게 되었습니다.` 
+            },
+            { 
+                q: "内容", r: "ないよう", m: "내용", u: "명사", 
+                e: `テストの 内容(ないよう)は 難(むずか)しかったです。
+시험 내용은 어려웠습니다.` 
+            },
+            { 
+                q: "台所", r: "だいどころ", m: "부엌", u: "명사", 
+                e: `母(はは)は 台所(だいどころ)で 料理(りょうり)を しています。
+어머니는 부엌에서 요리를 하고 있습니다.` 
+            },
+            { 
+                q: "～ないで", r: "～ないで", m: "~하지 않고", u: "부정 연결", 
+                e: `朝(あさ)ごはんを 食べないで 学校(がっこう)へ 行きました。
+아침을 먹지 않고 학교에 갔습니다.
+[연관 팁]
+1. 상태: A를 안 한 상태로 B를 한다는 느낌.` 
+            },
+            { 
+                q: "ために", r: "ために", m: "~하기 위해", u: "목적", 
+                e: `日本(にほん)に 行(い)く ために 貯金(ちょきん)を しています。
+일본에 가기 위해 저금을 하고 있습니다.
+[연관 팁]
+1. 강한 의지: 분명한 목적이 있을 때 사용.` 
+            }
+        ];
+
+        let currentIndex = 0;
+        window.onload = function() {
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#card')) {
+                const index = parseInt(hash.replace('#card', '')) - 1;
+                if (index >= 0 && index < words.length) { currentIndex = index; }
+            }
+            document.getElementById('total').innerText = words.length;
+            updateCard();
+        };
+
+        function updateCard() {
+            if (words.length === 0) return;
+            const word = words[currentIndex];
+            document.getElementById('question').innerText = word.q;
+            document.getElementById('reading').innerText = word.r;
+            document.getElementById('meaning').innerText = word.m;
+            document.getElementById('usage').innerText = "품사/역할: " + word.u;
+            document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('current').innerText = currentIndex + 1;
+            history.replaceState(null, null, "#card" + (currentIndex + 1));
+        }
+
+        function toggleAnswer() {
+            const ans = document.getElementById('answer');
+            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function nextCard() { currentIndex = (currentIndex + 1) % words.length; updateCard(); }
+        function prevCard() { currentIndex = (currentIndex - 1 + words.length) % words.length; updateCard(); }
+    </script>
+</body>
+</html>
