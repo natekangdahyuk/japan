@@ -3,33 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>8번 학습 페이지 - 태풍과 규칙</title>
+    <title>8번 학습 페이지 - 결정과 변화</title>
     <style>
         :root { --primary: #4A90E2; --bg: #f5f7fa; }
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
         .container { width: 100%; max-width: 400px; }
-        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 320px; display: flex; flex-direction: column; justify-content: center; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 350px; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .card:active { transform: scale(0.98); }
+        .category { position: absolute; top: 15px; left: 15px; font-size: 0.75rem; color: #aaa; font-weight: bold; border: 1px solid #eee; padding: 2px 8px; border-radius: 20px; }
         .question { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
         .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
         .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
-        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; }
-        .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
-        .example { font-size: 0.95rem; color: var(--primary); font-weight: 500; line-height: 1.6; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; font-weight: 600; }
+        .usage { font-size: 0.85rem; color: #e67e22; background: #fff5eb; padding: 8px; border-radius: 5px; margin-bottom: 10px; border-left: 3px solid #e67e22; }
+        .example { font-size: 0.95rem; color: #444; font-weight: 500; line-height: 1.6; }
         .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
         button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
         .prev { background: #ccc; color: white; }
         .next { background: var(--primary); color: white; flex-grow: 1; }
         .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
         .back-home { margin-top: 25px; text-decoration: none; color: #888; font-size: 0.9rem; display: block; text-align: center; font-weight: 500; }
-        .back-home:hover { color: var(--primary); text-decoration: underline; }
     </style>
 </head>
 <body>
-    <h1>🌪️ 태풍과 규칙 (8번 스토리 카드)</h1>
+    <h1>🎯 결정과 준비 (8번 학습 카드)</h1>
     <div class="container">
         <div class="card" onclick="toggleAnswer()">
+            <div id="category" class="category">단어/문법</div>
             <div id="question" class="question"></div> 
             <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
@@ -49,82 +50,64 @@
     <script>
         const words = [    
             { 
+                q: "置く", r: "おく", m: "두다, 놓다", u: "1그룹 타동사", 
+                e: `ここに 荷物(にもつ)を **置(お)く** ことに しました。
+여기에 짐을 두기로 했습니다 (내 결정).` 
+            },
+            { 
                 q: "靴", r: "くつ", m: "신발", u: "명사", 
-                e: `新しい 靴(くつ)を 履(は)いて 出(で)かけます。
-새 신발을 신고 나갑니다.
-[연관 팁]
-1. 세트: 靴を 履(は)く (신발을 신다)
-2. 靴を 脱(ぬ)ぐ (신발을 벗다)` 
+                e: `新(あたら)しい **靴(くつ)**을 사고 싶습니다.
+새 신발을 사고 싶습니다.` 
             },
             { 
-                q: "脱ぐ", r: "ぬぐ", m: "벗다", u: "동사 / 1형 타동사", 
-                e: `玄関(げんかん)で 靴(くつ)を 脱(ぬ)いで ください。
-현관에서 신발을 벗어 주세요.
-[연관 팁]
-1. 규칙: 탈의실에서 옷을 벗는 상황 등에도 사용.
-2. 반대말: 履(は)く / 着(き)る` 
+                q: "履く", r: "はく", m: "(신발 등을) 신다", u: "1그룹 타동사", 
+                e: `毎日(まいにち) この 靴(くつ)を **履(は)く** ことに なっています。
+매일 이 신발을 신기로 되어 있습니다 (규칙).` 
             },
             { 
-                q: "台風", r: "たいふう", m: "태풍", u: "명사", 
-                e: `台風(たいふう)が 来(く)るので 外(そと)は 危(あぶ)ないです。
-태풍이 오기 때문에 밖은 위험합니다.
-[연관 팁]
-1. 발음: '타이후-' 장음에 주의!` 
+                q: "脱ぐ", r: "ぬぐ", m: "벗다", u: "1그룹 타동사", 
+                e: `部屋(へや)に 入(はい)る 前(まえ)に 靴(くつ)を **脱(ぬ)ぐ**。
+방에 들어가기 전에 신발을 벗는다.` 
             },
             { 
-                q: "倒れる", r: "たおれる", m: "쓰러지다", u: "동사 / 2형 자동사", 
-                e: `強(つよ)い 風(かぜ)で 木(き)が 倒れました。
-강한 바람으로 나무가 쓰러졌습니다.
-[연관 팁]
-1. 상태: 倒(たお)れている (쓰러져 있다)` 
+                q: "助け", r: "たすけ", m: "도움, 구조", u: "명사", 
+                e: `友達(ともだち)の **助(たす)け**가 필요합니다.
+친구의 도움이 필요합니다.` 
             },
             { 
-                q: "増える", r: "ふえる", m: "늘다, 증가하다", u: "동사 / 2형 자동사", 
-                e: `勉強(べんきょう)の 時間(じかん)が どんどん 増えました。
-공부 시간이 점점 늘었습니다.
-[연관 팁]
-1. 타동사: 増(ふ)やす (늘리다)` 
+                q: "看板", r: "かんばん", m: "간판", u: "명사", 
+                e: `店(みせ)の 前(まえ)に 大(おお)きな **看板(かんばん)**을 두었습니다.
+가게 앞에 큰 간판을 두었습니다.` 
             },
             { 
-                q: "消す", r: "けす", m: "끄다, 지우다", u: "동사 / 1형 타동사", 
-                e: `部屋(へや)を 出(で)る 時(とき)は 電気(でんき)を 消します。
-방을 나갈 때는 불을 끕니다.
-[연관 팁]
-1. 자동사: 消(き)える (꺼지다)` 
+                q: "数", r: "かず", m: "수, 개수", u: "명사", 
+                e: `人(ひと)の **数(かず)**가 以前(いぜん)보다 늘었습니다.
+사람 수가 예전보다 늘었습니다.` 
             },
             { 
-                q: "文章", r: "ぶんしょう", m: "문장", u: "명사", 
-                e: `短(みじか)い 文章(ぶんしょう)を 作(つく)って ください。
-짧은 문장을 만들어 주세요.` 
+                q: "体重", r: "たいじゅう", m: "체중", u: "명사", 
+                e: `**体重(たいじゅう)**가 늘어서 다이어트를 하기로 했습니다.
+체중이 늘어서 다이어트를 하기로 했습니다 (ことにした).` 
             },
             { 
-                q: "以前", r: "いぜん", m: "이전, 예전", u: "명사/부사", 
-                e: `以前(いぜん)より 漢字(かんじ)が 読(よ)めるように なりました。
-예전보다 한자를 읽을 수 있게 되었습니다.` 
+                q: "心配", r: "しんぱい", m: "걱정", u: "명사 / する동사", 
+                e: `テストの 内容(ないよう)가 **心配(しんぱい)**입니다.
+시험 내용이 걱정입니다.` 
             },
             { 
-                q: "内容", r: "ないよう", m: "내용", u: "명사", 
-                e: `テストの 内容(ないよう)は 難(むずか)しかったです。
-시험 내용은 어려웠습니다.` 
+                q: "準備", r: "じゅんび", m: "준비", u: "명사 / する동사", 
+                e: `明日(あした)の **準備(じゅんび)**를 하기 위해 일찍 잡니다.
+내일 준비를 하기 위해 일찍 잡니다.` 
             },
             { 
-                q: "台所", r: "だいどころ", m: "부엌", u: "명사", 
-                e: `母(はは)は 台所(だいどころ)で 料理(りょうり)を しています。
-어머니는 부엌에서 요리를 하고 있습니다.` 
+                q: "疲れた", r: "つかれた", m: "지쳤다, 피곤했다", u: "동사 과거형", 
+                e: `一日中(いちにちじゅう) 働(はたら)いて **疲(つか)れました**。
+하루 종일 일해서 피곤했습니다.` 
             },
             { 
-                q: "～ないで", r: "～ないで", m: "~하지 않고", u: "부정 연결", 
-                e: `朝(あさ)ごはんを 食べないで 学校(がっこう)へ 行きました。
-아침을 먹지 않고 학교에 갔습니다.
-[연관 팁]
-1. 상태: A를 안 한 상태로 B를 한다는 느낌.` 
-            },
-            { 
-                q: "ために", r: "ために", m: "~하기 위해", u: "목적", 
-                e: `日本(にほん)に 行(い)く ために 貯金(ちょきん)を しています。
-일본에 가기 위해 저금을 하고 있습니다.
-[연관 팁]
-1. 강한 의지: 분명한 목적이 있을 때 사용.` 
+                q: "ことにする / なる", r: "문법 핵심", m: "결정 / 결정됨", u: "보통형 연결", 
+                e: `1. 自分で **決(き)める** → **ことにする**
+2. 状況(じょうきょう)で **決(き)まる** → **ことになる**` 
             }
         ];
 
@@ -145,10 +128,11 @@
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
-            document.getElementById('usage').innerText = "품사/역할: " + word.u;
+            document.getElementById('usage').innerText = "해설: " + word.u;
             document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
+            document.getElementById('category').innerText = (currentIndex === 11) ? "핵심문법" : "단어학습";
             history.replaceState(null, null, "#card" + (currentIndex + 1));
         }
 
