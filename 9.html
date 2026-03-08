@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>9번 학습 페이지 - 교차 학습 & 심화 Tip</title>
+    <title>9번 학습 페이지 - 백틱 & UI 최적화</title>
     <style>
         :root { --primary: #1976d2; --bg: #e3f2fd; --point: #e67e22; }
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
@@ -14,11 +14,12 @@
         .category { position: absolute; top: 15px; left: 15px; font-size: 0.75rem; color: var(--primary); font-weight: bold; border: 1px solid var(--primary); padding: 2px 8px; border-radius: 20px; }
         .type-tag { position: absolute; top: 15px; right: 15px; font-size: 0.75rem; color: white; background: var(--point); padding: 2px 8px; border-radius: 5px; font-weight: bold; }
         .question { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
-        .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
-        .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
-        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; font-weight: 600; }
-        .usage { font-size: 0.85rem; color: #1976d2; background: #e3f2fd; padding: 8px; border-radius: 5px; margin-bottom: 15px; border-left: 3px solid #1976d2; }
-        .example-box { line-height: 1.7; white-space: pre-wrap; margin-bottom: 15px; }
+        .answer { display: none; border-top: 1px solid #eee; padding-top: 15px; margin-top: 15px; text-align: left; }
+        .reading { font-size: 1.3rem; color: #111; font-weight: bold; display: block; margin-bottom: 5px; }
+        .info-line { font-size: 1rem; color: #555; margin-bottom: 15px; display: block; }
+        .meaning { font-weight: 700; color: #333; }
+        .usage { color: #1976d2; font-size: 0.9rem; }
+        .example-box { line-height: 1.7; white-space: pre-wrap; margin-bottom: 15px; border-top: 1px dashed #eee; padding-top: 15px; }
         .ex-jp { font-size: 0.95rem; color: #111; font-weight: 500; display: block; margin-bottom: 5px; }
         .ex-kr { font-size: 0.85rem; color: #666; display: block; }
         .tip-box { font-size: 0.82rem; color: #5d4037; background: #fff3e0; padding: 12px; border-radius: 10px; border: 1px solid #ffe0b2; line-height: 1.5; }
@@ -31,7 +32,7 @@
     </style>
 </head>
 <body>
-    <h1>✨ 시즌 2: 심화 교차 학습 (9번 카드)</h1>
+    <h1>✨ 시즌 2: 백틱 교차 학습 (9번 카드)</h1>
     <div class="container">
         <div class="card" onclick="toggleAnswer()">
             <div id="category" class="category">N4 핵심</div>
@@ -39,8 +40,10 @@
             <div id="question" class="question"></div> 
             <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
-                <div id="meaning" class="meaning"></div>
-                <div id="usage" class="usage"></div>
+                <div class="info-line">
+                    <span id="meaning" class="meaning"></span>, 
+                    <span id="usage" class="usage"></span>
+                </div>
                 <div id="example" class="example-box"></div>
                 <div id="tip" class="tip-box"></div>
             </div>
@@ -55,145 +58,145 @@
     <script>
         const words = [    
             { 
-                q: "助け", r: "たすけ", m: "도움, 구조", u: "명사", 
+                q: `助け`, r: `たすけ`, m: `도움, 구조`, u: `명사`, 
                 jp: `友達の 助けで 宿題が 終わりました。`, 
                 kr: `친구의 도움으로 숙제가 끝났습니다.`,
-                tip: `동사 '助ける(돕다)'에서 왔어요. 'たすけて!'라고 외치면 '살려줘!'라는 뜻이 되죠. 명사로 쓰일 땐 '신의 도움(神の助け)'처럼 보이지 않는 조력을 뜻하기도 합니다.
-                한자 助는 비석을세울때 힘을 보탠다.`,
-                t: "한자→읽기"
+                tip: `동사 '助ける(돕다)'에서 왔어요. 'たすけて!'라고 외치면 '살려줘!'라는 뜻이 되죠. 
+                神(かみ)が 私(わたし)を 助(たす)けて くれました。신이 저를 도와주었습니다.`,
+                t: `한자→읽기`
             },
             { 
-                q: "看板", r: "かんばん", m: "간판", u: "명사", 
-                jp: `新しい 看板を 店の 前に 置くことに しました。`, 
+                q: `看板`, r: `かんばん`, m: `간판`, u: `명사`, 
+                jp: `新しい 看板を 店의 前에 置くことに しました。`, 
                 kr: `새로운 간판을 가게 앞에 두기로 했습니다.`,
-                tip: `볼 간(看)에 판자 판(板). 즉 '보는 판자'예요. 일본에서는 그 가게의 최고 인기 메뉴나 인물을 '간판 메뉴/딸(看板娘)'이라고 부르기도 하는 핵심 단어입니다.`,
-                t: "한자→읽기"
+                tip: `볼 간(看)에 판자 판(板). 즉 '보는 판자'예요. 일본에서는 인기 메뉴나 인물을 '간판 메뉴/딸(看板娘)'이라고 부르기도 하는 핵심 단어입니다.`,
+                t: `한자→읽기`
             },
             { 
-                q: "数", r: "かず", m: "수, 개수", u: "명사", 
-                jp: `漢字の 数が 以前より 増えました。`, 
+                q: `数`, r: `かず`, m: `수, 개수`, u: `명사`, 
+                jp: `漢字の 数가 以前보다 늘었습니다.`, 
                 kr: `한자의 수가 이전보다 늘었습니다.`,
-                tip: `숫자(数字) 자체보다 '사물의 양/개수'를 셀 때 'かず'라고 읽어요. '数(かず)を数(かぞ)える'는 '수를 세다'라는 찰떡궁합 표현이니 꼭 세트로 외우세요!`,
-                t: "한자→읽기"
+                tip: `숫자(数字) 자체보다 '사물의 양/개수'를 셀 때 'かず'라고 읽어요. '수를 세다'라는 뜻의 '数(かず)を数(かぞ)える'를 통째로 외우세요!`,
+                t: `한자→읽기`
             },
             { 
-                q: "体重", r: "たいじゅう", m: "체중", u: "명사", 
+                q: `体重`, r: `たいじゅう`, m: `체중`, u: `명사`, 
                 jp: `最近 体重が 増えて 心配です。`, 
                 kr: `최근 체중이 늘어서 걱정입니다.`,
-                tip: `몸(体)의 무게(重). 일본에서는 '살이 찌다'를 '体重が増える'라고 하거나 '太る(ふ토루)'라고 해요. 반대로 줄어드는 건 '減る(へる)'를 씁니다.`,
-                t: "한자→읽기"
+                tip: `몸(体)의 무게(重). 일본에서는 '살이 찌다'를 '体重が増える'라고 하거나 '太る(후토루)'라고 해요. 반대로 줄어드는 건 '減る(헤루)'를 씁니다.`,
+                t: `한자→읽기`
             },
             { 
-                q: "心配", r: "しんぱい", m: "걱정", u: "명사 / する동사", 
-                jp: `明日の テストが とても 心配です。`, 
+                q: `心配`, r: `しんぱい`, m: `걱정`, u: `명사 / する동사`, 
+                jp: `明日の テスト가 とても 心配입니다.`, 
                 kr: `내일 시험이 매우 걱정입니다.`,
-                tip: `마음(心)을 나누어 배분(配)한다는 뜻에서 '마음을 쓰다=걱정하다'가 됐어요. '걱정 마'는 '心配しないで' 혹은 '心配ないよ'라고 하면 아주 자연스러워요.`,
-                t: "한자→읽기"
+                tip: `마음(心)을 나누어 배분(配)한다는 뜻에서 '마음을 쓰다'가 됐어요. '걱정 마'는 '心配しないで' 혹은 '心配ないよ'라고 하면 자연스러워요.`,
+                t: `한자→읽기`
             },
             { 
-                q: "準備", r: "じゅんび", m: "준비", u: "명사 / する동사", 
+                q: `準備`, r: `じゅんび`, m: `준비`, u: `명사 / する동사`, 
                 jp: `旅行の 準備を することに しました。`, 
                 kr: `여행 준비를 하기로 했습니다.`,
-                tip: `준비는 '완료'와 세트죠? '準備ができた(준비가 됐다)' 혹은 '準備が終わった(준비가 끝났다)'와 함께 쓰세요. 한자가 복잡하니 '준' 자의 삼수변을 기억하세요!`,
-                t: "한자→읽기"
+                tip: `준비는 '완료'와 세트죠? '準備ができた(준비가 됐다)' 혹은 '準備が終わった(준비가 끝났다)'와 함께 쓰세요. 한자가 복잡하니 눈에 익혀두세요!`,
+                t: `한자→읽기`
             },
             { 
-                q: "疲れた", r: "つかれた", m: "지쳤다, 피곤했다", u: "동사 과거형", 
+                q: `疲れた`, r: `つかれた`, m: `지쳤다`, u: `동사 과거형`, 
                 jp: `今日は たくさん 歩いて 疲れました。`, 
                 kr: `오늘은 많이 걸어서 피곤했습니다.`,
-                tip: `기본형 '疲れる'는 2그룹 동사예요. 육체적 피로뿐만 아니라 정신적으로 '질렸다'라고 할 때도 써요. 'お疲れ様'의 뿌리가 되는 아주 중요한 동사입니다.`,
-                t: "한자→읽기"
+                tip: `기본형 '疲れる'는 2그룹 동사예요. 육체적 피로뿐만 아니라 정신적으로 '질렸다'라고 할 때도 써요. 'お疲れ様'의 뿌리가 되는 동사입니다.`,
+                t: `한자→읽기`
             },
             { 
-                q: "置く", r: "おく", m: "두다, 놓다", u: "1그룹 타동사", 
+                q: `置く`, r: `おく`, m: `두다, 놓다`, u: `1그룹 타동사`, 
                 jp: `ここに 荷物を 置かないで ください。`, 
                 kr: `여기에 짐을 두지 마세요.`,
-                tip: `물건을 물리적으로 내려놓을 때 써요. '미리 ~해 두다'라는 문법 '~ておく'로도 쓰이니, 기본 뜻인 '놓다'를 확실히 잡아둬야 나중에 문법이 안 헷갈려요.`,
-                t: "한자→읽기"
+                tip: `물건을 물리적으로 내려놓을 때 써요. '미리 ~해 두다'라는 문법 '~ておく'로도 쓰이니, 기본 뜻인 '놓다'를 확실히 잡아둬야 합니다.`,
+                t: `한자→읽기`
             },
             { 
-                q: "履く", r: "은", m: "신다", u: "1그룹 타동사", 
-                jp: `新しい 靴を 履く ことに なっています。`, 
+                q: `履く`, r: `은`, m: `신다`, u: `1그룹 타동사`, 
+                jp: `新しい 靴を 履く ことに なっています.`, 
                 kr: `새 신발을 신기로 되어 있습니다.`,
-                tip: `일본어에서 '입다/신다'는 위치마다 단어가 달라요. 허리 아래(신발, 바지, 치마, 양말)는 무조건 '履く'입니다. 머리 위(모자)는 'かぶる'라는 거 잊지 마세요!`,
-                t: "한자→읽기"
+                tip: `일본어에서 하리 아래(신발, 바지, 치마, 양말)는 무조건 '履く'입니다. 머리 위(모자)는 'かぶる'라는 거 잊지 마세요!`,
+                t: `한자→읽기`
             },
             { 
-                q: "送る", r: "おくる", m: "보내다", u: "1그룹 타동사", 
-                jp: `手紙を 送る ために 郵便局に 行きます。`, 
+                q: `送る`, r: `おくる`, m: `보내다`, u: `1그룹 타동사`, 
+                jp: `手紙を 送る ために 郵便局に 行きます.`, 
                 kr: `편지를 보내기 위해 우체국에 갑니다.`,
-                tip: `물건이나 메시지를 '전송'할 때도 쓰고, 차로 사람을 '바래다줄' 때도 써요. '駅まで送る(역까지 바래다주다)'처럼 일상에서 정말 많이 쓰는 동사입니다.`,
-                t: "한자→읽기"
+                tip: `물건이나 메시지를 '전송'할 때도 쓰고, 차로 사람을 '바래다줄' 때도 써요. '駅まで送る'처럼 일상에서 정말 많이 쓰는 동사입니다.`,
+                t: `한자→읽기`
             },
             { 
-                q: "たすけ", r: "助け", m: "도움, 구조", u: "명사", 
-                jp: `神様の 助けを 借りたいです。`, 
+                q: `たすけ`, r: `助け`, m: `도움`, u: `명사`, 
+                jp: `神様の 助けを 借りたいです.`, 
                 kr: `신의 도움을 빌리고 싶습니다.`,
-                tip: `한자 '助(조)'는 '도울 조'예요. 왼쪽의 '且'는 물건을 쌓는 판이고 오른쪽 '力'은 힘이죠. 힘을 보태서 물건을 쌓는 걸 돕는다는 의미가 담겨있어요.`,
-                t: "읽기→한자"
+                tip: `한자 '助(조)'는 '도울 조'예요. 힘(力)을 보태서 물건을 쌓는 것을 돕는다는 의미가 담겨있어요. 'たすけ' 소리를 기억하세요!`,
+                t: `읽기→한자`
             },
             { 
-                q: "かんばん", r: "看板", m: "간판", u: "명사", 
-                jp: `有名な 看板を 見つけました。`, 
+                q: `かんばん`, r: `看板`, m: `간판`, u: `명사`, 
+                jp: `有名な 看板を 見つけました.`, 
                 kr: `유명한 간판을 발견했습니다.`,
-                tip: `'看'은 '간호사' 할 때의 간(지켜보다)이고, '板'은 '칠판' 할 때의 판(나무판자)이에요. 즉, 사람들이 지켜보는 나무판자가 곧 간판입니다.`,
-                t: "읽기→한자"
+                tip: `'看'은 '지켜보다', '板'은 '판자'예요. 즉, 사람들이 지켜보는 나무판자가 곧 간판입니다. 발음은 '칸반'입니다.`,
+                t: `읽기→한자`
             },
             { 
-                q: "たいじゅう", r: "体重", m: "체중", u: "명사", 
-                jp: `体重を 計る ことに しました。`, 
+                q: `たいじゅう`, r: `体重`, m: `체중`, u: `명사`, 
+                jp: `体重を 計る ことに しました.`, 
                 kr: `체중을 재기로 했습니다.`,
-                tip: `'重(중)'은 무겁다는 뜻도 있지만, '무게'라는 명사로도 쓰여요. 'たいじゅう'라고 읽을 때 'たい'가 장음이 되지 않도록 주의하세요! '다이쥬-'가 아니라 '다이쥬'입니다.`,
-                t: "읽기→한자"
+                tip: `'たいじゅう'라고 읽을 때 'たい'가 장음이 되지 않도록 주의하세요! '다이쥬-'가 아니라 '다이쥬'입니다.`,
+                t: `읽기→한자`
             },
             { 
-                q: "しんぱい", r: "心配", m: "걱정", u: "명사 / する동사", 
-                jp: `親が 心配して います。`, 
+                q: `しんぱい`, r: `心配`, m: `걱정`, u: `명사 / する동사`, 
+                jp: `親が 心配して います.`, 
                 kr: `부모님이 걱정하고 계십니다.`,
-                tip: `'配(배)'는 '배달/배분' 할 때의 배예요. 술병(酉) 옆에 사람이 무릎 꿇고(己) 있는 모습에서 술을 나누어주는 것을 뜻하다가, 마음을 나누는 '걱정'까지 의미가 확장됐어요.`,
-                t: "읽기→한자"
+                tip: `'배달' 할 때의 '배(配)'와 '마음(心)'이 합쳐진 단어입니다. 소리 '심파이'와 한자를 매칭해보세요.`,
+                t: `읽기→한자`
             },
             { 
-                q: "じゅんび", r: "準備", m: "준비", u: "명사 / する동사", 
-                jp: `食事の 準備가 できました.`, 
+                q: `じゅんび`, r: `準備`, m: `준비`, u: `명사 / する동사`, 
+                jp: `食事の 準備が できました.`, 
                 kr: `식사 준비가 되었습니다.`,
-                tip: `'備(비)'는 '비축하다/구비하다'의 비예요. 미리 갖추어 놓는 것이 '준비'입니다. 일본어 회화에서는 '용의(用意, ようい)'라는 단어도 준비와 비슷하게 쓰이니 참고!`,
-                t: "읽기→한자"
+                tip: `한자가 꽤 복잡하지만 '준(準)' 자의 물 수 변을 기억하면 쓰기 편해요. 발음은 '준비'와 거의 비슷합니다.`,
+                t: `읽기→한자`
             },
             { 
-                q: "おくる", r: "送る", m: "보내다", u: "동사", 
+                q: `おくる`, r: `送る`, m: `보내다`, u: `동사`, 
                 jp: `メールを 送るのを 忘れました.`, 
                 kr: `메일 보내는 것을 잊었습니다.`,
-                tip: `'송금'할 때의 송(送)이에요. 책받침 변(辶)은 '길/이동'을 뜻하죠. 즉, 길을 통해 무언가를 멀리 보내는 모습입니다. 읽기 발음은 '오쿠루'!`,
-                t: "읽기→한자"
+                tip: `'송금'할 때의 송(送)이에요. 길(辶)을 통해 무언가를 멀리 보내는 모습입니다. 읽기 발음은 '오쿠루'!`,
+                t: `읽기→한자`
             },
             { 
-                q: "へる", r: "減る", m: "줄다", u: "동사", 
+                q: `へる`, r: `減る`, m: `줄다`, u: `동사`, 
                 jp: `人数が 減って 寂しいです.`, 
                 kr: `인원수가 줄어서 외롭습니다.`,
-                tip: `'감소'할 때의 감(減)이에요. 1그룹 동사라 'へらない(줄지 않다)', 'へります(줍니다)'로 활용돼요. 배고플 때 'お腹が減った'는 관용구처럼 외워두면 인싸 등극!`,
-                t: "읽기→한자"
+                tip: `'감소'할 때의 감(減)이에요. 1그룹 동사라 'へらない', 'へります'로 활용돼요. 배고플 때 'お腹が減った'는 필수 표현!`,
+                t: `읽기→한자`
             },
             { 
-                q: "はたらく", r: "働く", m: "일하다", u: "동사", 
+                q: `はたらく`, r: `働く`, m: `일하다`, u: `동사`, 
                 jp: `朝から 晩まで 働きます.`, 
                 kr: `아침부터 밤까지 일합니다.`,
-                tip: `사람(人)이 움직여(動) 일하는 모습! 일본에서 만든 한자(국자)예요. 기계가 정상적으로 '작동'할 때도 '機械(きかい)が働く'라고 표현합니다.`,
-                t: "읽기→한자"
+                tip: `사람(人)이 움직여(動) 일하는 모습! 기계가 정상적으로 '작동'할 때도 '機械が働く'라고 표현합니다.`,
+                t: `읽기→한자`
             },
             { 
-                q: "ことにする", r: "ことにする", m: "~하기로 하다", u: "문법", 
+                q: `ことにする`, r: `ことにする`, m: `~하기로 하다`, u: `문법`, 
                 jp: `今日から 日記を 書く ことに しました.`, 
                 kr: `오늘부터 일기를 쓰기로 했습니다.`,
-                tip: `'의지 결정'의 끝판왕! 주어가 '나'일 때 내가 마음먹은 일을 선언할 때 써요. '동사 기본형'에 바로 붙여서 사용하면 됩니다.`,
-                t: "읽기→의미"
+                tip: `'의지 결정'의 끝판왕! 내가 스스로 마음먹은 일을 선언할 때 써요. '동사 기본형'에 붙입니다.`,
+                t: `읽기→의미`
             },
             { 
-                q: "ことに なって いる", r: "ことに なって いる", m: "~하기로 되어 있다", u: "문법", 
+                q: `ことになっている`, r: `ことになっている`, m: `~하기로 되어 있다`, u: `문법`, 
                 jp: `会議は 10時に 始まる ことに なって います.`, 
                 kr: `회의는 10시에 시작하기로 되어 있습니다.`,
-                tip: `'시스템/규칙/일정'의 느낌! 내가 정한 게 아니라 이미 그렇게 정해진 사회적 약속이나 관습을 말할 때 써요. 개인의 의지가 빠진 '드라이한' 느낌입니다.`,
-                t: "읽기→의미"
+                tip: `'시스템/규칙'의 느낌! 이미 정해진 사회적 약속을 말할 때 써요. 개인의 의지가 빠진 느낌입니다.`,
+                t: `읽기→의미`
             }
         ];
 
@@ -208,14 +211,11 @@
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
-            document.getElementById('usage').innerText = "분류: " + word.u;
+            document.getElementById('usage').innerText = word.u;
             document.getElementById('type').innerText = word.t;
             
             const exBox = document.getElementById('example');
-            exBox.innerHTML = `
-                <span class="ex-jp">${word.jp}</span>
-                <span class="ex-kr">${word.kr}</span>
-            `;
+            exBox.innerHTML = `<span class="ex-jp">${word.jp}</span><span class="ex-kr">${word.kr}</span>`;
 
             const tipBox = document.getElementById('tip');
             tipBox.innerHTML = `<span class="tip-title">💡 풍성한 학습 Tip</span>${word.tip}`;
@@ -229,8 +229,8 @@
             ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
         }
 
-        function nextCard() { currentIndex = (currentIndex + 1) % words.length; updateCard(); }
         function prevCard() { currentIndex = (currentIndex - 1 + words.length) % words.length; updateCard(); }
+        function nextCard() { currentIndex = (currentIndex + 1) % words.length; updateCard(); }
     </script>
 </body>
 </html>
