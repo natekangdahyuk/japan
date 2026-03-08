@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9번 학습 페이지 - 일상과 준비</title>
+    <style>
+        :root { --primary: #1976d2; --bg: #e3f2fd; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
+        .container { width: 100%; max-width: 400px; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 400px; display: flex; flex-direction: column; justify-content: center; position: relative; border: 1px solid #bbdefb; }
+        .card:active { transform: scale(0.98); }
+        .category { position: absolute; top: 15px; left: 15px; font-size: 0.75rem; color: var(--primary); font-weight: bold; border: 1px solid var(--primary); padding: 2px 8px; border-radius: 20px; }
+        .question { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
+        .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; font-weight: 600; }
+        .usage { font-size: 0.85rem; color: #1976d2; background: #e3f2fd; padding: 8px; border-radius: 5px; margin-bottom: 15px; border-left: 3px solid #1976d2; }
+        .example-box { line-height: 1.7; white-space: pre-wrap; margin-bottom: 15px; }
+        .ex-jp { font-size: 0.95rem; color: #111; font-weight: 500; display: block; margin-bottom: 5px; }
+        .ex-kr { font-size: 0.85rem; color: #666; display: block; }
+        .tip-box { font-size: 0.8rem; color: #e67e22; background: #fff5eb; padding: 10px; border-radius: 8px; border: 1px dashed #ffcc80; }
+        .tip-title { font-weight: bold; display: block; margin-bottom: 3px; }
+        .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
+        .prev { background: #ccc; color: white; }
+        .next { background: var(--primary); color: white; flex-grow: 1; }
+        .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
+        .back-home { margin-top: 25px; text-decoration: none; color: #888; font-size: 0.9rem; display: block; text-align: center; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <h1>✨ 시즌 2: 일상과 준비 (9번 카드)</h1>
+    <div class="container">
+        <div class="card" onclick="toggleAnswer()">
+            <div id="category" class="category">N4 필수 단어</div>
+            <div id="question" class="question"></div> 
+            <div id="answer" class="answer">
+                <div id="reading" class="reading"></div>
+                <div id="meaning" class="meaning"></div>
+                <div id="usage" class="usage"></div>
+                <div id="example" class="example-box"></div>
+                <div id="tip" class="tip-box"></div>
+            </div>
+        </div>
+        <div class="nav">
+            <button class="prev" onclick="prevCard()">이전</button>
+            <button class="next" onclick="nextCard()">다음 카드</button>
+        </div>
+        <div class="status"><span id="current">1</span> / <span id="total">13</span></div>
+        <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
+    </div>
+
+    <script>
+        const words = [    
+            { 
+                q: "助け", r: "たすけ", m: "도움, 구조", u: "명사", 
+                jp: `友達の 助けで 宿題が 終わりました。`, 
+                kr: `친구의 도움으로 숙제가 끝났습니다.`,
+                tip: `助ける(돕다)의 명사형으로, 누군가의 조력을 뜻해요.`
+            },
+            { 
+                q: "看板", r: "かんばん", m: "간판", u: "명사", 
+                jp: `新しい 看板を 店の 前に 置くことに しました。`, 
+                kr: `새로운 간판을 가게 앞에 두기로 했습니다.`,
+                tip: `가게를 상징하는 얼굴! '인기인'을 뜻하는 비유로도 써요.`
+            },
+            { 
+                q: "数", r: "かず", m: "수, 개수", u: "명사", 
+                jp: `漢字の 数が 以前より 増えました。`, 
+                kr: `한자의 수가 이전보다 늘었습니다.`,
+                tip: `숫자(数字, すうじ)와는 달라요. 수량의 '개수'를 뜻함!`
+            },
+            { 
+                q: "体重", r: "たいじゅう", m: "체중", u: "명사", 
+                jp: `最近 体重が 増えて 心配です。`, 
+                kr: `최근 체중이 늘어서 걱정입니다.`,
+                tip: `체중이 늘다(増える), 줄다(減る,へる)`
+            },
+            { 
+                q: "心配", r: "しんぱい", m: "걱정", u: "명사 / する동사", 
+                jp: `明日の テストが とても 心配です.`, 
+                kr: `내일 시험이 매우 걱정입니다.`,
+                tip: `心配(しんぱい)する는 걱정하다, 걱정이 되다!`
+            },
+            { 
+                q: "準備", r: "じゅんび", m: "준비", u: "명사 / する동사", 
+                jp: `旅行の 準備を することに しました。`, 
+                kr: `여행 준비를 하기로 했습니다.`,
+                tip: `준비를 끝내다(準備が終わる)로 자주 쓰여요.`
+            },
+            { 
+                q: "疲れた", r: "つかれた", m: "지쳤다, 피곤했다", u: "동사 과거형", 
+                jp: `今日は たくさん 歩いて 疲れました。`, 
+                kr: `오늘은 많이 걸어서 피곤했습니다.`,
+                tip: `기본형은 疲れる(2그룹). 정신적으로 지쳤을 때도 써요.`
+            },
+            { 
+                q: "置く", r: "おく", m: "두다, 놓다", u: "1그룹 타동사", 
+                jp: `ここに 荷物を 置かないで ください。`, 
+                kr: `여기에 짐을 두지 마세요.`,
+                tip: `물건을 물리적으로 특정한 곳에 위치시킬 때 써요.`
+            },
+            { 
+                q: "履く", r: "はく", m: "신다", u: "1그룹 타동사", 
+                jp: `新しい 靴を 履く ことに なっています。`, 
+                kr: `새 신발을 신기로 되어 있습니다.`,
+                tip: `신발, 양말, 바지 등 하체에 착용하는 것들에 사용!`
+            },
+            { 
+                q: "送る", r: "おくる", m: "보내다", u: "1그룹 타동사", 
+                jp: `手紙を 送る ために 郵便局に 行きます。`, 
+                kr: `편지를 보내기 위해 우체국에 갑니다.`,
+                tip: `물건을 보내거나, 사람을 바래다줄 때도 써요.`
+            },
+            { 
+                q: "減る", r: "へる", m: "줄다", u: "1그룹 자동사", 
+                jp: `お腹が 減りましたね。`, 
+                kr: `배가 고파졌네요 (배가 줄었네요).`,
+                tip: `수량이나 부피가 줄어들 때 써요. 반대말은 増える.`
+            },
+            { 
+                q: "働く", r: "はたらく", m: "일하다", u: "1그룹 자동사", 
+                jp: `日本で 働く ことに なりました。`, 
+                kr: `일본에서 일하게 되었습니다.`,
+                tip: `노동의 가치를 실현하는 '일하다'! 기계가 작동할 때도 써요.`
+            },
+            { 
+                q: "ことにする", r: "ことにする", m: "~하기로 하다", u: "문법 (의지)", 
+                jp: `明日から 毎日 走る ことに しました.`, 
+                kr: `내일부터 매일 달리기로 했습니다.`,
+                tip: `나의 개인적인 '의지'나 '결정'을 나타내는 핵심 표현!`
+            }
+        ];
+
+        let currentIndex = 0;
+        window.onload = function() {
+            document.getElementById('total').innerText = words.length;
+            updateCard();
+        };
+
+        function updateCard() {
+            const word = words[currentIndex];
+            document.getElementById('question').innerText = word.q;
+            document.getElementById('reading').innerText = word.r;
+            document.getElementById('meaning').innerText = word.m;
+            document.getElementById('usage').innerText = "해설: " + word.u;
+            
+            // 일어/한글 분리
+            const exBox = document.getElementById('example');
+            exBox.innerHTML = `
+                <span class="ex-jp">${word.jp}</span>
+                <span class="ex-kr">${word.kr}</span>
+            `;
+
+            // Tip 추가
+            const tipBox = document.getElementById('tip');
+            tipBox.innerHTML = `<span class="tip-title">💡 학습 Tip</span>${word.tip}`;
+            
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('current').innerText = currentIndex + 1;
+        }
+
+        function toggleAnswer() {
+            const ans = document.getElementById('answer');
+            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function nextCard() { currentIndex = (currentIndex + 1) % words.length; updateCard(); }
+        function prevCard() { currentIndex = (currentIndex - 1 + words.length) % words.length; updateCard(); }
+    </script>
+</body>
+</html>
