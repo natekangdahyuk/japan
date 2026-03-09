@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10번 학습 페이지 - 시즌2 지침서 준수</title>
+    <style>
+      :root {
+        --primary: #1976d2;
+        --bg: #e3f2fd;
+        --point: #e67e22;
+      }
+
+      body {
+        font-family: 'Pretendard', sans-serif;
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        margin: 0;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.3s;
+        min-height: 480px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        border: 1px solid #bbdefb;
+      }
+
+      .card:active {
+        transform: scale(0.98);
+      }
+
+      .category {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        font-size: 0.75rem;
+        color: var(--primary);
+        font-weight: bold;
+        border: 1px solid var(--primary);
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+
+      .type-tag {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 0.75rem;
+        color: white;
+        background: var(--point);
+        padding: 2px 8px;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+
+      .question {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 15px;
+      }
+
+      .answer {
+        display: none;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+        margin-top: 15px;
+        text-align: left;
+      }
+
+      .reading {
+        font-size: 1.3rem;
+        color: #111;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .info-line {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .meaning {
+        font-weight: 700;
+        color: #333;
+      }
+
+      .usage {
+        color: #1976d2;
+        font-size: 0.9rem;
+      }
+
+      .example-box {
+        line-height: 1.7;
+        white-space: pre-wrap;
+        margin-bottom: 15px;
+        border-top: 1px dashed #eee;
+        padding-top: 15px;
+      }
+
+      .ex-jp {
+        font-size: 0.95rem;
+        color: #111;
+        font-weight: 500;
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .ex-kr {
+        font-size: 0.85rem;
+        color: #666;
+        display: block;
+      }
+
+      .tip-box {
+        font-size: 0.82rem;
+        color: #5d4037;
+        background: #fff3e0;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ffe0b2;
+        line-height: 1.5;
+      }
+
+      .tip-title {
+        font-weight: bold;
+        color: #e65100;
+        display: block;
+        margin-bottom: 5px;
+        border-bottom: 1px solid #ffcc80;
+        padding-bottom: 2px;
+      }
+
+      .nav {
+        margin-top: 25px;
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        justify-content: center;
+      }
+
+      button {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+
+      .prev {
+        background: #ccc;
+        color: white;
+      }
+
+      .next {
+        background: var(--primary);
+        color: white;
+        flex-grow: 1;
+      }
+
+      .status {
+        margin-top: 15px;
+        font-size: 0.9rem;
+        color: #999;
+        text-align: center;
+      }
+
+      .back-home {
+        margin-top: 25px;
+        text-decoration: none;
+        color: #888;
+        font-size: 0.9rem;
+        display: block;
+        text-align: center;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>✨ 시즌 2: 9번 무한 성장 카드 (v1.2)</h1>
+    <div class="container">
+      <div class="card" onclick="toggleAnswer()">
+        <div id="category" class="category">N4 핵심</div>
+        <div id="type" class="type-tag"></div>
+        <div id="question" class="question"></div>
+        <div id="answer" class="answer">
+          <div id="reading" class="reading"></div>
+          <div class="info-line">
+            <span id="meaning" class="meaning"></span>, <span id="usage" class="usage"></span>
+          </div>
+          <div id="example" class="example-box"></div>
+          <div id="tip" class="tip-box"></div>
+        </div>
+      </div>
+      <div class="nav">
+        <button class="prev" onclick="prevCard()">이전</button>
+        <button class="next" onclick="nextCard()">다음 카드</button>
+      </div>
+      <div class="status">
+        <span id="current">1</span> / <span id="total">20</span>
+      </div>
+      <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
+    </div>
+    <script>
+      const words = [{
+        q: `台風`,
+        r: `たいふう`,
+        m: `태풍`,
+        u: `명사`,
+        jp: `台風が来るので、窓を閉めましょう。`,
+        kr: `태풍이 오니까 창문을 닫읍시다.`,
+        tip: `한자 '태(台)'와 '풍(風)'이 합쳐진 단어예요. 일본은 여름과 가을 사이에 태풍이 자주 오니 뉴스에서 자주 듣게 될 거예요.`,
+        t: `한자→읽기`
+      }, {
+        q: `たいふう`,
+        r: `台風`,
+        m: `태풍`,
+        u: `명사`,
+        jp: `昨日の台風はすごかったです。`,
+        kr: `어제의 태풍은 대단했습니다.`,
+        tip: `소리 '타이후-'를 기억하세요. '태풍이 상륙하다'는 '台風が上陸(じょうりく)する'라고 합니다.`,
+        t: `읽기→한자`
+      }, {
+        q: `倒れる`,
+        r: `たおれる`,
+        m: `쓰러지다`,
+        u: `2그룹 자동사`,
+        jp: `地震で本棚が倒れました。`,
+        kr: `지진으로 책장이 쓰러졌습니다.`,
+        tip: `사람이 과로로 쓰러지거나 사물이 넘어질 때 모두 씁니다. 수동태가 아닌 자동사라는 점에 주의하세요!`,
+        t: `한자→읽기`
+      }, {
+        q: `たおれる`,
+        r: `倒れる`,
+        m: `쓰러지다`,
+        u: `2그룹 자동사`,
+        jp: `道で人が倒れています。`,
+        kr: `길에 사람이 쓰러져 있습니다.`,
+        tip: `'사람 인(人)' 변이 들어간 '倒(도)'는 사람이 거꾸로 된다는 의미에서 유래했어요.`,
+        t: `읽기→한자`
+      }, {
+        q: `台所`,
+        r: `だいどころ`,
+        m: `부엌, 주방`,
+        u: `명사`,
+        jp: `台所で母が料理を作っています。`,
+        kr: `부엌에서 어머니가 요리를 만들고 있습니다.`,
+        tip: `'대(台)'가 있는 '곳(所)'이라는 뜻이에요. 옛날에 요리 기구를 올려두던 대에서 유래했습니다.`,
+        t: `한자→읽기`
+      }, {
+        q: `だいどころ`,
+        r: `台所`,
+        m: `부엌, 주방`,
+        u: `명사`,
+        jp: `新しいアパートの台所は広いです。`,
+        kr: `새 아파트의 부엌은 넓습니다.`,
+        tip: `'다이도코로'라는 긴 발음이지만 한 단어처럼 외우세요. 주방을 뜻하는 '키친(キッチン)'도 자주 씁니다.`,
+        t: `읽기→한자`
+      }, {
+        q: `以前`,
+        r: `以前`,
+        m: `이전, 전`,
+        u: `명사`,
+        jp: `以前、ここに来たことがあります。`,
+        kr: `이전, 여기에 온 적이 있습니다.`,
+        tip: `기준 시점보다 앞을 나타내요. '~보다 전'이라고 할 때는 '～より以前' 혹은 간단히 '以前'을 씁니다.`,
+        t: `한자→읽기`
+      }, {
+        q: `いぜん`,
+        r: `以前`,
+        m: `이전, 전`,
+        u: `명사`,
+        jp: `以前の生活はもっと静かでした。`,
+        kr: `이전 생활은 더 조용했습니다.`,
+        tip: `'이(以)'는 기준을, '전(前)'은 앞을 의미해요. 한국어 '이전'과 한자가 같아 외우기 쉽죠?`,
+        t: `읽기→한자`
+      }, {
+        q: `文章`,
+        r: `ぶんしょう`,
+        m: `문장`,
+        u: `명사`,
+        jp: `この文章を日本語に訳してください。`,
+        kr: `이 문장을 일본어로 번역해 주세요.`,
+        tip: `단어가 모여서 된 '글' 전체를 의미하기도 해요. 시험 문제의 지문을 '文章'이라고 부릅니다.`,
+        t: `한자→읽기`
+      }, {
+        q: `ぶんしょう`,
+        r: `文章`,
+        m: `문장`,
+        u: `명사`,
+        jp: `短くて分かりやすい文章を書きます。`,
+        kr: `짧고 이해하기 쉬운 문장을 씁니다.`,
+        tip: `'글월 문(文)'과 '글 장(章)'이에요. 발음은 '분쇼-'로 장음에 주의해서 읽으세요.`,
+        t: `읽기→한자`
+      }, {
+        q: `消す`,
+        r: `けす`,
+        m: `끄다, 지우다`,
+        u: `1그룹 타동사`,
+        jp: `電気を消して寝ます。`,
+        kr: `불을 끄고 잡니다.`,
+        tip: `불(火)을 끄는 것뿐만 아니라 연필로 쓴 글씨를 지울 때도 '消す'를 사용합니다. 지우개는 '消しゴム'예요!`,
+        t: `한자→읽기`
+      }, {
+        q: `けす`,
+        r: `消す`,
+        m: `끄다, 지우다`,
+        u: `1그룹 타동사`,
+        jp: `間違えたところを消しました。`,
+        kr: `틀린 곳을 지웠습니다.`,
+        tip: `'소멸(消)'할 때의 '소'자입니다. 물 수(氵)가 들어있어 불을 물로 꺼서 없애는 이미지를 떠올리세요.`,
+        t: `읽기→한자`
+      }];
+      let currentIndex = 0;
+      const storageKey = `dahyeok_japanese_card_9`;
+      window.onload = function() {
+        const savedIndex = localStorage.getItem(storageKey);
+        if (savedIndex !== null) currentIndex = parseInt(savedIndex);
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#card')) {
+          const index = parseInt(hash.replace('#card', '')) - 1;
+          if (index >= 0 && index < words.length) currentIndex = index;
+        }
+        document.getElementById('total').innerText = words.length;
+        updateCard();
+      };
+
+      function updateCard() {
+        const word = words[currentIndex];
+        document.getElementById('question').innerText = word.q;
+        document.getElementById('reading').innerText = word.r;
+        document.getElementById('meaning').innerText = word.m;
+        document.getElementById('usage').innerText = word.u;
+        document.getElementById('type').innerText = word.t;
+        const exBox = document.getElementById('example');
+        exBox.innerHTML = `
+					<span class="ex-jp">${word.jp}</span>
+					<span class="ex-kr">${word.kr}</span>`;
+        const tipBox = document.getElementById('tip');
+        tipBox.innerHTML = `
+					<span class="tip-title">💡 풍성한 학습 Tip</span>${word.tip}`;
+        document.getElementById('answer').style.display = 'none';
+        document.getElementById('current').innerText = currentIndex + 1;
+        localStorage.setItem(storageKey, currentIndex);
+        history.replaceState(null, null, `#card${currentIndex + 1}`);
+      }
+
+      function toggleAnswer() {
+        const ans = document.getElementById('answer');
+        ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+      }
+
+      function nextCard() {
+        currentIndex = (currentIndex + 1) % words.length;
+        updateCard();
+      }
+
+      function prevCard() {
+        currentIndex = (currentIndex - 1 + words.length) % words.length;
+        updateCard();
+      }
+    </script>
+  </body>
+</html>
