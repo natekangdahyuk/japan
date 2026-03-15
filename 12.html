@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다혁 전용 일본어 학습 - 시즌 2 (v1.2)</title>
+    <style>
+        :root {
+            --primary-color: #1976d2; /* 시즌 2 파란 계열 */
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-main: #333;
+            --accent-color: #e3f2fd;
+        }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #study-container { width: 95%; max-width: 500px; background: var(--card-bg); padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center; }
+        button { padding: 10px 18px; border: none; border-radius: 8px; background: var(--primary-color); color: white; cursor: pointer; font-size: 14px; }
+        .question { font-size: 42px; font-weight: bold; margin: 30px 0; color: var(--text-main); word-break: keep-all; }
+        .info-line { background: var(--accent-color); padding: 10px; border-radius: 10px; font-size: 18px; margin-bottom: 20px; display: none; }
+        .example-box { text-align: left; margin-top: 15px; padding: 15px; background: #f9f9f9; border-left: 4px solid var(--primary-color); display: none; }
+        .tip-box { margin-top: 15px; padding: 12px; background: #fff9c4; border-radius: 10px; font-size: 14px; line-height: 1.5; display: none; text-align: left; }
+        .show-answer-btn { width: 100%; padding: 15px; font-size: 18px; background: #eee; color: #333; margin-top: 10px; border-radius: 10px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="study-container">
+    <div class="nav-buttons">
+        <button onclick="prevCard()">이전</button>
+        <span id="card-index" style="font-weight:bold;">1 / 11</span>
+        <button onclick="nextCard()">다음</button>
+    </div>
+
+    <div id="card-content">
+        <div class="question" id="q-text">질문 로딩중...</div>
+        <div class="info-line" id="info-line"><span id="reading"></span> / <span id="meaning"></span></div>
+        <div class="example-box" id="example-box">
+            <div id="ex-jp" style="font-weight: bold;"></div>
+            <div id="ex-kr" style="color: #666; margin-top:5px; font-size: 0.9em;"></div>
+        </div>
+        <div class="tip-box" id="tip-box"></div>
+        <button class="show-answer-btn" id="ans-btn" onclick="toggleAnswer()">정답 확인</button>
+    </div>
+</div>
+
+<script>
+    const data = [
+        { q: `困る`, r: `こまる`, m: `곤란하다`, u: `동사`, jp: `お金がなくて困っています。`, kr: `돈이 없어서 곤란해하고 있습니다.`, 
+         tip: `나무(木)가 사방(口)에 갇혀 괴로운 모습을 상상하세요.` },
+        { q: `返す`, r: `かえす`, m: `돌려주다`, u: `동사`, jp: `図書館に本を返します。`, kr: `도서관에 책을 반납합니다.`, 
+         tip: `상대방에게 물건을 되돌려 줄 때 씁니다.` },
+        { q: `渡す`, r: `わたす`, m: `건네주다`, u: `동사`, jp: `手紙を渡しました。`, kr: `편지를 건네주었습니다.`, 
+         tip: `강을 '건너다(渡る)'와 같은 한자로, 물건이 건너가게 하는 것입니다.` },
+        { q: `今朝`, r: `けさ`, m: `오늘 아침`, u: `명사`, jp: `今朝、シャワーを浴びました。`, kr: `오늘 아침에 샤워를 했습니다.`, 
+         tip: `특수 읽기 단어입니다. '이마아사'가 아닌 '케사'로 꼭 외우세요!` },
+        { q: `半分`, r: `はんぶん`, m: `절반`, u: `명사`, jp: `宿題が半分終わりました。`, kr: `숙제가 절반 끝났습니다.`, 
+         tip: `한자 낚시 주의! '半'의 점은 안으로 모이고, '分'의 아래는 칼(刀)입니다.` },
+        { q: `地図を 書く`, r: `ちずを かく`, m: `지도를 그리다`, u: `관용구`, jp: `地図を書いてください。`, kr: `지도를 그려 주세요.`, 
+         tip: `지도는 描く(그리다)가 아니라 書く(쓰다)를 주로 사용합니다.` },
+        { q: `大使館`, r: `たいしかん`, m: `대사관`, u: `명사`, jp: `大使館へ行ってください。`, kr: `대사관으로 가 주세요.`, 
+         tip: `한자 '큰 대 + 부릴 사 + 집 관'을 그대로 읽으면 됩니다.` },
+        { q: `国`, r: `くに`, m: `나라, 고향`, u: `명사`, jp: `国へ帰ります。`, kr: `고향(나라)으로 돌아갑니다.`, 
+         tip: `문맥에 따라 '모국' 또는 '본인의 고향 시골'을 뜻합니다.` },
+        { q: `生まれる`, r: `うまれる`, m: `태어나다`, u: `동사`, jp: `6月15日に生まれました。`, kr: `6월 15일에 태어났습니다.`, 
+         tip: `생일(誕生日)과 짝꿍인 단어입니다.` },
+        { q: `一昨日`, r: `おととい`, m: `그저께`, u: `명사`, jp: `おととい、友達に会いました。`, kr: `그저께 친구를 만났습니다.`, 
+         tip: `2일 전을 뜻합니다. '재작년(おととし)'과 발음 주의!` },
+        { q: `一昨年`, r: `おととし`, m: `재작년`, u: `명사`, jp: `おととし、日本へ行きました。`, kr: `재작년에 일본에 갔습니다.`, 
+         tip: `2년 전을 뜻합니다. 어미가 '시'로 끝나는 것을 기억하세요.` }
+    ];
+
+    let currentIndex = 0;
+
+    function init() {
+        const hash = window.location.hash.replace('#card', '');
+        const saved = localStorage.getItem('lastStudyIndex_v1.2');
+        if (hash) { currentIndex = parseInt(hash) - 1; }
+        else if (saved) { currentIndex = parseInt(saved); }
+        showCard();
+    }
+
+    function showCard() {
+        const item = data[currentIndex];
+        document.getElementById('q-text').innerText = item.q;
+        document.getElementById('reading').innerText = item.r;
+        document.getElementById('meaning').innerText = item.m;
+        document.getElementById('ex-jp').innerText = item.jp;
+        document.getElementById('ex-kr').innerText = item.kr;
+        document.getElementById('tip-box').innerText = "💡 Tip: " + item.tip;
+        document.getElementById('card-index').innerText = `${currentIndex + 1} / ${data.length}`;
+        
+        document.getElementById('info-line').style.display = 'none';
+        document.getElementById('example-box').style.display = 'none';
+        document.getElementById('tip-box').style.display = 'none';
+        document.getElementById('ans-btn').innerText = "정답 확인";
+
+        localStorage.setItem('lastStudyIndex_v1.2', currentIndex);
+        window.location.hash = `card${currentIndex + 1}`;
+    }
+
+    function toggleAnswer() {
+        const info = document.getElementById('info-line');
+        const ex = document.getElementById('example-box');
+        const tip = document.getElementById('tip-box');
+        const btn = document.getElementById('ans-btn');
+
+        if (info.style.display === 'none') {
+            info.style.display = 'block'; ex.style.display = 'block'; tip.style.display = 'block';
+            btn.innerText = "가리기";
+        } else {
+            info.style.display = 'none'; ex.style.display = 'none'; tip.style.display = 'none';
+            btn.innerText = "정답 확인";
+        }
+    }
+
+    function nextCard() { if (currentIndex < data.length - 1) { currentIndex++; showCard(); } }
+    function prevCard() { if (currentIndex > 0) { currentIndex--; showCard(); } }
+
+    window.onhashchange = () => {
+        const hash = window.location.hash.replace('#card', '');
+        if (hash) { currentIndex = parseInt(hash) - 1; showCard(); }
+    };
+
+    window.onload = init;
+</script>
+</body>
+</html>
