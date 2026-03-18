@@ -3,229 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2번 학습 페이지 - 단어장</title>
+    <title>2번 학습 페이지 - 단어장 (v1.3)</title>
     <style>
         :root { --primary: #4A90E2; --bg: #f5f7fa; }
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
         .container { width: 100%; max-width: 400px; }
-        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 280px; display: flex; flex-direction: column; justify-content: center; }
-        .card:active { transform: scale(0.98); }
-        .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        
+        /* 카드 클릭 이벤트 제거 및 커서 변경 */
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; min-height: 350px; display: flex; flex-direction: column; justify-content: center; position: relative; cursor: default; }
+        
+        .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; word-break: keep-all; }
+        
+        /* 정답 영역 */
         .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
         .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
-        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; }
-        .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
-        .example { font-size: 0.95rem; color: var(--primary); font-weight: 500; line-height: 1.6; }
-        .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
-        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
-        .prev { background: #ccc; color: white; }
-        .next { background: var(--primary); color: white; flex-grow: 1; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; font-weight: 600; }
+        .usage { font-size: 0.85rem; color: #e67e22; background: #fff5eb; padding: 8px; border-radius: 5px; margin-bottom: 10px; border-left: 3px solid #e67e22; }
+        .example { font-size: 0.95rem; color: #444; font-weight: 500; line-height: 1.6; white-space: pre-wrap; margin-bottom: 15px; }
+        .tip-box { background: #fff9c4; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #555; border-left: 4px solid #fbc02d; }
+        
+        /* 메인 버튼 스타일 */
+        .nav-main { margin-top: 25px; display: flex; gap: 10px; width: 100%; }
+        button { padding: 15px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; flex: 1; }
+        .btn-view { background: #546e7a; color: white; }
+        .btn-next { background: var(--primary); color: white; }
+        button:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* 하단 보조 링크 스타일 */
+        .nav-sub { margin-top: 20px; display: flex; gap: 20px; justify-content: center; }
+        .nav-sub a { text-decoration: none; color: #888; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        .nav-sub a:hover { color: var(--primary); }
+
         .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
-        .back-home { margin-top: 20px; text-decoration: none; color: #888; font-size: 0.9rem; display: block; text-align: center; }
     </style>
 </head>
 <body>
 
-    <h1>🎴 오늘의 단어 카드 (N4)</h1>
+    <h1>🎴 오늘의 단어 카드 (v1.3)</h1>
     <div class="container">
-        <div class="card" onclick="toggleAnswer()">
+        <div class="card">
             <div id="question" class="question"></div> 
             <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
                 <div id="meaning" class="meaning"></div>
                 <div id="usage" class="usage"></div>
                 <div id="example" class="example"></div>
+                <div id="tip" class="tip-box"></div>
             </div>
         </div>
 
-        <div class="nav">
-            <button class="prev" onclick="prevCard()">이전</button>
-            <button class="next" onclick="nextCard()">다음 카드</button>
+        <div class="nav-main">
+            <button class="btn-view" onclick="toggleAnswer()">내용 보기</button>
+            <button class="btn-next" onclick="nextCard()">다음 카드</button>
         </div>
+
+        <div class="nav-sub">
+            <a onclick="prevCard()">이전</a>
+            <a onclick="goToFirst()">처음</a>
+            <a href="index.html">목록</a>
+        </div>
+
         <div class="status"><span id="current">1</span> / <span id="total">0</span></div>
-        <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
     </div>
 
     <script>
+        // 지침 v1.3 준수: q(한글X), r(한자/한글X)
         const words = [    
             { 
-                q: "倒れる", 
-                r: "たおれる", 
-                m: "넘어지다, 쓰러지다", 
-                u: "동사 / 2형 자동사", 
-                e: `台風(たいふう)で 家(いえ)가 倒れ(たおれ)ました。
-태풍으로 집이 쓰러졌습니다.
-
-[연관 팁]
-1. 반대말: 立つ(たつ, 서다)
-2. 타동사: 倒す(たおす, 쓰러뜨리다)
-3. 수동형: 倒される(쓰러짐을 당하다)` 
+                q: "倒れる", r: "たおれる", m: "넘어지다, 쓰러지다", u: "2그룹 자동사", 
+                e: `台風で 家が 倒れました.
+태풍으로 집이 쓰러졌습니다.`,
+                tip: `스스로 쓰러지는 것! 내가 쓰러뜨리는 타동사는 '倒す(たおす)'야.`
             },
             { 
-                q: "電気", 
-                r: "でんき", 
-                m: "전기, 불(전등)", 
-                u: "명사 / 에너지 및 전등", 
-                e: `寝(ね)る 前(まえ)に 電気(でんき)を 消し(けし)ます。
-자기 전에 불을 끕니다.
-
-[연관 팁]
-1. 반대말: 電気をつける(불을 켜다)` 
+                q: "電気", r: "でんき", m: "전기, 불(전등)", u: "명사", 
+                e: `寝る 前に 電気を入 けします.
+자기 전에 불을 끕니다.`,
+                tip: `전력뿐만 아니라 방 안의 불을 뜻하기도 해. 켜는 건 'つける'!`
             },
             { 
-                q: "消す", 
-                r: "けす", 
-                m: "끄다, 지우다", 
-                u: "동사 / 1형 타동사", 
-                e: `黒板(こくばん)の 文字(もじ)を 消し(けし)て ください。
-칠판의 글자를 지워 주세요.
-
-[연관 팁]
-1. 자동사 세트: 消える(きえる, 꺼지다)
-2. 반대말: つける(켜다)` 
+                q: "消す", r: "けす", m: "끄다, 지우다", u: "1그룹 타동사", 
+                e: `黒板の 文字を 消して ください.
+칠판의 글자를 지워 주세요.`,
+                tip: `불을 끄거나 낙서를 지울 때 써. 자동사 세트는 '消える(きえる)'야.`
             },
             { 
-                q: "忘れる", 
-                r: "わすれる", 
-                m: "잊다, 잊어버리다", 
-                u: "동사 / 2형 자동사", 
-                e: `傘(かさ)を 電車(でんしゃ)に 忘れ(わすれ)ました。
-우산을 지하철에 두고 왔습니다.
-
-[연관 팁]
-1. 반대말: 覚える(おぼえる, 기억하다/외우다)
-2. 희망형: 忘れたい(わすれたい, 잊고 싶다)` 
+                q: "忘れる", r: "わすれる", m: "잊다, 잊어버리다", u: "2그룹 타동사", 
+                e: `傘を 電車に 忘れました.
+우산을 지하철에 두고 왔습니다.`,
+                tip: `기억에서 사라지거나 물건을 두고 올 때 써. 반대말은 '覚える(おぼえる)'!`
             },
             { 
-                q: "便利だ", 
-                r: "べん리다", 
-                m: "편리하다", 
-                u: "나형용사", 
-                e: `駅(えき)の 近く(ちかく)は とても 便利(べんり)입니다.
-역 근처는 매우 편리합니다.
-
-[연관 팁]
-1. 반대말: 不便だ(ふべんだ, 불편하다)` 
+                q: "便利だ", r: "べんりだ", m: "편리하다", u: "나형용사", 
+                e: `駅의 近く는 とても 便利입니다.
+역 근처는 매우 편리합니다.`,
+                tip: `편할 편(便) + 이로울 리(利). 반대말은 '不便(ふべん)だ'야.`
             },
             { 
-                q: "増える", 
-                r: "ふえる", 
-                m: "늘다, 늘어나다", 
-                u: "동사 / 2형 자동사", 
-                e: `この 町(まち)は 人(ひと)が 増え(ふえ)て います。
-이 마을은 사람이 늘어나고 있습니다.
-
-[연관 팁]
-1. 타동사 세트: 増やす(ふやす, 늘리다)
-2. 반대말: 減る(へる, 줄다)` 
+                q: "増える", r: "ふえる", m: "늘다, 늘어나다", u: "2그룹 자동사", 
+                e: `この 町は 人が 増えて います.
+이 마을은 사람이 늘어나고 있습니다.`,
+                tip: `양이나 수가 저절로 불어날 때 써. 내가 늘리면 '増やす(ふやす)'!`
             },
             { 
-                q: "以前", 
-                r: "いぜん", 
-                m: "이전, 전", 
-                u: "명사 / 시간", 
-                e: `以前(いぜん)、ここに 学校(がっこう)이 있었습니다.
-이전에 여기에 학교가 있었습니다.
-
-[연관 팁]
-1. 유의어: 昔(むかし, 옛날) - 보다 객관적인 표현` 
+                q: "以前", r: "いぜん", m: "이전, 전", u: "명사", 
+                e: `以前、ここに 学校が ありました.
+이전에 여기에 학교가 있었습니다.`,
+                tip: `어떤 기준보다 앞선 때. '옛날(昔, むかし)'보다 좀 더 세련된 표현이야.`
             },
             { 
-                q: "隣", 
-                r: "となり", 
-                m: "옆, 이웃", 
-                u: "명사 / 위치", 
-                e: `隣(となり)の 部屋(へ야)가 시끄럽습니다.
-옆 방이 시끄럽습니다.
-
-[연관 팁]
-1. 비교: 横(よこ, 옆) - 보다 범위가 넓음` 
+                q: "隣", r: "となり", m: "옆, 이웃", u: "명사", 
+                e: `隣の 部屋가 시끄럽습니다.
+옆 방이 시끄럽습니다.`,
+                tip: `가장 가까운 바로 옆을 뜻해. 같은 종류의 사물이 나란히 있을 때 주로 써.`
             },
             { 
-                q: "出口", 
-                r: "でぐち", 
-                m: "출구", 
-                u: "명사 / 통로", 
-                e: `出口(でぐち)는 어디에 있습니까?
-출구는 어디에 있습니까?
-
-[연관 팁]
-1. 반대말: 入口(いりぐち, 입구)` 
+                q: "出口", r: "でぐち", m: "출구", u: "명사", 
+                e: `出口는 어디에 있습니까?
+출구는 어디에 있습니까?`,
+                tip: `나가는(出) 입구(口). 반대말은 '入口(いりぐち, 입구)'야.`
             },
             { 
-                q: "真っ直ぐ", 
-                r: "まっすぐ", 
-                m: "똑바로, 곧장", 
-                u: "부사 / 상태", 
-                e: `この 道(みち)を まっすぐ 行っ(いっ)て ください.
-이 길을 똑바로 가 주세요.
-
-[연관 팁]
-1. 유의어: ずっと (줄곧/훨씬)` 
+                q: "真っ直ぐ", r: "まっすぐ", m: "똑바로, 곧장", u: "부사", 
+                e: `この 道を まっすぐ 行って ください.
+이 길을 똑바로 가 주세요.`,
+                tip: `굽지 않고 일직선인 상태! 길 안내할 때 필수 단어지.`
             },
             { 
-                q: "忘れてしまう", 
-                r: "わすれてしまう", 
-                m: "잊어버리고 말다", 
-                u: "문형 / 완료/아쉬움", 
-                e: `大事(だいじ)な 用事(ようじ)를 잊어버리고 말았습니다.
-중요한 볼일을 잊어버리고 말았습니다.
-
-[용어 체크]
-用事(ようじ): 볼일, 해야 할 일` 
+                q: "忘れてしまう", r: "わすれてしまう", m: "잊어버리고 말다", u: "문형", 
+                e: `大事な 用事を 忘れてしまいました.
+중요한 볼일을 잊어버리고 말았습니다.`,
+                tip: `~てしまう는 완료나 아쉬움의 뉘앙스를 담고 있어.`
             },
             { 
-                q: "歩く", 
-                r: "あるく", 
-                m: "걷다", 
-                u: "동사 / 1형 자동사", 
-                e: `公園(こうえん)을 함께 걸읍시다.
-공원을 함께 걸읍시다.
-
-[연관 팁]
-1. 수단 표현: 歩いて(あるいて, 걸어서)
-2. 명사형: 歩き(あるき, 걸음)` 
+                q: "歩く", r: "あるく", m: "걷다", u: "1그룹 자동사", 
+                e: `公園を 一緒に 歩きましょう.
+공원을 함께 걸읍시다.`,
+                tip: `발로 걷는 것. '걸어서 가다'라고 할 때는 '歩いて行く'라고 해.`
             }
         ];
 
         let currentIndex = 0;
-        const totalSpan = document.getElementById('total');
-        totalSpan.innerText = words.length;
+        const storageKey = 'dahyeok_study_index_2_v1.3';
 
-        // 초기 실행
-        updateCard();
+        window.onload = function() {
+            const savedIndex = localStorage.getItem(storageKey);
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#card')) {
+                currentIndex = parseInt(hash.replace('#card', '')) - 1;
+            } else if (savedIndex !== null) {
+                currentIndex = parseInt(savedIndex);
+            }
+            document.getElementById('total').innerText = words.length;
+            updateCard();
+        };
 
         function updateCard() {
             if (words.length === 0) return;
-            
             const word = words[currentIndex];
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
-            document.getElementById('usage').innerText = "품사/역할: " + word.u;
-            
-            // \n을 <br>로 변환하여 HTML로 삽입
-            document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
+            document.getElementById('usage').innerText = "해설: " + word.u;
+            document.getElementById('example').innerText = word.e;
+            document.getElementById('tip').innerHTML = "<strong>💡 Tip:</strong> " + word.tip;
             
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
+            
+            localStorage.setItem(storageKey, currentIndex);
+            history.replaceState(null, null, "#card" + (currentIndex + 1));
         }
 
         function toggleAnswer() {
             const ans = document.getElementById('answer');
-            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+            ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
         }
 
-        function nextCard() {
-            currentIndex = (currentIndex + 1) % words.length;
-            updateCard();
-        }
-
-        function prevCard() {
-            currentIndex = (currentIndex - 1 + words.length) % words.length;
-            updateCard();
-        }
+        function nextCard() { if (currentIndex < words.length - 1) { currentIndex++; updateCard(); } }
+        function prevCard() { if (currentIndex > 0) { currentIndex--; updateCard(); } }
+        function goToFirst() { currentIndex = 0; updateCard(); }
     </script>
 </body>
 </html>
