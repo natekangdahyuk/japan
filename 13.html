@@ -3,246 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>다혁 전용 일본어 학습 - 시즌2 (치졸한 실전편)</title>
+    <title>13번 학습 페이지 - 쫄~</title>
     <style>
-        :root {
-            --primary-color: #1976d2; /* 시즌 2: 파란 계열 */
-            --bg-color: #f0f4f8;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --tip-bg: #e3f2fd;
-        }
-
-        body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            min-height: 420px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
+        :root { --primary: #4A90E2; --bg: #f5f7fa; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
+        .container { width: 100%; max-width: 400px; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 350px; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .card:active { transform: scale(0.98); }
-
-        .question {
-            font-size: 2.8rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            word-break: keep-all;
-        }
-
-        .info-line {
-            font-size: 1.1rem;
-            color: #666;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .example-box {
-            text-align: left;
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-        }
-
-        .example-ja { font-weight: bold; color: #000; display: block; margin-bottom: 5px; font-size: 1.05rem; }
-        .example-ko { font-size: 0.95rem; color: #555; }
-
-        .tip-box {
-            background: var(--tip-bg);
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            text-align: left;
-            line-height: 1.6;
-            border-left: 5px solid var(--primary-color);
-            margin-top: 10px;
-        }
-
-        .nav-btns {
-            margin-top: 25px;
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        button {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 12px;
-            background: var(--primary-color);
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .btn-list {
-            background: #455a64;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        .progress {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #888;
-            font-weight: bold;
-        }
-
-        #answerSection { display: none; }
+        .category { position: absolute; top: 15px; left: 15px; font-size: 0.75rem; color: #aaa; font-weight: bold; border: 1px solid #eee; padding: 2px 8px; border-radius: 20px; }
+        .question { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
+        .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; font-weight: 600; }
+        .usage { font-size: 0.85rem; color: #e67e22; background: #fff5eb; padding: 8px; border-radius: 5px; margin-bottom: 10px; border-left: 3px solid #e67e22; }
+        .example { font-size: 0.95rem; color: #444; font-weight: 500; line-height: 1.6; }
+        .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
+        .prev { background: #ccc; color: white; }
+        .next { background: var(--primary); color: white; flex-grow: 1; }
+        .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
+        .back-home { margin-top: 25px; text-decoration: none; color: #888; font-size: 0.9rem; display: block; text-align: center; font-weight: 500; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="card" id="studyCard" onclick="toggleAnswer()">
-        <div id="cardFront">
-            <div class="question" id="qText"></div>
-            <p style="color:#bbb;">(클릭하여 정답 보기)</p>
+    <h1>🎯 쫄부의 무례함</h1>
+    <div class="container">
+        <div class="card" onclick="toggleAnswer()">
+            <div id="category" class="category">단어/문법</div>
+            <div id="question" class="question"></div> 
+            <div id="answer" class="answer">
+                <div id="reading" class="reading"></div>
+                <div id="meaning" class="meaning"></div>
+                <div id="usage" class="usage"></div>
+                <div id="example" class="example"></div>
+            </div>
         </div>
-        <div id="answerSection">
-            <div class="question" id="qTextTitle"></div>
-            <div class="info-line" id="infoLine"></div>
-            <div id="examples"></div>
-            <div class="tip-box" id="tipBox"></div>
+        <div class="nav">
+            <button class="prev" onclick="prevCard()">이전</button>
+            <button class="next" onclick="nextCard()">다음 카드</button>
         </div>
+        <div class="status"><span id="current">1</span> / <span id="total">12</span></div>
+        <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
     </div>
 
-    <div class="nav-btns">
-        <button onclick="prevCard(event)">이전</button>
-        <button onclick="nextCard(event)">다음</button>
-    </div>
-    
-    <div class="progress" id="progressInfo"></div>
-    
-    <button class="btn-list" onclick="location.href='index.html'">목록으로 돌아가기</button>
-</div>
-
-<script>
-    const data = [
-        { q: `返す`, r: `かえす (카에스)`, m: `돌려주다 / 갚다`, u: `v. 1그룹`, 
-          ex: [{j: `財布を返せ！`, k: `지갑 내놔(돌려줘)!`}, {j: `お金を返してください。`, k: `돈을 돌려주세요.`}],
+    <script>
+        const words = [    
+            { q: `返す`, r: `かえす (카에스)`, m: `돌려주다 / 갚다`, u: `v. 1그룹`, 
+          e: [{j: `財布を返せ！`, k: `지갑 내놔(돌려줘)!`}, {j: `お金を返してください。`, k: `돈을 돌려주세요.`}],
           tip: `내 물건 빨리 **카에세!**(돌려주세!)라고 외워. '카에세'는 아주 거친 명령형이야.` },
         { q: `渡す`, r: `わたす (와타스)`, m: `건네주다 / 넘기다`, u: `v. 1그룹`, 
-          ex: [{j: `その財布를 俺に渡せ！`, k: `그 지갑 나한테 넘겨!`}, {j: `脱いだ服を渡してください。`, k: `벗은 옷을 건네주세요.`}],
+          e: [{j: `その財布를 俺に渡せ！`, k: `그 지갑 나한테 넘겨!`}, {j: `脱いだ服を渡してください。`, k: `벗은 옷을 건네주세요.`}],
           tip: `**"와타시(나)한테 와타세(넘겨)!"** 발음을 연결해. 원래 내 건 '카에스', 그냥 넘기는 건 '와타스'!` },
         { q: `生まれる`, r: `うまれる (우마레루)`, m: `태어나다`, u: `v. 2그룹`, 
-          ex: [{j: `なんで生まれた？`, k: `왜 태어났냐?`}, {j: `生まれるな！`, k: `태어나지 마!`}],
+          e: [{j: `なんで生まれた？`, k: `왜 태어났냐?`}, {j: `生まれるな！`, k: `태어나지 마!`}],
           tip: `존재 자체를 부정하는 치졸한 문장. '왜 태어났니' 노래를 떠올리면 뇌에 박힌다.` },
         { q: `砂糖`, r: `さとう (사토-)`, m: `설탕`, u: `n. 명사`, 
-          ex: [{j: `この砂糖を舐めろ。`, k: `이 설탕이나 핥아라.`}, {j: `砂糖を増やせ。`, k: `설탕을 늘려라.`}],
+          e: [{j: `この砂糖を舐めろ。`, k: `이 설탕이나 핥아라.`}, {j: `砂糖を増やせ。`, k: `설탕을 늘려라.`}],
           tip: `설탕(**사토-**)을 핥으라(**나메로**)고 명령하는 비열한 상황을 상상해.` },
         { q: `増やせ`, r: `ふやせ (후야세)`, m: `늘려라`, u: `v. 1그룹 명령`, 
-          ex: [{j: `どんな手を使っても金を増やせ。`, k: `어떤 수단을 써서라도 돈을 늘려라.`}, {j: `借金を増やすな。`, k: `빚을 늘리지 마.`}],
+          e:  [{j: `どんな手を使っても金を増やせ。`, k: `어떤 수단을 써서라도 돈을 늘려라.`}, {j: `借金を増やすな。`, k: `빚을 늘리지 마.`}],
           tip: `**후야스**는 수/양을 늘릴 때 써. 사채업자가 돈 불리라고(**후야세**) 독촉하는 장면!` },
         { q: `貸す/借りる`, r: `かす / かりる`, m: `빌려주다 / 빌리다`, u: `v. 혼합`, 
-          ex: [{j: `100円だけ貸してください。`, k: `100엔만 빌려주세요.`}, {j: `100円だけ借りてもいいですか？`, k: `100엔만 빌려도 좋을까요?`}],
+          e:  [{j: `100円だけ貸してください。`, k: `100엔만 빌려주세요.`}, {j: `100円だけ借りてもいいですか？`, k: `100엔만 빌려도 좋을까요?`}],
           tip: `**카스(Kass)** 맥주 한 병 **카시테(빌려줘)**! 빌려주는 쪽 '카스', 빌리는 쪽 '카리루'!` },
         { q: `掃除`, r: `そうじ (소-지)`, m: `청소`, u: `n/v. 명사`, 
-          ex: [{j: `俺が帰るまで部屋を掃除しろ。`, k: `내가 돌아올 때까지 방 청소 해.`}, {j: `トイレを掃除してください.`, k: `화장실을 청소해 주세요.`}],
+          e:  [{j: `俺が帰るまで部屋を掃除しろ。`, k: `내가 돌아올 때까지 방 청소 해.`}, {j: `トイレを掃除してください.`, k: `화장실을 청소해 주세요.`}],
           tip: `네 소지품 다 치우고 **소-지(청소)**해! 명령형 '시로(해라)'와 세트로 외워.` },
         { q: `磨く`, r: `みがく (미가쿠)`, m: `닦다 (광내다)`, u: `v. 1그룹`, 
-          ex: [{j: `歯を磨いてから喋れ。`, k: `이 닦고 나서 말해.`}, {j: `靴を磨け。`, k: `구두를 닦아라.`}],
+          e:  [{j: `歯を磨いてから喋れ。`, k: `이 닦고 나서 말해.`}, {j: `靴を磨け。`, k: `구두를 닦아라.`}],
           tip: `박박 문질러 광낼 때 써. 입 냄새 나니까 **미가쿠(미각)** 잃기 전에 이 닦으라고 해.` },
         { q: `遅れる`, r: `おくれる (오쿠레루)`, m: `늦다`, u: `v. 2그룹`, 
-          ex: [{j: `遅れたから、服を脱げ！`, k: `늦었으니까 옷 벗어라!`}, {j: `遅れたから、服を脱いでください。`, k: `늦었으니까 옷을 벗어 주세요.`}],
+          e:  [{j: `遅れたから、服を脱げ！`, k: `늦었으니까 옷 벗어라!`}, {j: `遅れたから、服を脱いでください。`, k: `늦었으니까 옷을 벗어 주세요.`}],
           tip: `지각 벌칙으로 옷 벗기기... '오쿠레루(늦다)' 뒤엔 '누게(벗어라)'가 온다.` },
         { q: `拾う`, r: `ひろう (히로우)`, m: `줍다`, u: `v. 1그룹`, 
-          ex: [{j: `そのゴミを拾え！`, k: `그 쓰레기를 주워라!`}, {j: `そのゴミを拾ってください。`, k: `그 쓰레기를 주워 주세요.`}],
+          e:  [{j: `そのゴミを拾え！`, k: `그 쓰레기를 주워라!`}, {j: `そのゴミを拾ってください。`, k: `그 쓰레기를 주워 주세요.`}],
           tip: `비참하게 바닥을 기며 **히로에(주워라)!** 줍는 행위 자체가 굴욕인 상황.` },
         { q: `投げる`, r: `なげる (나게루)`, m: `던지다`, u: `v. 2그룹`, 
-          ex: [{j: `その財布を投げろ！`, k: `그 지갑을 던져라!`}, {j: `財布を投げてください。`, k: `지갑을 던져 주세요.`}],
+          e:  [{j: `その財布を投げろ！`, k: `그 지갑을 던져라!`}, {j: `財布を投げてください。`, k: `지갑을 던져 주세요.`}],
           tip: `**"나에게로(나게로) 던져라!"** 2그룹 동사 명령형은 '로'가 붙어서 '나게로'!` },
         { q: `届く`, r: `とどく (토도쿠)`, m: `도착하다 / 닿다`, u: `v. 1그룹`, 
-          ex: [{j: `宅配が届いた。`, k: `택배가 도착했다.`}, {j: `手紙が届いた。`, k: `편지가 도착했다.`}],
+          e:  [{j: `宅配が届いた。`, k: `택배가 도착했다.`}, {j: `手紙が届いた。`, k: `편지가 도착했다.`}],
           tip: `물건이 손에 **'톡'** 하고 **'토도(독)'** 도착하는 느낌을 기억해.` },
         { q: `生ぬるい`, r: `なまぬるい (나마누루이)`, m: `미지근하다`, u: `adj. 형용사`, 
-          ex: [{j: `疲れました。生ぬるい水を一杯ください。`, k: `피곤합니다. 미지근한 물 한 잔 주세요.`}],
+          e:  [{j: `疲れました。生ぬるい水を一杯ください。`, k: `피곤합니다. 미지근한 물 한 잔 주세요.`}],
           tip: `기분 나쁘게 미지근한 것. 피곤해서 **나마(생기)** 없이 **누루이(느릿)**할 때 마시는 물.` },
         { q: `冷たい`, r: `つめたい (츠메타이)`, m: `차갑다`, u: `adj. 형용사`, 
-          ex: [{j: `お前の心は氷より冷たいな。`, k: `너의 마음은 얼음보다 차갑구나.`}],
+          e:  [{j: `お前の心は氷より冷たいな。`, k: `너의 마음은 얼음보다 차갑구나.`}],
           tip: `얼음을 만져서 손톱(**츠메**)이 **타이(타는 듯)** 차가운 느낌!` }
-    ];
+        ];
 
-    let currentIndex = parseInt(localStorage.getItem('lastCardIndex')) || 0;
-    let isAnswerVisible = false;
+        let currentIndex = 0;
+        window.onload = function() {
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#card')) {
+                const index = parseInt(hash.replace('#card', '')) - 1;
+                if (index >= 0 && index < words.length) { currentIndex = index; }
+            }
+            document.getElementById('total').innerText = words.length;
+            updateCard();
+        };
 
-    function renderCard() {
-        const item = data[currentIndex];
-        document.getElementById('qText').innerText = item.q;
-        document.getElementById('qTextTitle').innerText = item.q;
-        document.getElementById('infoLine').innerText = `${item.r} / ${item.m} (${item.u})`;
-        
-        let exHtml = '';
-        item.ex.forEach(e => {
-            exHtml += `<div class="example-box"><span class="example-ja">${e.j}</span><span class="example-ko">${e.k}</span></div>`;
-        });
-        document.getElementById('examples').innerHTML = exHtml;
-        document.getElementById('tipBox').innerHTML = `<strong>💡 치졸한 Tip:</strong><br>${item.tip}`;
-        
-        document.getElementById('cardFront').style.display = isAnswerVisible ? 'none' : 'block';
-        document.getElementById('answerSection').style.display = isAnswerVisible ? 'block' : 'none';
-        
-        document.getElementById('progressInfo').innerText = `${currentIndex + 1} / ${data.length}`;
-        localStorage.setItem('lastCardIndex', currentIndex);
-        window.location.hash = `card${currentIndex + 1}`;
-    }
-
-    function toggleAnswer() {
-        isAnswerVisible = !isAnswerVisible;
-        renderCard();
-    }
-
-    function nextCard(e) {
-        e.stopPropagation();
-        if (currentIndex < data.length - 1) {
-            currentIndex++;
-            isAnswerVisible = false;
-            renderCard();
+        function updateCard() {
+            if (words.length === 0) return;
+            const word = words[currentIndex];
+            document.getElementById('question').innerText = word.q;
+            document.getElementById('reading').innerText = word.r;
+            document.getElementById('meaning').innerText = word.m;
+            document.getElementById('usage').innerText = "해설: " + word.u;
+            document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('current').innerText = currentIndex + 1;
+            document.getElementById('category').innerText = (currentIndex === 11) ? "핵심문법" : "단어학습";
+            history.replaceState(null, null, "#card" + (currentIndex + 1));
         }
-    }
 
-    function prevCard(e) {
-        e.stopPropagation();
-        if (currentIndex > 0) {
-            currentIndex--;
-            isAnswerVisible = false;
-            renderCard();
+        function toggleAnswer() {
+            const ans = document.getElementById('answer');
+            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
         }
-    }
 
-    renderCard();
-</script>
-
+        function nextCard() { currentIndex = (currentIndex + 1) % words.length; updateCard(); }
+        function prevCard() { currentIndex = (currentIndex - 1 + words.length) % words.length; updateCard(); }
+    </script>
 </body>
 </html>
