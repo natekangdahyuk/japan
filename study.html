@@ -62,7 +62,8 @@
         // JSON 데이터 불러오기
         async function loadData() {
             try {
-                const response = await fetch(`./data/${dataId}.json`);
+              const seasonId = urlParams.get('s') || '01'; // 시즌 번호 가져오기
+              const response = await fetch(`./data/season${seasonId}/${dataId}.json`);
                 if (!response.ok) throw new Error('파일을 찾을 수 없습니다.');
                 words = await response.json();
                 init();
