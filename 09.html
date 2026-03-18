@@ -1,1 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9번 학습 페이지 - 시즌 2 (v1.3)</title>
+    <style>
+        :root { --primary: #1976d2; --bg: #e3f2fd; --point: #e67e22; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
+        .container { width: 100%; max-width: 400px; }
+        
+        /* 카드 클릭 이벤트 제거 및 커서 변경 */
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); text-align: center; min-height: 480px; display: flex; flex-direction: column; justify-content: center; position: relative; border: 1px solid #bbdefb; cursor: default; }
+        
+        .category { position: absolute; top: 15px; left: 15px; font-size: 0.75rem; color: var(--primary); font-weight: bold; border: 1px solid var(--primary); padding: 2px 8px; border-radius: 20px; }
+        .type-tag { position: absolute; top: 15px; right: 15px; font-size: 0.75rem; color: white; background: var(--point); padding: 2px 8px; border-radius: 5px; font-weight: bold; }
+        .question { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; word-break: keep-all; }
+        
+        /* 정답 영역 */
+        .answer { display: none; border-top: 1px solid #eee; padding-top: 15px; margin-top: 15px; text-align: left; }
+        .reading { font-size: 1.3rem; color: #111; font-weight: bold; display: block; margin-bottom: 5px; }
+        .info-line { font-size: 1rem; color: #555; margin-bottom: 15px; display: block; }
+        .meaning { font-weight: 700; color: #333; }
+        .usage { color: #1976d2; font-size: 0.9rem; }
+        .example-box { line-height: 1.7; white-space: pre-wrap; margin-bottom: 15px; border-top: 1px dashed #eee; padding-top: 15px; }
+        .ex-jp { font-size: 0.95rem; color: #111; font-weight: 500; display: block; margin-bottom: 5px; }
+        .ex-kr { font-size: 0.85rem; color: #666; display: block; }
+        .tip-box { font-size: 0.82rem; color: #5d4037; background: #fff3e0; padding: 12px; border-radius: 10px; border: 1px solid #ffe0b2; line-height: 1.5; }
+        .tip-title { font-weight: bold; color: #e65100; display: block; margin-bottom: 5px; border-bottom: 1px solid #ffcc80; padding-bottom: 2px; }
 
+        /* 메인 버튼 스타일 */
+        .nav-main { margin-top: 25px; display: flex; gap: 10px; width: 100%; }
+        button { padding: 15px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; flex: 1; }
+        .btn-view { background: #546e7a; color: white; }
+        .btn-next { background: var(--primary); color: white; }
+        button:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* 하단 보조 링크 스타일 */
+        .nav-sub { margin-top: 20px; display: flex; gap: 20px; justify-content: center; }
+        .nav-sub a { text-decoration: none; color: #666; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        .nav-sub a:hover { color: var(--primary); }
+
+        .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>✨ 시즌 2: 9번 무한 성장 카드 (v1.3)</h1>
+    <div class="container">
+        <div class="card">
+            <div id="category" class="category">N4 핵심</div>
+            <div id="type" class="type-tag"></div>
+            <div id="question" class="question"></div>
+            <div id="answer" class="answer">
+                <div id="reading" class="reading"></div>
+                <div class="info-line">
+                    <span id="meaning" class="meaning"></span>, <span id="usage" class="usage"></span>
+                </div>
+                <div id="example" class="example-box"></div>
+                <div id="tip" class="tip-box"></div>
+            </div>
+        </div>
+
+        <div class="nav-main">
+            <button class="btn-view" onclick="toggleAnswer()">내용 보기</button>
+            <button class="btn-next" onclick="nextCard()">다음 카드</button>
+        </div>
+
+        <div class="nav-sub">
+            <a onclick="prevCard()">이전</a>
+            <a onclick="goToFirst()">처음</a>
+            <a href="index.html">목록</a>
+        </div>
+
+        <div class="status">
+            <span id="current">1</span> / <span id="total">20</span>
+        </div>
+    </div>
+
+    <script>
+        // 지침 준수: q(한글X), r(한자/한글X)
+        const words = [
+            { q: `助け`, r: `たすけ`, m: `도움, 구조`, u: `명사`, jp: `友達の助けで宿題が終わりました.`, kr: `친구의 도움으로 숙제가 끝났습니다.`, tip: `동사 '助ける(돕다)'에서 파생된 명사야. 'たすけて!'는 긴급 상황의 비명이지만, 명사는 은혜 같은 따뜻한 뉘앙스로도 쓰여.`, t: `한자→읽기` },
+            { q: `たすけ`, r: `たすけ`, m: `도움`, u: `명사`, jp: `神様が私を助けてくれました.`, kr: `신이 저를 도와주었습니다.`, tip: `한자 '助(조)'는 힘(力)을 보태서 물건을 쌓는 것(且)을 돕는다는 의미야. 소리 'たすけ'와 한자를 연결해봐!`, t: `읽기→한자` },
+            { q: `看板`, r: `かんばん`, m: `간판`, u: `명사`, jp: `新しい看板を店の前に置くことにしました.`, kr: `새로운 간판을 가게 앞에 두기로 했습니다.`, tip: `볼 간(看) + 판자 판(板). 가게의 얼굴이지. 인기 있는 사람을 '간판 딸(看板娘)'이라고 부르기도 해.`, t: `한자→읽기` },
+            { q: `かんばん`, r: `かんばん`, m: `간판`, u: `명사`, jp: `有名な看板を見つけました.`, kr: `유명한 간판을 발견했습니다.`, tip: `'看'은 간호사 할 때의 간(지켜보다)이야. 사람들이 지켜보는 나무판자가 바로 간판이지.`, t: `읽기→한자` },
+            { q: `数`, r: `かず`, m: `수, 개수`, u: `명사`, jp: `漢字の数が以前より増えました.`, kr: `한자의 수가 이전보다 늘었습니다.`, tip: `양/개수를 말할 때 써. '수를 세다'는 '数(かず)を数(かぞ)える'라고 하니 세트로 외워!`, t: `한자→읽기` },
+            { q: `かず`, r: `かず`, m: `수, 개수`, u: `명사`, jp: `人数が減って寂しいです.`, kr: `인원수가 줄어서 외롭습니다.`, tip: `한자 '数'는 '셀 수'야. 발음은 짧게 '카즈'! 수학 할 때는 'すう'라고 읽기도 해.`, t: `읽기→한자` },
+            { q: `体重`, r: `たいじゅう`, m: `체중`, u: `명사`, jp: `最近、体重が増えて心配です.`, kr: `최근 체중이 늘어서 걱정입니다.`, tip: `몸(体)의 무게(重). 일본에선 '살찌다'를 '体重が増える' 또는 '太る(후토루)'라고 해.`, t: `한자→읽기` },
+            { q: `たいじゅう`, r: `たいじゅう`, m: `체중`, u: `명사`, jp: `体重を計ることにしました.`, kr: `체중을 재기로 했습니다.`, tip: `'たい'가 장음이 되지 않게 '타이쥬'라고 짧고 끊어 읽는 것이 포인트야.`, t: `읽기→한자` },
+            { q: `心配`, r: `しんぱい`, m: `걱정`, u: `명사 / する동사`, jp: `明日のテストがとても心配です.`, kr: `내일 시험이 매우 걱정입니다.`, tip: `마음(心)을 나누어 배분(配)한다는 뜻. 마음이 여기저기 흩어지니 걱정이 되는 상태인 거지.`, t: `한자→읽기` },
+            { q: `しんぱい`, r: `しんぱい`, m: `걱정`, u: `명사 / する동사`, jp: `親が心配しています.`, kr: `부모님이 걱정하고 계십니다.`, tip: `'심파이' 소리와 함께 한자의 구성을 머릿속에 그려봐.`, t: `읽기→한자` },
+            { q: `準備`, r: `じゅんび`, m: `준비`, u: `명사 / する동사`, jp: `旅行の準備をすることにしました.`, kr: `여행 준비를 하기로 했습니다.`, tip: `한자가 어렵다면 '준(準)' 자의 물 수 변을 기억해! '준비 완료'는 '準備ができた'라고 해.`, t: `한자→읽기` },
+            { q: `じゅんび`, r: `じゅん비`, m: `준비`, u: `명사 / する동사`, jp: `食事の準備ができました.`, kr: `식사 준비가 되었습니다.`, tip: `'비(備)'는 구비하다의 비야. 소리는 한국어 '준비'와 거의 같아서 외우기 쉽지?`, t: `읽기→한자` },
+            { q: `疲れた`, r: `つかれた`, m: `지쳤다`, u: `동사 과거형`, jp: `今日はたくさん歩いて疲れました.`, kr: `오늘은 많이 걸어서 피곤했습니다.`, tip: `기본형 '疲れる'. 몸뿐만 아니라 마음이 지쳤을 때도 써. '오츠카레사마'의 어원이야.`, t: `한자→읽기` },
+            { q: `つかれた`, r: `つかれた`, m: `지쳤다`, u: `동사 과거형`, jp: `働きすぎて疲れました.`, kr: `너무 많이 일해서 지쳤습니다.`, tip: `한자 안에 '병(疒)' 변이 들어있어. 과로하면 병이 된다는 걸 잊지 마!`, t: `읽기→한자` },
+            { q: `置く`, r: `おく`, m: `두다, 놓다`, u: `1그룹 타동사`, jp: `ここに荷物を置かないでください.`, kr: `여기에 짐을 두지 마세요.`, tip: `물리적인 위치에 내려놓는 동작이야. '~해 두다(～ておく)' 문법의 기초가 되는 동사지.`, t: `한자→읽기` },
+            { q: `おく`, r: `おく`, m: `두다, 놓다`, u: `1그룹 타동사`, jp: `カバンを机の上に置きました.`, kr: `가방을 책상 위에 두었습니다.`, tip: `발음 '오쿠'는 안쪽을 뜻하는 '奥(おく)'와 같으니 문맥으로 구분해야 해!`, t: `읽기→한자` },
+            { q: `履く`, r: `はく`, m: `신다`, u: `1그룹 타동사`, jp: `新しい靴を履くことになっています.`, kr: `새 신발을 신기로 되어 있습니다.`, tip: `허리 아래로 입는 것(바지, 신발 등)은 무조건 '履く'야. 상의는 '着る', 모자는 'かぶる'!`, t: `한자→읽기` },
+            { q: `はく`, r: `はく`, m: `신다`, u: `1그룹 타동사`, jp: `ズボンを履いてください.`, kr: `바지를 입어(신어) 주세요.`, tip: `발음 '하쿠'는 뱉다(吐く), 쓸다(掃く)와 같아. '신발 신는 하쿠'라고 딱 외워두자!`, t: `읽기→한자` },
+            { q: `送る`, r: `おくる`, m: `보내다`, u: `1그룹 타동사`, jp: `手紙を送るために郵便局に行きます.`, kr: `편지를 보내기 위해 우체국에 갑니다.`, tip: `물건을 보내거나 사람을 바래다줄 때 써. '역까지 바래다주다'는 '駅まで送る'라고 해.`, t: `한자→읽기` },
+            { q: `おくる`, r: `おくる`, m: `보내다`, u: `1그룹 타동사`, jp: `メールを送るのを忘れました.`, kr: `메일 보내는 것을 잊었습니다.`, tip: `길(辶) 위를 지나 멀리 보내는 모습. 발음 '오쿠루'는 늦다(遅れる)와 헷갈리지 않게 조심!`, t: `읽기→한자` }
+        ];
+
+        let currentIndex = 0;
+        const storageKey = `dahyeok_japanese_card_9_v1.3`;
+
+        window.onload = function() {
+            const savedIndex = localStorage.getItem(storageKey);
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#card')) {
+                currentIndex = parseInt(hash.replace('#card', '')) - 1;
+            } else if (savedIndex !== null) {
+                currentIndex = parseInt(savedIndex);
+            }
+            updateCard();
+        };
+
+        function updateCard() {
+            const word = words[currentIndex];
+            document.getElementById('question').innerText = word.q;
+            document.getElementById('reading').innerText = word.r;
+            document.getElementById('meaning').innerText = word.m;
+            document.getElementById('usage').innerText = word.u;
+            document.getElementById('type').innerText = word.t;
+            
+            const exBox = document.getElementById('example');
+            exBox.innerHTML = `<span class="ex-jp">${word.jp}</span><span class="ex-kr">${word.kr}</span>`;
+
+            const tipBox = document.getElementById('tip');
+            tipBox.innerHTML = `<span class="tip-title">💡 풍성한 학습 Tip</span>${word.tip}`;
+            
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('current').innerText = currentIndex + 1;
+            document.getElementById('total').innerText = words.length;
+            
+            localStorage.setItem(storageKey, currentIndex);
+            history.replaceState(null, null, `#card${currentIndex + 1}`);
+        }
+
+        function toggleAnswer() {
+            const ans = document.getElementById('answer');
+            ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
+        }
+
+        function nextCard() { if (currentIndex < words.length - 1) { currentIndex++; updateCard(); } }
+        function prevCard() { if (currentIndex > 0) { currentIndex--; updateCard(); } }
+        function goToFirst() { currentIndex = 0; updateCard(); }
+    </script>
+</body>
+</html>
