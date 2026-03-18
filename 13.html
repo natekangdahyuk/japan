@@ -9,8 +9,8 @@
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
         h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
         .container { width: 100%; max-width: 400px; }
-        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 350px; display: flex; flex-direction: column; justify-content: center; position: relative; }
-        .card:active { transform: scale(0.98); }
+        /* 클릭 이벤트 제거 및 cursor 변경 */
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; min-height: 350px; display: flex; flex-direction: column; justify-content: center; position: relative; cursor: default; }
         .category { position: absolute; top: 15px; left: 15px; font-size: 0.75rem; color: #aaa; font-weight: bold; border: 1px solid #eee; padding: 2px 8px; border-radius: 20px; }
         .question { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
         .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
@@ -19,18 +19,26 @@
         .usage { font-size: 0.85rem; color: #e67e22; background: #fff5eb; padding: 8px; border-radius: 5px; margin-bottom: 10px; border-left: 3px solid #e67e22; }
         .example { font-size: 0.95rem; color: #444; font-weight: 500; line-height: 1.6; white-space: pre-wrap; margin-bottom: 15px; }
         .tip-box { background: #fff9c4; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #555; border-left: 4px solid #fbc02d; }
-        .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
-        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
-        .prev { background: #ccc; color: white; }
-        .next { background: var(--primary); color: white; flex-grow: 1; }
+        
+        /* 메인 버튼 스타일 (내용보기, 다음 카드) */
+        .nav-main { margin-top: 25px; display: flex; gap: 10px; width: 100%; }
+        button { padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-size: 1.1rem; font-weight: bold; transition: 0.2s; flex: 1; }
+        .btn-view { background: #546e7a; color: white; }
+        .btn-next { background: var(--primary); color: white; }
+        button:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* 하단 보조 링크 스타일 (이전, 처음, 목록) */
+        .nav-sub { margin-top: 20px; display: flex; gap: 20px; justify-content: center; }
+        .nav-sub a { text-decoration: none; color: #888; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        .nav-sub a:hover { color: var(--primary); }
+
         .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
-        .back-home { margin-top: 25px; text-decoration: none; color: #888; font-size: 0.9rem; display: block; text-align: center; font-weight: 500; }
     </style>
 </head>
 <body>
     <h1>🎯 쫄부의 무례함</h1>
     <div class="container">
-        <div class="card" onclick="toggleAnswer()">
+        <div class="card">
             <div id="category" class="category">단어학습</div>
             <div id="question" class="question"></div> 
             <div id="answer" class="answer">
@@ -41,22 +49,29 @@
                 <div id="tip" class="tip-box"></div>
             </div>
         </div>
-        <div class="nav">
-            <button class="prev" onclick="prevCard()">이전</button>
-            <button class="next" onclick="nextCard()">다음 카드</button>
+
+        <div class="nav-main">
+            <button class="btn-view" onclick="toggleAnswer()">내용 보기</button>
+            <button class="btn-next" onclick="nextCard()">다음 카드</button>
         </div>
+
+        <div class="nav-sub">
+            <a onclick="prevCard()">이전</a>
+            <a onclick="goToFirst()">처음</a>
+            <a href="index.html">목록</a>
+        </div>
+
         <div class="status"><span id="current">1</span> / <span id="total">14</span></div>
-        <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
     </div>
 
     <script>
         const words = [    
             { q: `返す`, r: `かえす (카에스)`, m: `돌려주다 / 갚다`, u: `v. 1그룹`, 
-              e: `財布を返せ！ 지갑 내놔(돌려줘)!
+              e: `財布를 返せ！ 지갑 내놔(돌려줘)!
 お金를 返してください。 돈을 돌려주세요.`,
               tip: `내 물건 빨리 **카에세!**(돌려주세!)라고 외워. '카에세'는 아주 거친 명령형이야.` },
             { q: `渡す`, r: `わたす (와타스)`, m: `건네주다 / 넘기다`, u: `v. 1그룹`, 
-              e: `その財布를 俺に渡せ！ 그 지갑 나한테 넘겨!
+              e: `その財布를 俺に渡세！ 그 지갑 나한테 넘겨!
 脱いだ服を渡してください。 벗은 옷을 건네주세요.`,
               tip: `"와타시(나)한테 와타세(넘겨)!" 발음을 연결해. 원래 내 건 '카에스', 그냥 넘기는 건 '와타스'!` },
             { q: `生まれる`, r: `うまれる (우마레루)`, m: `태어나다`, u: `v. 2그룹`, 
@@ -67,13 +82,13 @@
               e: `この砂糖を舐めろ。 이 설탕이나 핥아라.
 砂糖を増やせ。 설탕을 늘려라.`,
               tip: `설탕(사토-)을 핥으라(나메로)고 명령하는 비열한 상황을 상상해.` },
-            { q: `増やせ`, r: `ふ야せ (후야세)`, m: `늘려라`, u: `v. 1그룹 명령`, 
+            { q: `増やせ`, r: `ふ야세 (후야세)`, m: `늘려라`, u: `v. 1그룹 명령`, 
               e: `どんな手を使っても金を増やせ。 어떤 수단을 써서라도 돈을 늘려라.
-借金を増やす나。 빚을 늘리지 마.`,
+借금을 増やす나。 빚을 늘리지 마.`,
               tip: `후야스는 수/양을 늘릴 때 써. 사채업자가 돈 불리라고(후야세) 독촉하는 장면!` },
-            { q: `貸す/借りる`, r: `かす / かりる`, m: `빌려주다 / 빌리다`, u: `v. 혼합`, 
+            { q: `貸す/借りる`, r: `かす / か리루`, m: `빌려주다 / 빌리다`, u: `v. 혼합`, 
               e: `100円だけ貸してください。 100엔만 빌려주세요.
-100円だけ借りてもいいですか？ 100엔만 빌려도 좋을까요?`,
+100円만 借りてもいいですか？ 100엔만 빌려도 좋을까요?`,
               tip: `카스(Kass) 맥주 한 병 카시테(빌려줘)! 빌려주는 쪽 '카스', 빌리는 쪽 '카리루'!` },
             { q: `掃除`, r: `そうじ (소-지)`, m: `청소`, u: `n/v. 명사`, 
               e: `俺が帰るまで部屋を掃除しろ。 내가 돌아올 때까지 방 청소 해.
@@ -89,7 +104,7 @@
               tip: `지각 벌칙으로 옷 벗기기... '오쿠레루(늦다)' 뒤엔 '누게(벗어라)'가 온다.` },
             { q: `拾う`, r: `ひろう (히로우)`, m: `줍다`, u: `v. 1그룹`, 
               e: `そのゴミを拾え！ 그 쓰레기를 주워라!
-そのゴミを拾ってください. 그 쓰레기를 주워 주세요.`,
+그 고미를 拾ってください. 그 쓰레기를 주워 주세요.`,
               tip: `비참하게 바닥을 기며 히로에(주워라)! 줍는 행위 자체가 굴욕인 상황.` },
             { q: `投げる`, r: `なげる (나게루)`, m: `던지다`, u: `v. 2그룹`, 
               e: `その財布を投げろ！ 그 지갑을 던져라!
@@ -97,7 +112,7 @@
               tip: `"나에게로(나게로) 던져라!" 2그룹 동사 명령형은 '로'가 붙어서 '나게로'!` },
             { q: `届く`, r: `とどく (토도쿠)`, m: `도착하다 / 닿다`, u: `v. 1그룹`, 
               e: `宅配が届いた。 택배가 도착했다.
-手紙が届いた。 편지가 도착했다.`,
+手紙が届いた. 편지가 도착했다.`,
               tip: `물건이 손에 '톡' 하고 '토도(독)' 도착하는 느낌을 기억해.` },
             { q: `生ぬるい`, r: `なまぬるい (나마누루이)`, m: `미지근하다`, u: `adj. 형용사`, 
               e: `疲れました。生ぬるい水を一杯ください。 피곤합니다. 미지근한 물 한 잔 주세요.`,
@@ -124,7 +139,7 @@
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
             document.getElementById('usage').innerText = "해설: " + word.u;
-            document.getElementById('example').innerText = word.e; // 줄바꿈 유지를 위해 innerText 사용
+            document.getElementById('example').innerText = word.e;
             document.getElementById('tip').innerHTML = "<strong>💡 Tip:</strong> " + word.tip;
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
@@ -138,6 +153,7 @@
 
         function nextCard() { currentIndex = (currentIndex + 1) % words.length; updateCard(); }
         function prevCard() { currentIndex = (currentIndex - 1 + words.length) % words.length; updateCard(); }
+        function goToFirst() { currentIndex = 0; updateCard(); }
     </script>
 </body>
 </html>
