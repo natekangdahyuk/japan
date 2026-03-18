@@ -1,1 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6번 학습 페이지 - 태풍의 밤 (v1.3)</title>
+    <style>
+        :root { --primary: #4A90E2; --bg: #f5f7fa; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
+        .container { width: 100%; max-width: 400px; }
+        
+        /* 카드 클릭 이벤트 제거 및 커서 변경 */
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center; position: relative; cursor: default; }
+        
+        .question { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; word-break: keep-all; }
+        
+        /* 정답 영역 */
+        .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
+        .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; font-weight: 600; }
+        .usage { font-size: 0.85rem; color: #e67e22; background: #fff5eb; padding: 8px; border-radius: 5px; margin-bottom: 10px; border-left: 3px solid #e67e22; }
+        .example { font-size: 0.95rem; color: #444; font-weight: 500; line-height: 1.6; white-space: pre-wrap; margin-bottom: 15px; }
+        .tip-box { background: #fff9c4; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #555; border-left: 4px solid #fbc02d; }
+        
+        /* 메인 버튼 스타일 */
+        .nav-main { margin-top: 25px; display: flex; gap: 10px; width: 100%; }
+        button { padding: 15px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; flex: 1; }
+        .btn-view { background: #546e7a; color: white; }
+        .btn-next { background: var(--primary); color: white; }
+        button:active { transform: scale(0.98); opacity: 0.9; }
 
+        /* 하단 보조 링크 스타일 */
+        .nav-sub { margin-top: 20px; display: flex; gap: 20px; justify-content: center; }
+        .nav-sub a { text-decoration: none; color: #888; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        .nav-sub a:hover { color: var(--primary); }
+
+        .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>🌪️ 태풍의 밤 (6번 스토리 카드)</h1>
+    <div class="container">
+        <div class="card">
+            <div id="question" class="question"></div> 
+            <div id="answer" class="answer">
+                <div id="reading" class="reading"></div>
+                <div id="meaning" class="meaning"></div>
+                <div id="usage" class="usage"></div>
+                <div id="example" class="example"></div>
+                <div id="tip" class="tip-box"></div>
+            </div>
+        </div>
+
+        <div class="nav-main">
+            <button class="btn-view" onclick="toggleAnswer()">내용 보기</button>
+            <button class="btn-next" onclick="nextCard()">다음 카드</button>
+        </div>
+
+        <div class="nav-sub">
+            <a onclick="prevCard()">이전</a>
+            <a onclick="goToFirst()">처음</a>
+            <a href="index.html">목록</a>
+        </div>
+
+        <div class="status"><span id="current">1</span> / <span id="total">18</span></div>
+    </div>
+
+    <script>
+        // 지침 v1.3 준수: q(한글X), r(한자/한글X)
+        const words = [    
+            { q: "下ろす", r: "おろす", m: "찾다, 인출하다", u: "1그룹 타동사", 
+              e: `台風が 来る 前に、銀行で お金を 下ろしました。
+태풍이 오기 전에, 은행에서 돈을 찾았습니다.`,
+              tip: `돈을 인출할 때 쓰는 필수 표현! 위에서 아래로 '내리다'라는 뜻도 있어.` },
+            { q: "預ける", r: "あずける", m: "맡기다", u: "2그룹 타동사", 
+              e: `大事な 荷物を 安全な 場所に 預けました.
+중요한 짐을 안전한 장소에 맡겼습니다.`,
+              tip: `내가 남에게 줄 때! 반대로 남이 나에게 맡기는 걸 내가 보관하면 '預(あず)かる'야.` },
+            { q: "窓", r: "まど", m: "창문", u: "명사", 
+              e: `強い 風が 吹くので、窓を 閉めました.
+강한 바람이 불어서, 창문을 닫았습니다.`,
+              tip: `창문을 닫을 때는 '閉(し)める', 열 때는 '開(あ)ける'! 세트로 외워.` },
+            { q: "揺れる", r: "ゆれる", m: "흔들리다", u: "2그룹 자동사", 
+              e: `風が 強くて、家가 ずっと 揺れています.
+바람이 강해서, 집이 내내 흔들리고 있습니다.`,
+              tip: `지진이나 바람으로 물체가 흔들릴 때 써. '유레(흔들림)'라는 명사도 기억해!` },
+            { q: "ずっと", r: "ずっと", m: "내내, 훨씬", u: "부사", 
+              e: `昨日から ずっと 雨が 降っています.
+어제부터 내내 비가 내리고 있습니다.`,
+              tip: `시간이 계속 이어지는 '내내'와 비교할 때 쓰는 '훨씬' 두 가지 뜻이 있어.` },
+            { q: "ひどい", r: "ひどい", m: "심하다, 지독하다", u: "이형용사", 
+              e: `外は 雨と 風が 本当に ひどいです.
+밖은 비와 바람이 정말로 심합니다.`,
+              tip: `안 좋은 상황이 극심할 때 써. 사람이 못됐을 때도 '히도이!'라고 하지.` },
+            { q: "ひどくなる", r: "ひどくなる", m: "심해지다", u: "동사구", 
+              e: `夜に なって、台風が もっと ひ독낫테루.
+밤이 되어서, 태풍이 더 심해졌습니다.`,
+              tip: `형용사 뒤에 'なる'가 붙어서 변화를 나타내. '히도쿠 나루'!` },
+            { q: "ひどくなっている", r: "ひどくなっている", m: "심해지고 있다", u: "진행/상태", 
+              e: `今 外の 状況が どんどん ひどくなっています.
+지금 밖의 상황이 점점 더 심해지고 있습니다.`,
+              tip: `점점 더 악화되는 진행 상황을 강조할 때 써. '돈돈(점점)'과 찰떡궁합!` },
+            { q: "怖い", r: "こわい", m: "무섭다", u: "이형용사", 
+              e: `外の 音が 大きくて、とても 怖いです.
+밖의 소리가 커서, 매우 무섭습니다.`,
+              tip: `내가 느끼는 공포! 발음 '코와이'는 무서운 상황에서 절로 나오겠지?` },
+            { q: "気がする", r: "き가する", m: "~인 느낌이 든다", u: "관용구", 
+              e: `窓が 壊れそうな 気がします.
+창문이 부서질 것 같은 느낌이 듭니다.`,
+              tip: `내 기분(気)이 그렇게 시키는(する) 거니까 추측이나 체감을 말해.` },
+            { q: "壊れる", r: "こわれる", m: "부서지다, 고장나다", u: "2그룹 자동사", 
+              e: `風で 庭の 椅子가 壊れました.
+바람 때문에 마당의 의자가 부서졌습니다.`,
+              tip: `스스로 부서지거나 고장 날 때 써. 내가 부수면 '壊(こわ)す'야.` },
+            { q: "だよね", r: "だよね", m: "그치? 맞지?", u: "종조사", 
+              e: `台風は 本当に 怖いだよね.
+태풍은 정말로 무섭지, 그치?`,
+              tip: `친구끼리 공감을 유도할 때 쓰는 아주 친근한 표현이야.` },
+            { q: "できるだけ", r: "できるだけ", m: "가능한 한", u: "부사", 
+              e: `危ないですから、できるだけ 外に 出ないで ください.
+위험하니까, 가능한 한 밖에 나가지 말아 주세요.`,
+              tip: `할 수 있는(できる) 만큼(だけ)! 최선을 다해 뭔가를 하라고 할 때 유용해.` },
+            { q: "外出", r: "がいしゅつ", m: "외출", u: "명사", 
+              e: `今日は 台風なので、外出を 控えます.
+오늘은 태풍이라서, 외출을 삼갑니다.`,
+              tip: `바깥(外)으로 나가는(出) 것. 발음 '가이슈츠'를 기억해!` },
+            { q: "しんどい", r: "しんどい", m: "힘들다, 벅차다", u: "이형용사", 
+              e: `ずっと 立っていたので、足が しんどいです.
+내내 서 있어서, 다리가 힘듭니다.`,
+              tip: `육체적으로 지치거나 상황이 버거울 때 쓰는 구어체 표현이야.` },
+            { q: "宿題", r: "しゅくだい", m: "숙제", u: "명사", 
+              e: `外に 出られませんから、家で 宿題を しました.
+밖에 나갈 수 없어서, 집에서 숙제를 했습니다.`,
+              tip: `잘 숙(宿) + 제목 제(題). 집에서 하는 과제라는 뜻이지.` },
+            { q: "おすすめ", r: "おすすめ", m: "추천", u: "명사", 
+              e: `この アニメは 私の おすすめです.
+이 애니메이션은 제가 추천하는 것입니다.`,
+              tip: `동사 'すすめる(추천하다)'의 명사형. 식당에서 메뉴 추천받을 때 필수!` },
+            { q: "進む", r: "すすむ", m: "나아가다, 진행되다", u: "1그룹 자동사", 
+              e: `台風が 北へ 進んで います.
+태풍이 북쪽으로 나아가고 있습니다.`,
+              tip: `앞으로 전진하는 느낌! 일이 척척 진행될 때도 써.` }
+        ];
+
+        let currentIndex = 0;
+        const storageKey = 'dahyeok_study_index_6_v1.3';
+
+        window.onload = function() {
+            const savedIndex = localStorage.getItem(storageKey);
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#card')) {
+                currentIndex = parseInt(hash.replace('#card', '')) - 1;
+            } else if (savedIndex !== null) {
+                currentIndex = parseInt(savedIndex);
+            }
+            document.getElementById('total').innerText = words.length;
+            updateCard();
+        };
+
+        function updateCard() {
+            const word = words[currentIndex];
+            document.getElementById('question').innerText = word.q;
+            document.getElementById('reading').innerText = word.r;
+            document.getElementById('meaning').innerText = word.m;
+            document.getElementById('usage').innerText = "해설: " + word.u;
+            document.getElementById('example').innerText = word.e;
+            document.getElementById('tip').innerHTML = "<strong>💡 Tip:</strong> " + word.tip;
+            
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('current').innerText = currentIndex + 1;
+            
+            localStorage.setItem(storageKey, currentIndex);
+            history.replaceState(null, null, "#card" + (currentIndex + 1));
+        }
+
+        function toggleAnswer() {
+            const ans = document.getElementById('answer');
+            ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
+        }
+
+        function nextCard() { if (currentIndex < words.length - 1) { currentIndex++; updateCard(); } }
+        function prevCard() { if (currentIndex > 0) { currentIndex--; updateCard(); } }
+        function goToFirst() { currentIndex = 0; updateCard(); }
+    </script>
+</body>
+</html>
