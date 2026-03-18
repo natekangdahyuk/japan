@@ -3,216 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1번 학습 페이지 - 단어장</title>
+    <title>1번 학습 페이지 - 단어장 (v1.3)</title>
     <style>
         :root { --primary: #4A90E2; --bg: #f5f7fa; }
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
         .container { width: 100%; max-width: 400px; }
-        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 280px; display: flex; flex-direction: column; justify-content: center; }
-        .card:active { transform: scale(0.98); }
-        .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        
+        /* 카드 클릭 이벤트 제거 및 커서 변경 */
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; min-height: 350px; display: flex; flex-direction: column; justify-content: center; position: relative; cursor: default; }
+        
+        .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; word-break: keep-all; }
+        
+        /* 정답 영역 */
         .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
         .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
-        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; }
-        .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
-        .example { font-size: 0.95rem; color: var(--primary); font-weight: 500; line-height: 1.6; }
-        .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
-        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
-        .prev { background: #ccc; color: white; }
-        .next { background: var(--primary); color: white; flex-grow: 1; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; font-weight: 600; }
+        .usage { font-size: 0.85rem; color: #e67e22; background: #fff5eb; padding: 8px; border-radius: 5px; margin-bottom: 10px; border-left: 3px solid #e67e22; }
+        .example { font-size: 0.95rem; color: #444; font-weight: 500; line-height: 1.6; white-space: pre-wrap; margin-bottom: 15px; }
+        .tip-box { background: #fff9c4; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #555; border-left: 4px solid #fbc02d; }
+        
+        /* 메인 버튼 스타일 */
+        .nav-main { margin-top: 25px; display: flex; gap: 10px; width: 100%; }
+        button { padding: 15px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; flex: 1; }
+        .btn-view { background: #546e7a; color: white; }
+        .btn-next { background: var(--primary); color: white; }
+        button:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* 하단 보조 링크 스타일 */
+        .nav-sub { margin-top: 20px; display: flex; gap: 20px; justify-content: center; }
+        .nav-sub a { text-decoration: none; color: #888; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        .nav-sub a:hover { color: var(--primary); }
+
         .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
-        .back-home { margin-top: 20px; text-decoration: none; color: #888; font-size: 0.9rem; display: block; text-align: center; }
     </style>
 </head>
 <body>
 
-    <h1>🎴 오늘의 단어 카드 (N4)</h1>
+    <h1>🎴 오늘의 단어 카드 (v1.3)</h1>
     <div class="container">
-        <div class="card" onclick="toggleAnswer()">
+        <div class="card">
             <div id="question" class="question"></div> 
             <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
                 <div id="meaning" class="meaning"></div>
                 <div id="usage" class="usage"></div>
                 <div id="example" class="example"></div>
+                <div id="tip" class="tip-box"></div>
             </div>
         </div>
 
-        <div class="nav">
-            <button class="prev" onclick="prevCard()">이전</button>
-            <button class="next" onclick="nextCard()">다음 카드</button>
+        <div class="nav-main">
+            <button class="btn-view" onclick="toggleAnswer()">내용 보기</button>
+            <button class="btn-next" onclick="nextCard()">다음 카드</button>
         </div>
-        <div class="status"><span id="current">1</span> / <span id="total">0</span></div>
-        <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
+
+        <div class="nav-sub">
+            <a onclick="prevCard()">이전</a>
+            <a onclick="goToFirst()">처음</a>
+            <a href="index.html">목록</a>
+        </div>
+
+        <div class="status"><span id="current">1</span> / <span id="total">12</span></div>
     </div>
 
     <script>
+        // 지침 v1.3 준수: q(한글X), r(한자/한글X)
         const words = [    
             { 
-                q: "最近", 
-                r: "さいきん", 
-                m: "요즘, 최근", 
-                u: "부사 / 한국어 '요즘'에 가장 가까운 시간 부사.", 
-                e: `最近、忙しいです。
-(요즘 바쁩니다.)
-
-最近、あまり 暑く ありません。
-(요즘 별로 덥지 않습니다.)
-
-[팁] 과거부터 현재까지 이어지는 상태를 말할 때 자연스럽게 쓰입니다.`
+                q: "最近", r: "さいきん", m: "요즘, 최근", u: "시간 부사", 
+                e: `最近、忙しいです.
+요즘 바쁩니다.`,
+                tip: `과거부터 현재까지 이어지는 상태를 말할 때 자연스러워. 한국어 '최근'과 한자가 같아!`
             },            
             { 
-                q: "若者", 
-                r: "わかもの", 
-                m: "젊은이, 청년", 
-                u: "명사 / '젊은 사람' 전체를 일컫는 집단 명사.", 
-                e: `最近の 若者は、お酒を 飲みません。
-요즘 젊은이는 술을 마시지 않습니다.
-
-[팁] 주로 사회적 경향을 말할 때 사용하며, 구체적인 아이는 '子(こ)'라고 합니다.` 
+                q: "若者", r: "わかもの", m: "젊은이, 청년", u: "집단 명사", 
+                e: `最近の 若者は、お酒を 飲みません.
+요즘 젊은이는 술을 마시지 않습니다.`,
+                tip: `젊다(若い, わかい) + 사람(者, もの). 사회적 경향을 말할 때 주로 쓴단다.`
             },
             { 
-                q: "考え", 
-                r: "かんがえ", 
-                m: "생각, 의견", 
-                u: "명사 / 동사 '考える(생각하다)'의 명사형.", 
-                e: `田中さんは、いい 考えが あります。
-다나카 씨는 좋은 생각이 있습니다.
-
-[팁] '나의 생각'이나 '아이디어'를 뜻할 때 주로 사용합니다.` 
+                q: "考え", r: "かんがえ", m: "생각, 의견", u: "명사", 
+                e: `田中さんは、いい 考えが あります.
+다나카 씨는 좋은 생각이 있습니다.`,
+                tip: `동사 '考える(かんがえる)'의 명사형이야. 개인의 아이디어를 뜻할 때 유용해.`
             },
             { 
-                q: "傾向", 
-                r: "けいこう", 
-                m: "경향, 추세", 
-                u: "명사 / 어떤 방향으로 쏠리는 현상.", 
-                e: `肉(にく)を 食べない 傾向が あります。
-고기를 먹지 않는 경향이 있습니다.
-
-[팁] N4 독해 지문에서 사회 현상을 설명할 때 자주 등장하는 격식 어휘입니다.` 
+                q: "傾向", r: "けいこう", m: "경향, 추세", u: "격식 명사", 
+                e: `肉を 食べない 傾向が あります.
+고기를 먹지 않는 경향이 있습니다.`,
+                tip: `N4 독해 단골 손님! 사회 현상을 설명할 때 자주 등장하는 세련된 어휘야.`
             },
             { 
-                q: "事件", 
-                r: "じけん", 
-                m: "사건, 사고", 
-                u: "명사 / 사회적으로 큰 파장을 일으킨 일.", 
-                e: `昨日、大変(たいへん)な 事件が ありました。
-어제 큰일(중대한 사건)이 있었습니다.
-
-[팁] 가벼운 실수보다는 경찰이나 뉴스가 언급될 법한 상황에 씁니다.` 
+                q: "事件", r: "じけん", m: "사건, 사고", u: "사회 명사", 
+                e: `昨日、大変な 事件が ありました.
+어제 중대한 사건이 있었습니다.`,
+                tip: `경찰이나 뉴스가 언급될 법한 큰 파장을 일으킨 일에 주로 사용해.`
             },
             { 
-                q: "環境", 
-                r: "かんきょう", 
-                m: "환경", 
-                u: "명사 / 자연 환경이나 주변의 여건.", 
-                e: `子ども(こども)の ために、いい 環境를 作りましょう。
-아이들을 위해 좋은 환경을 만듭시다.
-
-[팁] '자연 보호(自然保護)' 지문에서 필수로 등장하는 단어입니다.` 
+                q: "環境", r: "かんきょう", m: "환경", u: "자연/사회 명사", 
+                e: `子どもの ために、いい 環境を 作りましょう.
+아이들을 위해 좋은 환경을 만듭시다.`,
+                tip: `'자연 보호' 지문 필수 단어! '환(環)'은 '칸', '경(境)'은 '쿄-' 발음에 주의해.`
             },
             { 
-                q: "解決", 
-                r: "かいけつ", 
-                m: "해결", 
-                u: "명사/동사 / 문제나 궁금증을 끝내는 일.", 
-                e: `問題(もんだい)を 解決(かいけつ)したいです。
-문제를 해결하고 싶습니다.
-
-[팁] '解決する(해결하다)' 형태로 3형 동사로 자주 쓰입니다.` 
+                q: "解決", r: "かいけつ", m: "해결", u: "명사 / する동사", 
+                e: `問題を 解決したいです.
+문제를 해결하고 싶습니다.`,
+                tip: `꼬인 일을 푸는 것. '해결하다'는 '解決する'로 3형 동사가 돼.`
             },
             { 
-                q: "日々", 
-                r: "ひび", 
-                m: "나날, 매일매일", 
-                u: "명사 / 반복되는 하루하루를 소중히 여기는 뉘앙스.", 
-                e: `日々の 生活(せいかつ)を 大切(たいせつ)に しています。
-매일의 생활을 소중히 하고 있습니다.
-
-[문법 상세]
-1. 大切(たいせつ)にする: 소중히 여기다
-2. に의 역할: 형용동사를 부사로 만들어 동사를 수식` 
+                q: "日々", r: "ひび", m: "나날, 매일매일", u: "명사", 
+                e: `日々の 生活を 大切に しています.
+매일의 생활을 소중히 하고 있습니다.`,
+                tip: `반복되는 하루하루를 소중히 여기는 따뜻한 뉘앙스를 담고 있어.`
             },
             { 
-                q: "患者", 
-                r: "かんじゃ", 
-                m: "환자", 
-                u: "명사 / 병원에서 치료를 받는 사람.", 
-                e: `病院(びょういん)に 患者(かんじゃ)가 たく점 います。
-병원에 환자가 많이 있습니다.
-
-[팁] '환(患)'은 '칸', '자(者)'는 '쟈'로 발음한다는 점을 기억하세요.` 
+                q: "患者", r: "かんじゃ", m: "환자", u: "병원 명사", 
+                e: `病院に 患者が たくさん います.
+병원에 환자가 많이 있습니다.`,
+                tip: `'환(患)'은 '칸', '자(者)'는 '쟈'! 병원에서 치료받는 사람을 뜻해.`
             },
             { 
-                q: "救う", 
-                r: "すくう", 
-                m: "구하다, 살리다", 
-                u: "동사 / 위험에 처한 생명을 돕는 1형 타동사.", 
-                e: `犬を 救った 人은 有名입니다.
-개를 구한 사람은 유명합니다.
-
-[팁] 반대말: 殺す(ころす, 죽이다)
-수동형: 救われる(すくわれる, 도움을 받다)` 
+                q: "救う", r: "すくう", m: "구하다, 살리다", u: "1그룹 타동사", 
+                e: `犬を 救った 人は 有名です.
+개를 구한 사람은 유명합니다.`,
+                tip: `위험에 처한 생명을 돕는 숭고한 행위야. 반대말은 '殺す(ころす, 죽이다)'.`
             },
             { 
-                q: "重要性", 
-                r: "じゅうようせい", 
-                m: "중요성", 
-                u: "명사 / 얼마나 중요한지 나타내는 가치.", 
-                e: `水の 重要性を 知りました。
-물의 중요성을 알았습니다.
-
-[팁] '重要(중요)'라는 형용사에 '性(성질)'이 붙은 형태입니다.` 
+                q: "重要性", r: "じゅうようせい", m: "중요성", u: "추상 명사", 
+                e: `水の 重要性を 知りました.
+물의 중요성을 알았습니다.`,
+                tip: `'重要(중요)' + '性(성질)'. 얼마나 중요한지 가치를 나타내는 단어야.`
             },
             { 
-                q: "集中力", 
-                r: "しゅうちゅうりょく", 
-                m: "집중력", 
-                u: "명사 / 한 가지에 몰입하는 힘.", 
-                e: `夜(よる)は 集中力(しゅうちゅうりょく)가 높아집니다.
-밤에는 집중력이 높아집니다.
-
-[팁] 슈우-츄우-료쿠! 두 번의 장음(う)을 꼭 지켜서 발음하세요.` 
+                q: "集中力", r: "しゅうちゅうりょく", m: "집중력", u: "능력 명사", 
+                e: `夜는 集中力が 高くなります.
+밤에는 집중력이 높아집니다.`,
+                tip: `슈우-츄우-료쿠! 두 번의 장음을 꼭 지켜줘야 일본인처럼 들린단다.`
             }
         ];
 
         let currentIndex = 0;
-        const totalSpan = document.getElementById('total');
-        totalSpan.innerText = words.length;
+        const storageKey = 'dahyeok_study_index_1_v1.3';
 
-        updateCard();
+        window.onload = function() {
+            const savedIndex = localStorage.getItem(storageKey);
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#card')) {
+                currentIndex = parseInt(hash.replace('#card', '')) - 1;
+            } else if (savedIndex !== null) {
+                currentIndex = parseInt(savedIndex);
+            }
+            document.getElementById('total').innerText = words.length;
+            updateCard();
+        };
 
         function updateCard() {
             if (words.length === 0) return;
-            
             const word = words[currentIndex];
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
-            document.getElementById('usage').innerText = "품사/역할: " + word.u;
-            
-            // 백틱 내부의 실제 줄바꿈을 <br>로 변환하여 출력
-            document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
+            document.getElementById('usage').innerText = "해설: " + word.u;
+            document.getElementById('example').innerText = word.e;
+            document.getElementById('tip').innerHTML = "<strong>💡 Tip:</strong> " + word.tip;
             
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
+            
+            localStorage.setItem(storageKey, currentIndex);
+            history.replaceState(null, null, "#card" + (currentIndex + 1));
         }
 
         function toggleAnswer() {
             const ans = document.getElementById('answer');
-            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+            ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
         }
 
-        function nextCard() {
-            currentIndex = (currentIndex + 1) % words.length;
-            updateCard();
-        }
-
-        function prevCard() {
-            currentIndex = (currentIndex - 1 + words.length) % words.length;
-            updateCard();
-        }
+        function nextCard() { if (currentIndex < words.length - 1) { currentIndex++; updateCard(); } }
+        function prevCard() { if (currentIndex > 0) { currentIndex--; updateCard(); } }
+        function goToFirst() { currentIndex = 0; updateCard(); }
     </script>
 </body>
 </html>
