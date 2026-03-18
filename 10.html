@@ -1,653 +1,144 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>다혁 전용 일본어 학습 - 시즌 2 (10.html)</title>
+    <title>다혁 전용 일본어 학습 - 시즌 2 (v1.3)</title>
     <style>
-      :root {
-        --main-color: #1976d2;
-        --bg-color: #f0f4f8;
-      }
+        :root { --primary: #1976d2; --bg: #f0f4f8; }
+        body { font-family: 'Pretendard', -apple-system, sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
+        .container { width: 100%; max-width: 500px; }
+        
+        /* 카드 클릭 이벤트 제거 및 커서 변경 */
+        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); text-align: center; min-height: 350px; display: flex; flex-direction: column; justify-content: center; position: relative; cursor: default; }
+        
+        .q-text { font-size: 2.5rem; font-weight: bold; margin-bottom: 20px; color: #333; word-break: keep-all; }
+        
+        /* 정답 섹션 */
+        .ans-section { display: none; border-top: 1px solid #eee; padding-top: 15px; text-align: left; }
+        .info-line { font-size: 1.1rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; text-align: center; background: #e3f2fd; padding: 10px; border-radius: 8px; }
+        
+        .example-box { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid var(--primary); }
+        .jp-ex { font-size: 1.1rem; color: #333; margin-bottom: 5px; font-weight: 500; }
+        .kr-ex { font-size: 0.95rem; color: #666; }
+        
+        .tip-box { background: #fff9c4; padding: 12px; border-radius: 8px; font-size: 0.9rem; color: #5d4037; line-height: 1.5; border-left: 5px solid #fbc02d; }
 
-      body {
-        font-family: 'Malgun Gothic', sans-serif;
-        background-color: var(--bg-color);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin: 0;
-        padding: 20px;
-      }
+        /* 메인 버튼 스타일 */
+        .nav-main { margin-top: 25px; display: flex; gap: 10px; width: 100%; }
+        button { padding: 15px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; flex: 1; }
+        .btn-view { background: #546e7a; color: white; }
+        .btn-next { background: var(--primary); color: white; }
+        button:active { transform: scale(0.98); opacity: 0.9; }
 
-      .card {
-        background: white;
-        width: 90%;
-        max-width: 500px;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        position: relative;
-        min-height: 350px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        transition: transform 0.3s;
-      }
+        /* 하단 보조 링크 스타일 */
+        .nav-sub { margin-top: 20px; display: flex; gap: 20px; justify-content: center; }
+        .nav-sub a { text-decoration: none; color: #888; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        .nav-sub a:hover { color: var(--primary); }
 
-      .q-text {
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 20px;
-        color: #333;
-      }
-
-      .info-line {
-        border-top: 1px solid #eee;
-        padding-top: 15px;
-        font-size: 1rem;
-        color: #666;
-        margin-bottom: 15px;
-      }
-
-      .example-box {
-        text-align: left;
-        background: #f9f9f9;
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 15px;
-      }
-
-      .jp-ex {
-        font-size: 1.1rem;
-        color: #1976d2;
-        margin-bottom: 5px;
-        font-weight: 500;
-      }
-
-      .kr-ex {
-        font-size: 0.95rem;
-        color: #555;
-      }
-
-      .tip-box {
-        background: #e3f2fd;
-        padding: 12px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        color: #0d47a1;
-        text-align: left;
-        line-height: 1.5;
-        border-left: 5px solid var(--main-color);
-      }
-
-      .nav-btns {
-        margin-top: 25px;
-        display: flex;
-        gap: 10px;
-        width: 90%;
-        max-width: 500px;
-      }
-
-      button {
-        flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        background: var(--main-color);
-        color: white;
-        font-size: 1rem;
-        cursor: pointer;
-      }
-
-      button:active {
-        opacity: 0.8;
-      }
-
-      .list-btn {
-        background: #666;
-        margin-top: 10px;
-        width: 90%;
-        max-width: 500px;
-      }
-
-      .progress {
-        margin-bottom: 10px;
-        font-size: 0.9rem;
-        color: var(--main-color);
-        font-weight: bold;
-      }
-
-      #ans-section {
-        display: none;
-      }
+        .progress { margin-bottom: 10px; font-size: 0.9rem; color: var(--primary); font-weight: bold; text-align: center; }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="progress" id="progress-text">Card: 1 / 52</div>
-    <div class="card" onclick="toggleAns()">
-      <div id="q-section" class="q-text">読み込み中...</div>
-      <div id="ans-section">
-        <div id="ans-text" class="q-text" style="color: var(--main-color);"></div>
-        <div class="info-line">
-          <span id="mean-text"></span> / <span id="unit-text"></span>
+    
+    <div class="container">
+        <div class="card">
+            <div id="q-section" class="q-text">読み込み中...</div>
+            <div id="ans-section" class="ans-section">
+                <div class="info-line">
+                    <span id="reading-text"></span> | <span id="mean-text"></span>
+                </div>
+                <div class="example-box">
+                    <div id="jp-ex" class="jp-ex"></div>
+                    <div id="kr-ex" class="kr-ex"></div>
+                </div>
+                <div id="tip-text" class="tip-box"></div>
+            </div>
         </div>
-        <div class="example-box">
-          <div id="jp-ex" class="jp-ex"></div>
-          <div id="kr-ex" class="kr-ex"></div>
+
+        <div class="nav-main">
+            <button class="btn-view" onclick="toggleAns()">내용 보기</button>
+            <button class="btn-next" onclick="nextCard()">다음 카드</button>
         </div>
-        <div id="tip-text" class="tip-box"></div>
-      </div>
+
+        <div class="nav-sub">
+            <a onclick="prevCard()">이전</a>
+            <a onclick="goToFirst()">처음</a>
+            <a href="index.html">목록</a>
+        </div>
     </div>
-    <div class="nav-btns">
-      <button onclick="prevCard()">[이전]</button>
-      <button onclick="nextCard()">[다음]</button>
-    </div>
-    <button class="list-btn" onclick="location.href='index.html'">[목록으로 돌아가기]</button>
+
     <script>
-      const words = [{
-          q: `引っ越し`,
-          r: `ひっこし`,
-          m: `이사`,
-          u: `명사`,
-          jp: `来週、新しいマンションに引っ越しします。`,
-          kr: `다음 주에 새 아파트로 이사합니다.`,
-          tip: `끌 인(引)과 넘을 월(越)이 합쳐진 단어예요. 일본에서는 이사 후 이웃에게 수건이나 과자를 돌리는 문화가 있어요.`,
-          t: `한자→읽기`
-        }, {
-          q: `ひっこし`,
-          r: `引っ越し`,
-          m: `이사`,
-          u: `명사`,
-          jp: `引っ越しはとても大変でした。`,
-          kr: `이사는 정말 힘들었습니다.`,
-          tip: `동사형은 '引っ越す(ひっこす)'입니다. '넘어가다'는 의미의 越가 들어가는 것에 주의!`,
-          t: `읽기→한자`
-        }, {
-          q: `貯金`,
-          r: `ちょきん`,
-          m: `저금`,
-          u: `명사`,
-          jp: `将来のために貯金をしています。`,
-          kr: `장래를 위해서 저금을 하고 있습니다.`,
-          tip: `쌓을 저(貯)와 쇠 금(金)이에요. 일본 우체국 은행인 '유초은행'에서도 자주 보는 단어입니다.`,
-          t: `한자→읽기`
-        }, {
-          q: `ちょきん`,
-          r: `貯金`,
-          m: `저금`,
-          u: `명사`,
-          jp: `貯金が全然ありません。`,
-          kr: `저금이 전혀 없습니다.`,
-          tip: `발음은 '쵸킨'입니다. '돈을 모으다'는 'お金を貯める'라고도 표현해요.`,
-          t: `읽기→한자`
-        }, {
-          q: `貯める`,
-          r: `ためる`,
-          m: `모으다, 저축하다`,
-          u: `1그룹 타동사`,
-          jp: `一万円貯めるのは難しいです。`,
-          kr: `만 엔 모으는 것은 어렵습니다.`,
-          tip: `돈뿐만 아니라 포인트(ポイント)나 스트레스(ストレス)가 쌓일 때도 이 단어를 써요.`,
-          t: `한자→읽기`
-        }, {
-          q: `ためる`,
-          r: `貯める`,
-          m: `모으다`,
-          u: `1그룹 타동사`,
-          jp: `ストレスを貯めないでください。`,
-          kr: `스트레스를 쌓지 마세요.`,
-          tip: `자동사인 '貯まる(たまる) - 쌓이다'와 짝꿍으로 외워두면 좋아요.`,
-          t: `읽기→한자`
-        }, {
-          q: `～について`,
-          r: `～について`,
-          m: `~에 대해서`,
-          u: `문법`,
-          jp: `僕について、どう思いますか？`,
-          kr: `나에 대해서 어떻게 생각합니까?`,
-          tip: `이야기의 주제나 대상을 나타낼 때 써요. 'A에 관하여'라는 뜻으로 명사 뒤에 바로 붙습니다.`,
-          t: `일어→의미`
-        }, {
-          q: `~에 대해서`,
-          r: `～について`,
-          m: `~에 대해서`,
-          u: `문법`,
-          jp: `日本の文化について勉強しています。`,
-          kr: `일본 문화에 대해서 공부하고 있습니다.`,
-          tip: `다혁아, 네가 질문했던 '보쿠니츠이테' 문장을 기억해! 주제를 던질 때 가장 유용한 표현이야.`,
-          t: `의미→일어`
-        }, {
-          q: `キャンプ場`,
-          r: `キャンプじょう`,
-          m: `캠핑장`,
-          u: `명사`,
-          jp: `週末にキャンプ場へ行きます。`,
-          kr: `주말에 캠핑장에 갑니다.`,
-          tip: `외래어 '캠프'와 한자 '장(場)'이 합쳐진 형태예요. 일본은 캠핑 문화가 아주 발달해 있어요.`,
-          t: `한자→읽기`
-        }, {
-          q: `キャンプじょう`,
-          r: `キャンプ場`,
-          m: `캠핑장`,
-          u: `명사`,
-          jp: `このキャンプ場は景色がいいです。`,
-          kr: `이 캠핑장은 경치가 좋습니다.`,
-          tip: `'장(場)'의 발음 '죠-'는 길게 빼주는 장음이라는 걸 잊지 마!`,
-          t: `읽기→한자`
-        }, {
-          q: `ホタテ`,
-          r: `ホタテ`,
-          m: `가리비`,
-          u: `명사`,
-          jp: `北海道のホタテはとても美味しいです.`,
-          kr: `홋카이도의 가리비는 정말 맛있습니다.`,
-          tip: `보통 가타카나로 많이 써요. 조개껍데기가 돛(帆, ほ)을 세운 것 같다고 해서 '호타테'라고 불립니다.`,
-          t: `일어→의미`
-        }, {
-          q: `가리비`,
-          r: `ホタテ`,
-          m: `가리비`,
-          u: `명사`,
-          jp: `ホタテを焼いて食べましょう。`,
-          kr: `가리비를 구워 먹읍시다.`,
-          tip: `캠핑 가서 구워 먹는 '호타테'는 꿀맛이지! 일본 이자카야에서도 인기 메뉴야.`,
-          t: `의미→일어`
-        }, {
-          q: `かぼちゃ`,
-          r: `かぼちゃ`,
-          m: `호박`,
-          u: `명사`,
-          jp: `かぼちゃのスープを作りました。`,
-          kr: `호박 수프를 만들었습니다.`,
-          tip: `포르투갈어 'Cambodia'에서 유래했다는 설이 있어요. 일본 호박은 특히 달고 단단한 단호박이 많아!`,
-          t: `일어→의미`
-        }, {
-          q: `호박`,
-          r: `かぼちゃ`,
-          m: `호박`,
-          u: `명사`,
-          jp: `私はかぼちゃが大好きです。`,
-          kr: `저는 호박을 정말 좋아합니다.`,
-          tip: `겨울 동지(冬至)에 호박을 먹으면 감기에 안 걸린다는 일본 풍습도 있어.`,
-          t: `의미→일어`
-        }, {
-          q: `とうもろこし`,
-          r: `とうもろこし`,
-          m: `옥수수`,
-          u: `명사`,
-          jp: `屋台でとうもろこしを買いました。`,
-          kr: `포장마차에서 옥수수를 샀습니다.`,
-          tip: `한자로 玉蜀黍라고 쓰지만 너무 어려우니 그냥 히라가나로 외우는 게 정신 건강에 좋아!`,
-          t: `일어→의미`
-        }, {
-          q: `옥수수`,
-          r: `とうもろこし`,
-          m: `옥수수`,
-          u: `명사`,
-          jp: `とうもろこしを茹でました。`,
-          kr: `옥수수를 삶았습니다.`,
-          tip: `일본 홋카이도 옥수수는 생으로 먹어도 될 정도로 달기로 유명해.`,
-          t: `의미→일어`
-        }, {
-          q: `～など`,
-          r: `～など`,
-          m: `~등, ~등등`,
-          u: `조사`,
-          jp: `机の上に本やペンなどがあります。`,
-          kr: `책상 위에 책이나 펜 등이 있습니다.`,
-          tip: `여러 가지를 나열할 때 써요. 'AやBなど' 패턴으로 가장 많이 쓰인다는 점 기억해!`,
-          t: `일어→의미`
-        }, {
-          q: `~등, ~등등`,
-          r: `～など`,
-          m: `~등, ~등등`,
-          u: `조사`,
-          jp: `野菜や果物などを買いました。`,
-          kr: `야채와 과일 등을 샀습니다.`,
-          tip: `한자로는 '等'이라고 쓰지만 보통 히라가나 'など'로 훨씬 많이 표기해.`,
-          t: `의미→일어`
-        }, {
-          q: `集まる`,
-          r: `あつまる`,
-          m: `모이다`,
-          u: `1그룹 자동사`,
-          jp: `駅の前に人が集まっています。`,
-          kr: `역 앞에 사람이 모여 있습니다.`,
-          tip: `주어가 스스로 모이는 자동사예요. '모으다'는 타동사 '集める(あつめる)'와 구분 필수!`,
-          t: `한자→읽기`
-        }, {
-          q: `あつまる`,
-          r: `集まる`,
-          m: `모이다`,
-          u: `1그룹 자동사`,
-          jp: `明日の朝、ここに集まってください。`,
-          kr: `내일 아침, 여기에 모여 주세요.`,
-          tip: `새(隹) 가 많이 모여 있는 모양에서 유래한 한자야.`,
-          t: `읽기→한자`
-        }, {
-          q: `袋`,
-          r: `ふくろ`,
-          m: `봉지, 주머니, 자루`,
-          u: `명사`,
-          jp: `この袋に入れてください。`,
-          kr: `이 봉투에 넣어 주세요.`,
-          tip: `물건을 담는 주머니나 봉투를 통칭해요. '눈 밑 지방(심술보)'을 '目の下の袋'라고도 해.`,
-          t: `한자→읽기`
-        }, {
-          q: `ふくろ`,
-          r: `袋`,
-          m: `봉지, 주머니`,
-          u: `명사`,
-          jp: `大きな袋を持っています。`,
-          kr: `큰 자루를 가지고 있습니다.`,
-          tip: `발음할 때 '후쿠로'라고 해. 부엉이(フクロウ)랑 발음이 비슷하니 헷갈리지 마!`,
-          t: `읽기→한자`
-        }, {
-          q: `ビニール袋`,
-          r: `ビニールぶくろ`,
-          m: `비닐봉지`,
-          u: `명사`,
-          jp: `ビニール袋は有料ですか？`,
-          kr: `비닐봉지는 유료입니까?`,
-          tip: `일본 편의점이나 마트에서 가장 많이 듣게 될 질문이야. '레지부쿠로(レジ袋)'라고도 많이 불러.`,
-          t: `일어→의미`
-        }, {
-          q: `비닐봉지`,
-          r: `ビニール袋`,
-          m: `비닐봉지`,
-          u: `명사`,
-          jp: `ビニール袋を一枚ください。`,
-          kr: `비닐봉지 한 장 주세요.`,
-          tip: `'袋'가 뒤에 붙으면서 발음이 '후쿠로'에서 '부쿠로'로 변하는 '연탁 현상'에 주의해!`,
-          t: `의미→일어`
-        }, {
-          q: `大気汚染`,
-          r: `たいきおせん`,
-          m: `대기오염`,
-          u: `명사`,
-          jp: `大気汚染が問題になっています。`,
-          kr: `대기오염이 문제가 되고 있습니다.`,
-          tip: `큰 대(大), 기운 기(気), 더러울 오(汚), 물들 염(染)이에요. 환경 관련 뉴스 단골 손님이야.`,
-          t: `한자→읽기`
-        }, {
-          q: `たいきおせん`,
-          r: `大気汚染`,
-          m: `대기오염`,
-          u: `명사`,
-          jp: `大気汚染で空が暗いです。`,
-          kr: `대기오염으로 하늘이 어둡습니다.`,
-          tip: `발음이 '타이키 오센'으로 한국어와 비슷해서 외우기 쉽지?`,
-          t: `읽기→한자`
-        }
-        // ... (나머지 이전 단어들도 동일한 로직으로 교차 배치하여 총 52개 카드 생성)
+      // 지침 준수: q(한글X), r(한자/한글X)
+      const data = [
+        { q: `引っ越し`, r: `ひっこし`, m: `이사`, jp: `来週、新しいマンションに引っ越しします.`, kr: `다음 주에 새 아파트로 이사합니다.`, tip: `끌 인(引)과 넘을 월(越)이 합쳐진 단어. 일본은 이사 후 이웃에게 선물을 돌리는 문화가 있어!` },
+        { q: `ひっこし`, r: `ひっこし`, m: `이사`, jp: `引っ越しはとても大変でした.`, kr: `이사는 정말 힘들었습니다.`, tip: `동사형은 '引っ越す(ひっこす)'. '넘어가다'는 의미의 越가 들어가는 것에 주의!` },
+        { q: `貯金`, r: `ちょきん`, m: `저금`, jp: `将来のために貯金をしています.`, kr: `장래를 위해서 저금을 하고 있습니다.`, tip: `쌓을 저(貯)와 쇠 금(金). 일본 우체국 은행 '유초은행'에서도 자주 보는 단어야.` },
+        { q: `ちょきん`, r: `ちょきん`, m: `저금`, jp: `貯金가 全然ありません.`, kr: `저금이 전혀 없습니다.`, tip: `발음 '쵸킨'! '돈을 모으다'는 'お金を貯める(ためる)'라고도 표현해.` },
+        { q: `貯める`, r: `ためる`, m: `모으다, 저축하다`, jp: `一万円貯めるのは難しいです.`, kr: `만 엔 모으는 것은 어렵습니다.`, tip: `돈뿐만 아니라 포인트나 스트레스가 쌓일 때도 이 단어를 써!` },
+        { q: `ためる`, r: `ためる`, m: `모으다`, jp: `ストレスを貯めないでください.`, kr: `스트레스를 쌓지 마세요.`, tip: `자동사인 '貯まる(たまる) - 쌓이다'와 짝꿍으로 외워두면 좋아.` },
+        { q: `～について`, r: `～について`, m: `~에 대해서`, jp: `僕について、どう思いますか？`, kr: `나에 대해서 어떻게 생각합니까?`, tip: `이야기의 주제를 나타낼 때 써. 명사 뒤에 바로 붙는 핵심 문법이야!` },
+        { q: `キャンプ場`, r: `きゃんぷじょう`, m: `캠핑장`, jp: `週末にキャンプ場へ行きます.`, kr: `주말에 캠핑장에 갑니다.`, tip: `외래어 '캠프'와 한자 '장(場)'의 결합. '죠-'는 길게 빼주는 장음이야.` },
+        { q: `ホタテ`, r: `ほたて`, m: `가리비`, jp: `北海道のホタテはとても美味しいです.`, kr: `홋카이도의 가리비는 정말 맛있습니다.`, tip: `조개껍데기가 돛(帆, ほ)을 세운 것 같다고 해서 '호타테'! 캠핑 단골 메뉴지.` },
+        { q: `かぼちゃ`, r: `かぼちゃ`, m: `호박`, jp: `かぼちゃのスープを作りました.`, kr: `호박 수프를 만들었습니다.`, tip: `일본 단호박은 아주 달기로 유명해. 동지에 먹으면 감기에 안 걸린다는 풍습이 있어.` },
+        { q: `とうもろこし`, r: `とうもろこし`, m: `옥수수`, jp: `屋台でとうもろこしを買いました.`, kr: `포장마차에서 옥수수를 샀습니다.`, tip: `한자가 어렵기로 유명하니 그냥 히라가나로 외우는 게 상책이야!` },
+        { q: `～など`, r: `～など`, m: `~등, ~등등`, jp: `机の上に本やペンなどがあります.`, kr: `책상 위에 책이나 펜 등이 있습니다.`, tip: `여러 가지를 나열할 때 'AやBなど' 패턴으로 기억해!` },
+        { q: `集まる`, r: `あつまる`, m: `모이다`, jp: `駅の前に人が集まっています.`, kr: `역 앞에 사람이 모여 있습니다.`, tip: `주어가 스스로 모이는 자동사! 타동사는 '集める(あつめる)'야.` },
+        { q: `袋`, r: `ふくろ`, m: `봉지, 주머니`, jp: `この袋に入れてください.`, kr: `이 봉투에 넣어 주세요.`, tip: `물건 담는 주머니. 부엉이(フクロウ)와 발음이 비슷하니 헷갈리지 마!` },
+        { q: `ビニール袋`, r: `びにーるぶくろ`, m: `비닐봉지`, jp: `ビニール袋は有料ですか？`, kr: `비닐봉지는 유료입니까?`, tip: `봉투(후쿠로)가 뒤에 붙으면서 발음이 '부쿠로'로 변하는 연탁 현상 주의!` },
+        { q: `大気汚染`, r: `たいきおせん`, m: `대기오염`, jp: `大気汚染が問題になっています.`, kr: `대기오염이 문제가 되고 있습니다.`, tip: `발음이 한국어와 비슷해서 외우기 쉽지? 환경 뉴스 단골 단어야.` },
+        { q: `中止`, r: `ちゅうし`, m: `중지`, jp: `雨で試合が中止になりました.`, kr: `비로 경기가 중지되었습니다.`, tip: `한자가 우리말과 똑같아. 발음은 '츄-시'!` },
+        { q: `両親`, r: `りょうしん`, m: `부모님`, jp: `週末に両親に会います.`, kr: `주말에 부모님을 만납니다.`, tip: `양쪽 어버이라는 뜻. 남의 부모님은 '고료-신'이라고 높여 불러.` },
+        { q: `試験`, r: `しけん`, m: `시험`, jp: `明日は日本語の試験があります.`, kr: `내일은 일본어 시험이 있습니다.`, tip: `JLPT도 '시켄'이지! 한자 험(験) 자 쓰기에 주의해.` },
+        { q: `経験`, r: `けいけん`, m: `경험`, jp: `色々な経験をしたいです.`, kr: `다양한 경험을 하고 싶습니다.`, tip: `삶의 축적을 뜻하는 깊은 단어. 발음은 '케이켄'.` },
+        { q: `野菜`, r: `やさい`, m: `야채, 채소`, jp: `毎日野菜を食べています.`, kr: `매일 야채를 먹고 있습니다.`, tip: `들(野)에서 자라는 나물(菜). 편의점 샐러드 코너 필수 단어!` },
+        { q: `運転`, r: `うんてん`, m: `운전`, jp: `父は運転が上手です.`, kr: `아버지는 운전을 잘하십니다.`, tip: `운전면허는 '운텐 멘쿄'라고 해. 기계 조작에도 쓸 수 있어.` },
+        { q: `化粧`, r: `けしょう`, m: `화장`, jp: `彼女は化粧が濃いです.`, kr: `그녀는 화장이 진합니다.`, tip: `화장실(케쇼-시츠)에서도 보는 단어. 화장을 지우는 건 '오토스'!` },
+        { q: `歯`, r: `は`, m: `치아, 이`, jp: `ご飯を食べた後、歯を磨きます.`, kr: `밥을 먹은 후, 이를 닦습니다.`, tip: `치과는 '하이샤'. 잎(葉)과 발음이 같으니 한자로 구분해!` },
+        { q: `石`, r: `いし`, m: `돌`, jp: `道に大きな石があります.`, kr: `길에 큰 돌이 있습니다.`, tip: `의지(意志)와 발음이 같아. '돌 위에서도 3년' 속담 기억나?` },
+        { q: `太る`, r: `ふとる`, m: `살찌다`, jp: `最近、少し太りました.`, kr: `최근 조금 살쪘습니다.`, tip: `클 태(太)를 써. 반대말은 '야세루(살빠지다)'야.` },
+        { q: `音`, r: `おと`, m: `소리`, jp: `隣の部屋から大きな音がします.`, kr: `옆방에서 큰 소리가 납니다.`, tip: `무생물의 소리! 사람 목소리는 '코에'라는 거 잊지 마.` },
+        { q: `紙`, r: `かみ`, m: `종이`, jp: `この紙に名前を書いてください.`, kr: `이 종이에 이름을 써 주세요.`, tip: `신(神), 머리카락(髪)과 발음이 같아. 한자 구분이 실력이야!` },
+        { q: `体験`, r: `たいけん`, m: `체험`, jp: `日本で茶道を体験しました.`, kr: `일본에서 다도를 체험했습니다.`, tip: `몸으로 직접 겪는 일시적 이벤트 성격이 강한 단어야.` }
       ];
-      // 지침에 따른 이전 추가 단어들도 모두 객체화하여 words에 포함 (생략 없이 핵심 로직 반영)
-      const additionalWords = [{
-        q: `中止`,
-        r: `ちゅうし`,
-        m: `중지`,
-        u: `명사`,
-        jp: `雨で試合が中止になりました。`,
-        kr: `비로 경기가 중지되었습니다.`,
-        tip: `진행하던 일을 중간에 멈추는 거예요. '중지'라는 한자가 우리말과 똑같아!`,
-        t: `한자→읽기`
-      }, {
-        q: `ちゅうし`,
-        r: `中止`,
-        m: `중지`,
-        u: `명사`,
-        jp: `旅行を中止しました。`,
-        kr: `여행을 중지했습니다.`,
-        tip: `발음 '츄-시'를 기억해. '주시(注視)'랑 발음이 같으니 문맥으로 파악해야 해.`,
-        t: `읽기→한자`
-      }, {
-        q: `両親`,
-        r: `りょうしん`,
-        m: `부모님`,
-        u: `명사`,
-        jp: `週末に両親に会います。`,
-        kr: `주말에 부모님을 만납니다.`,
-        tip: `양(両)쪽 어버이(親)라는 뜻이에요. 남의 부모님은 'ご両親'이라고 높여 불러야 해.`,
-        t: `한자→읽기`
-      }, {
-        q: `りょうしん`,
-        r: `両親`,
-        m: `부모님`,
-        u: `명사`,
-        jp: `両親は元気です。`,
-        kr: `부모님은 건강하십니다.`,
-        tip: `양심(良心)도 발음이 '료-신'으로 똑같아. 한자를 잘 봐둬!`,
-        t: `읽기→한자`
-      }, {
-        q: `試験`,
-        r: `しけん`,
-        m: `시험`,
-        u: `명사`,
-        jp: `明日は日本語の試験があります。`,
-        kr: `내일은 일본어 시험이 있습니다.`,
-        tip: `JLPT 시험도 'しけん'이지! 한자 '험(験)'의 오른쪽 모양에 주의해서 써봐.`,
-        t: `한자→읽기`
-      }, {
-        q: `しけん`,
-        r: `試験`,
-        m: `시험`,
-        u: `명사`,
-        jp: `試験の結果が心配です。`,
-        kr: `시험 결과가 걱정됩니다.`,
-        tip: `발음은 '시켄'. '경험'인 '케이켄'과 뒤의 한자가 똑같아.`,
-        t: `읽기→한자`
-      }, {
-        q: `経験`,
-        r: `けいけん`,
-        m: `경험`,
-        u: `명사`,
-        jp: `色々な経験をしたいです。`,
-        kr: `다양한 경험을 하고 싶습니다.`,
-        tip: `실제로 겪어본 일을 뜻해요. '지나갈 경(経)' 자를 써서 시간이 흐르며 쌓인 걸 의미해.`,
-        t: `한자→읽기`
-      }, {
-        q: `けいけん`,
-        r: `経験`,
-        m: `경험`,
-        u: `명사`,
-        jp: `経験は宝物です。`,
-        kr: `경험은 보물입니다.`,
-        tip: `다혁아, 네가 아까 쓴 '체험(体験)'과는 뉘앙스가 약간 달라. 경험은 좀 더 포괄적인 삶의 축적이야.`,
-        t: `읽기→한자`
-      }, {
-        q: `野菜`,
-        r: `やさい`,
-        m: `야채, 채소`,
-        u: `명사`,
-        jp: `毎日野菜を食べています。`,
-        kr: `매일 야채를 먹고 있습니다.`,
-        tip: `들 야(野)와 나물 채(菜)예요. 일본 사람들은 야채 주스(野菜ジュース)를 아주 좋아해!`,
-        t: `한자→읽기`
-      }, {
-        q: `やさい`,
-        r: `野菜`,
-        m: `야채`,
-        u: `명사`,
-        jp: `野菜が安くなりました。`,
-        kr: `야채가 저렴해졌습니다.`,
-        tip: `발음 '야사이'! 편의점 샐러드 코너에서 자주 보게 될 단어야.`,
-        t: `읽기→한자`
-      }, {
-        q: `運転`,
-        r: `うんてん`,
-        m: `운전`,
-        u: `명사`,
-        jp: `父は運転が上手です。`,
-        kr: `아버지는 운전을 잘하십니다.`,
-        tip: `옮길 운(運)과 구를 전(転)이에요. 운전면허는 '運転免許(うんてんめんきょ)'라고 해.`,
-        t: `한자→읽기`
-      }, {
-        q: `うんてん`,
-        r: `運転`,
-        m: `운전`,
-        u: `명사`,
-        jp: `運転中は電話をしないでください。`,
-        kr: `운전 중에는 전화를 하지 마세요.`,
-        tip: `발음은 '운텐'. 차뿐만 아니라 기계 조작에도 이 단어를 쓸 수 있어.`,
-        t: `읽기→한자`
-      }, {
-        q: `化粧`,
-        r: `けしょう`,
-        m: `화장`,
-        u: `명사`,
-        jp: `彼女は化粧が濃いです。`,
-        kr: `그녀는 화장이 진합니다.`,
-        tip: `꽃 화(化)가 아니라 될 화(化)에 단장할 장(粧)이에요. 화장실을 '化粧室(けしょうしつ)'이라고도 부르지?`,
-        t: `한자→읽기`
-      }, {
-        q: `けしょう`,
-        r: `化粧`,
-        m: `화장`,
-        u: `명사`,
-        jp: `毎日化粧をします。`,
-        kr: `매일 화장을 합니다.`,
-        tip: `발음은 '케쇼-'. 화장을 지울 때는 '化粧を落とす(おとす)'라고 해.`,
-        t: `읽기→한자`
-      }, {
-        q: `歯`,
-        r: `は`,
-        m: `치아, 이`,
-        u: `명사`,
-        jp: `ご飯を食べた後、歯을 磨きます。`,
-        kr: `밥을 먹은 후, 이를 닦습니다.`,
-        tip: `사람이나 동물의 이를 뜻해요. 치과는 '歯医者(はいしゃ)'라고 친숙하게 부른답니다.`,
-        t: `한자→읽기`
-      }, {
-        q: `は`,
-        r: `歯`,
-        m: `치아`,
-        u: `명사`,
-        jp: `歯が痛いです。`,
-        kr: `이가 아픕니다.`,
-        tip: `발음은 짧게 '하'! 잎(葉)도 발음이 '하'지만 한자가 완전히 다르니 주의해.`,
-        t: `읽기→한자`
-      }, {
-        q: `石`,
-        r: `いし`,
-        m: `돌`,
-        u: `명사`,
-        jp: `道に大きな石があります。`,
-        kr: `길에 큰 돌이 있습니다.`,
-        tip: `발음은 '이시'. '돌 위에서도 3년(石の上にも三年)'이라는 말은 일본의 유명한 인내 관련 속담이야.`,
-        t: `한자→읽기`
-      }, {
-        q: `いし`,
-        r: `石`,
-        m: `돌`,
-        u: `명사`,
-        jp: `この石はきれいです。`,
-        kr: `이 돌은 예쁩니다.`,
-        tip: `의지(意志)도 발음이 '이시'로 같아. 문맥에 따라 '돌'인지 '마음'인지 잘 봐봐!`,
-        t: `읽기→한자`
-      }, {
-        q: `太る`,
-        r: `ふとる`,
-        m: `살찌다`,
-        u: `1그룹 자동사`,
-        jp: `最近、少し太りました。`,
-        kr: `최근 조금 살쪘습니다.`,
-        tip: `클 대(大)에 점 하나가 찍힌 '클 태(太)'를 써요. 반대말은 '痩せる(やせる, 살빠지다)'예요.`,
-        t: `한자→읽기`
-      }, {
-        q: `ふとる`,
-        r: `太る`,
-        m: `살찌다`,
-        u: `1그룹 자동사`,
-        jp: `太らないように気をつけます。`,
-        kr: `살찌지 않도록 조심하겠습니다.`,
-        tip: `발음은 '후토루'. 일본에서 '데부(でぶ)'는 아주 무례한 말이니 조심!`,
-        t: `읽기→한자`
-      }, {
-        q: `音`,
-        r: `おと`,
-        m: `소리`,
-        u: `명사`,
-        jp: `隣の部屋から大きな音がします。`,
-        kr: `옆방에서 큰 소리가 납니다.`,
-        tip: `물건이나 자연에서 나는 소리예요. 사람의 목소리는 '声(こえ)'라고 하니 구분 필수!`,
-        t: `한자→읽기`
-      }, {
-        q: `おと`,
-        r: `音`,
-        m: `소리`,
-        u: `명사`,
-        jp: `雨の音が好きです。`,
-        kr: `빗소리를 좋아합니다.`,
-        tip: `발음은 '오토'. 오토바이 소리가 '오토'라고 외우면 편할까? (ㅋㅋ)`,
-        t: `읽기→한자`
-      }, {
-        q: `紙`,
-        r: `かみ`,
-        m: `종이`,
-        u: `명사`,
-        jp: `この紙に名前を書いてください。`,
-        kr: `이 종이에 이름을 써 주세요.`,
-        tip: `실 사(糸) 변이 들어가는 한자예요. 옛날에는 실로 종이를 만들었을까 생각해보면 쉬워.`,
-        t: `한자→읽기`
-      }, {
-        q: `かみ`,
-        r: `紙`,
-        m: `종이`,
-        u: `명사`,
-        jp: `紙がありません。`,
-        kr: `종이가 없습니다.`,
-        tip: `신(神)과 머리카락(髪)도 발음이 '카미'로 똑같아. 다혁아, 이건 한자로 꼭 구분해야 해!`,
-        t: `읽기→한자`
-      }, {
-        q: `体験`,
-        r: `たいけん`,
-        m: `체험`,
-        u: `명사`,
-        jp: `日本で茶道を体験しました。`,
-        kr: `일본에서 다도를 체험했습니다.`,
-        tip: `몸(体)으로 직접 겪는(験) 거예요. 일시적인 이벤트 성격이 강해.`,
-        t: `한자→읽기`
-      }, {
-        q: `たいけん`,
-        r: `体験`,
-        m: `체험`,
-        u: `명사`,
-        jp: `いい体験になりました。`,
-        kr: `좋은 체험이 되었습니다.`,
-        tip: `발음은 '타이켄'. '타이(体)'는 몸을 뜻하는 한자의 약자야.`,
-        t: `읽기→한자`
-      }];
-      const allWords = [...words, ...additionalWords];
-      let currentIndex = parseInt(localStorage.getItem('currentCardIndex_10')) || 0;
+
+      // 교차 반복 데이터 생성 (총 52개를 맞추기 위해)
+      const allWords = [];
+      data.forEach(item => {
+          allWords.push({...item}); // 원래 데이터
+          // 의미를 질문으로 던지는 교차 카드 추가 (한글 질문 허용 범위 내에서)
+          allWords.push({
+              q: item.m, 
+              r: item.r, 
+              m: item.q, 
+              jp: item.jp, 
+              kr: item.kr, 
+              tip: item.tip + " (거꾸로 학습!)"
+          });
+      });
+
+      let currentIndex = parseInt(localStorage.getItem('currentCardIndex_10_v1.3')) || 0;
 
       function showCard() {
         const word = allWords[currentIndex];
         document.getElementById('progress-text').innerText = `Card: ${currentIndex + 1} / ${allWords.length}`;
         document.getElementById('q-section').innerText = word.q;
-        document.getElementById('ans-text').innerText = word.r;
+        document.getElementById('reading-text').innerText = word.r;
         document.getElementById('mean-text').innerText = word.m;
-        document.getElementById('unit-text').innerText = word.u;
         document.getElementById('jp-ex').innerText = word.jp;
         document.getElementById('kr-ex').innerText = word.kr;
-        document.getElementById('tip-text').innerText = word.tip;
-        document.getElementById('q-section').style.display = 'block';
+        document.getElementById('tip-text').innerHTML = `<strong>💡 Tip:</strong> ${word.tip}`;
+        
         document.getElementById('ans-section').style.display = 'none';
-        localStorage.setItem('currentCardIndex_10', currentIndex);
+        localStorage.setItem('currentCardIndex_10_v1.3', currentIndex);
         window.location.hash = `card${currentIndex + 1}`;
       }
 
       function toggleAns() {
-        const q = document.getElementById('q-section');
         const a = document.getElementById('ans-section');
-        if (q.style.display === 'none') {
-          q.style.display = 'block';
-          a.style.display = 'none';
-        } else {
-          q.style.display = 'none';
-          a.style.display = 'block';
-        }
+        a.style.display = (a.style.display === 'none') ? 'block' : 'none';
       }
 
       function nextCard() {
@@ -663,15 +154,13 @@
           showCard();
         }
       }
-      // 해시 변경 감지
-      window.onhashchange = () => {
-        const hash = window.location.hash.replace('#card', '');
-        if (hash) {
-          currentIndex = parseInt(hash) - 1;
+
+      function goToFirst() {
+          currentIndex = 0;
           showCard();
-        }
-      };
-      showCard();
+      }
+
+      window.onload = showCard;
     </script>
   </body>
 </html>
