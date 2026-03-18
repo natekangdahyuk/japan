@@ -3,204 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4번 학습 페이지 - N4 단어장</title>
+    <title>4번 학습 페이지 - N4 단어장 (v1.3)</title>
     <style>
         :root { --primary: #4A90E2; --bg: #f5f7fa; }
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
         .container { width: 100%; max-width: 400px; }
-        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s; min-height: 320px; display: flex; flex-direction: column; justify-content: center; }
-        .card:active { transform: scale(0.98); }
-        .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+        
+        /* 카드 클릭 이벤트 제거 및 커서 변경 */
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; min-height: 350px; display: flex; flex-direction: column; justify-content: center; position: relative; cursor: default; }
+        
+        .question { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; word-break: keep-all; }
+        
+        /* 정답 영역 */
         .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
         .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
-        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; }
-        .usage { font-size: 0.9rem; color: #777; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
-        .example { font-size: 0.95rem; color: var(--primary); font-weight: 500; line-height: 1.6; }
-        .nav { margin-top: 25px; display: flex; gap: 10px; width: 100%; justify-content: center; }
-        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
-        .prev { background: #ccc; color: white; }
-        .next { background: var(--primary); color: white; flex-grow: 1; }
+        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; font-weight: 600; }
+        .usage { font-size: 0.85rem; color: #e67e22; background: #fff5eb; padding: 8px; border-radius: 5px; margin-bottom: 10px; border-left: 3px solid #e67e22; }
+        .example { font-size: 0.95rem; color: #444; font-weight: 500; line-height: 1.6; white-space: pre-wrap; margin-bottom: 15px; }
+        .tip-box { background: #fff9c4; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #555; border-left: 4px solid #fbc02d; }
+        
+        /* 메인 버튼 스타일 */
+        .nav-main { margin-top: 25px; display: flex; gap: 10px; width: 100%; }
+        button { padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-size: 1.1rem; font-weight: bold; transition: 0.2s; flex: 1; }
+        .btn-view { background: #546e7a; color: white; }
+        .btn-next { background: var(--primary); color: white; }
+        button:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* 하단 보조 링크 스타일 */
+        .nav-sub { margin-top: 20px; display: flex; gap: 20px; justify-content: center; }
+        .nav-sub a { text-decoration: none; color: #888; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        .nav-sub a:hover { color: var(--primary); }
+
         .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
-        .back-home { margin-top: 20px; text-decoration: none; color: #888; font-size: 0.9rem; display: block; text-align: center; }
     </style>
 </head>
 <body>
-    <h1>🎴 오늘의 단어 카드 (4번)</h1>
+    <h1>🎴 오늘의 단어 카드 (v1.3)</h1>
     <div class="container">
-        <div class="card" onclick="toggleAnswer()">
+        <div class="card">
             <div id="question" class="question"></div> 
             <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
                 <div id="meaning" class="meaning"></div>
                 <div id="usage" class="usage"></div>
                 <div id="example" class="example"></div>
+                <div id="tip" class="tip-box"></div>
             </div>
         </div>
-        <div class="nav">
-            <button class="prev" onclick="prevCard()">이전</button>
-            <button class="next" onclick="nextCard()">다음 카드</button>
+
+        <div class="nav-main">
+            <button class="btn-view" onclick="toggleAnswer()">내용 보기</button>
+            <button class="btn-next" onclick="nextCard()">다음 카드</button>
         </div>
+
+        <div class="nav-sub">
+            <a onclick="prevCard()">이전</a>
+            <a onclick="goToFirst()">처음</a>
+            <a href="index.html">목록</a>
+        </div>
+
         <div class="status"><span id="current">1</span> / <span id="total">12</span></div>
-        <a href="index.html" class="back-home">🏠 목록으로 돌아가기</a>
     </div>
 
     <script>
+        // 지침 v1.3 준수: q(한글X), r(한자/한글X)
         const words = [    
             { 
-                q: "選ぶ", 
-                r: "えらぶ", 
-                m: "고르다, 선택하다", 
-                u: "동사 / 1형 타동사", 
-                e: `一番(いちばん) いい もの를 하나 選んで ください。
-가장 좋은 것을 하나 골라 주세요.
-
-[연관 팁]
-1. 명사형: 選び (선택/고름)
-2. 정중형: 選ぶ → 選びます (고릅니다)
-3. 과거형: 選(えら)びました (고르셨습니다/골랐습니다)` 
+                q: "選ぶ", r: "えらぶ", m: "고르다, 선택하다", u: "1그룹 타동사", 
+                e: `一番 いい ものを 一つ 選んで ください.
+가장 좋은 것을 하나 골라 주세요.`,
+                tip: `여러 개 중에서 하나를 픽! 하는 느낌. '선거(選挙)'의 '선' 자야.`
             },
             { 
-                q: "送信", 
-                r: "そうしん", 
-                m: "송신, 보내기", 
-                u: "명사 / IT 및 통신 어휘", 
-                e: `メール(めーる)를 送信했습니다.
-메일을 송신했습니다.
-
-[연관 팁]
-1. 정중과거: 送信しました)
-2. 반대말: 受信 (じゅしん, 수신)
-3. 세트: 송신 버튼(ぼたん)을 누르다(おす)` 
+                q: "送信", r: "そうしん", m: "송신, 보내기", u: "명사 / IT 통신", 
+                e: `メールを 送信しました.
+메일을 송신했습니다.`,
+                tip: `반대말은 '受信(じゅしん, 수신)'. '송신 버튼을 누르다'로 통째로 외워!`
             },
             { 
-                q: "押す", 
-                r: "おす", 
-                m: "누르다, 밀다", 
-                u: "동사 / 1형 타동사", 
-                e: `아소코의 버튼(ぼたん)을 押して ください。
-저기 있는 버튼을 눌러 주세요.
-
-[연관 팁]
-1. 반대말: 引く (ひく, 당기다)
-2. 과거형: 押しました (눌렀습니다)` 
+                q: "押す", r: "おす", m: "누르다, 밀다", u: "1그룹 타동사", 
+                e: `あそこの ボタンを 押して ください.
+저기 있는 버튼을 눌러 주세요.`,
+                tip: `반대말은 '引く(ひく, 당기다)'. 도장을 찍을 때도 '押す'를 쓴단다.`
             },
             { 
-                q: "アルバイト", 
-                r: "あるばいと", 
-                m: "아르바이트", 
-                u: "명사 / 외래어 (독일어 유래)", 
-                e: `来週(らいしゅう)から新(あたら)しいアルバイトを始(はじ)めます。
-다음 주부터 새로운 아르바이트를 시작합니다.
-
-[연관 팁]
-1. 줄임말: バイト - 일상 대화용
-2. 고용되다: 雇(やと)われる (수동)` 
+                q: "アルバイト", r: "あるばいと", m: "아르바이트", u: "명사 / 외래어", 
+                e: `来週から 新しい アルバイトを 始めます.
+다음 주부터 새로운 아르바이트를 시작합니다.`,
+                tip: `독일어 'Arbeit(노동)'에서 왔어. 일상에선 'バイト'라고 줄여서 더 많이 써.`
             },
             { 
-                q: "雇う", 
-                r: "야토우", 
-                m: "고용하다, 채용하다", 
-                u: "동사 / 1형 타동사 (능동)", 
-                e: `店長(てんちょう)が新人(しんじん)を雇(やと)いました。
-점장님이 새로운 사람을 고용했습니다.
-
-[연관 팁]
-1. 수동형: 雇(야토)われる (고용되다)
-2. 정중과거: 雇(やと)いました (고용했습니다)` 
+                q: "雇う", r: "やとう", m: "고용하다, 채용하다", u: "1그룹 타동사", 
+                e: `店長が 新人を 雇いました.
+점장님이 새로운 사람을 고용했습니다.`,
+                tip: `고용주 입장에서 사람을 쓸 때! 수동형은 '雇われる(고용되다)'야.`
             },
             { 
-                q: "受ける", 
-                r: "うける", 
-                m: "받다, (시험을) 치르다", 
-                u: "동사 / 2형 타동사", 
-                e: `明日、日本語の試験(しけん)を受けます。
-내일 일본어 시험을 봅니다.
-
-[연관 팁]
-1. 정중형: 受けます (받습니다/봅니다)
-2. 과거형: 受けました (받았습니다/봤습니다)` 
+                q: "受ける", r: "うける", m: "받다, (시험을) 치르다", u: "2그룹 타동사", 
+                e: `明日、日本語の 試験を 受けます.
+내일 일본어 시험을 봅니다.`,
+                tip: `한국어는 시험을 '보다'라고 하지만 일본어는 '받다(受ける)'라고 해!`
             },
             { 
-                q: "受信", 
-                r: "じゅしん", 
-                m: "수신, 받음", 
-                u: "명사 / IT 통신", 
-                e: `重要(じゅうよう)なメールを受信しました。
-중요한 메일을 수신했습니다.
-
-[연관 팁]
-1. 반대말: 送信(そうしん)
-2. 동사: 受信しました)` 
+                q: "受信", r: "じゅしん", m: "수신, 받음", u: "명사 / IT 통신", 
+                e: `重要な メールを 受信しました.
+중요한 메일을 수신했습니다.`,
+                tip: `받을 수(受) + 믿을 신(信). 메시지를 받는 동작이야.`
             },
             { 
-                q: "引く", 
-                r: "ひく", 
-                m: "당기다, (선 등을) 긋다", 
-                u: "동사 / 1형 타동사", 
-                e: `ドアを引いてください。
-문을 당겨 주세요.
-
-[연관 팁]
-1. 반대말: 押す (おす, 밀다/누르다)
-2. 활용: 선(せん)을 引(ひ)く (선을 긋다)` 
+                q: "引く", r: "ひく", m: "당기다, (선을) 긋다", u: "1그룹 타동사", 
+                e: `ドアを 引いて ください.
+문을 당겨 주세요.`,
+                tip: `밀면 '押す', 당기면 '引く'! 감기 걸리는 것도 '風邪を引く'라고 하지.`
             },
             { 
-                q: "始める", 
-                r: "はじめる", 
-                m: "시작하다", 
-                u: "동사 / 2형 타동사 (의지)", 
-                e: `来週からアルバイトを 始めます。
-다음 주부터 아르바이트를 시작합니다.
-
-[연관 팁]
-1. 자동사 세트: 始(はじ)まる (시작되다)
-2. 과거형: 始めました (시작했습니다)` 
+                q: "始める", r: "はじめる", m: "시작하다", u: "2그룹 타동사", 
+                e: `来週から アルバイトを 始めます.
+다음 주부터 아르바이트를 시작합니다.`,
+                tip: `내가 시작하면 '始める(타동사)', 저절로 시작되면 '始まる(자동사)'!`
             },
             { 
-                q: "終わる", 
-                r: "おわる", 
-                m: "끝나다, 마치다", 
-                u: "동사 / 1형 자동사", 
-                e: `授業(じゅぎょう)が 終わりました.
-수업이 끝났습니다.
-
-[연관 팁]
-1. 타동사 세트: 終える (마치다)
-2. 과거형: 終わりました (끝났습니다)` 
+                q: "終わる", r: "おわる", m: "끝나다, 마치다", u: "1그룹 자동사", 
+                e: `授業が 終わりました.
+수업이 끝났습니다.`,
+                tip: `자동사지만 '마치다'라는 뜻으로도 쓰여. 타동사 세트는 '終える'야.`
             },
             { 
-                q: "雇われる", 
-                r: "雇(やと)われる", 
-                m: "고용되다", 
-                u: "동사 / 2형 수동형", 
-                e: `会社(かいしゃ)に雇(やと)われました。
-회사에 고용되었습니다.
-
-[연관 팁]
-1. 능동: 雇(やと)う (고용하다)
-2. 정중형: 雇われます (고용됩니다)` 
+                q: "雇われる", r: "やとわれる", m: "고용되다", u: "2그룹 수동형", 
+                e: `会社に 雇われました.
+회사에 고용되었습니다.`,
+                tip: `'雇う'의 수동형이야. 남 밑에서 일하게 된 상황이지.`
             },
             { 
-                q: "座る", 
-                r: "すわる", 
-                m: "앉다", 
-                u: "동사 / 1형 자동사", 
-                e: `椅子(いす)に座ってください。
-의자에 앉아 주세요.
-
-[연관 팁]
-1. 반대말: 立つ (たつ, 서다)
-2. 과거형: 座りました (앉았습니다)` 
+                q: "座る", r: "すわる", m: "앉다", u: "1그룹 자동사", 
+                e: `椅子に 座って ください.
+의자에 앉아 주세요.`,
+                tip: `반대말은 '立つ(たつ, 서다)'. 장소 뒤에는 조사 'に'가 온다는 거 잊지 마!`
             }
         ];
 
         let currentIndex = 0;
+        const storageKey = 'dahyeok_study_index_4_v1.3';
+
         window.onload = function() {
+            const savedIndex = localStorage.getItem(storageKey);
             const hash = window.location.hash;
             if (hash && hash.startsWith('#card')) {
-                const index = parseInt(hash.replace('#card', '')) - 1;
-                if (index >= 0 && index < words.length) { currentIndex = index; }
+                currentIndex = parseInt(hash.replace('#card', '')) - 1;
+            } else if (savedIndex !== null) {
+                currentIndex = parseInt(savedIndex);
             }
             document.getElementById('total').innerText = words.length;
             updateCard();
@@ -212,20 +164,25 @@
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
-            document.getElementById('usage').innerText = "품사/역할: " + word.u;
-            document.getElementById('example').innerHTML = word.e.replace(/\n/g, '<br>');
+            document.getElementById('usage').innerText = "해설: " + word.u;
+            document.getElementById('example').innerText = word.e;
+            document.getElementById('tip').innerHTML = "<strong>💡 Tip:</strong> " + word.tip;
+            
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
+            
+            localStorage.setItem(storageKey, currentIndex);
             history.replaceState(null, null, "#card" + (currentIndex + 1));
         }
 
         function toggleAnswer() {
             const ans = document.getElementById('answer');
-            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+            ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
         }
 
-        function nextCard() { currentIndex = (currentIndex + 1) % words.length; updateCard(); }
-        function prevCard() { currentIndex = (currentIndex - 1 + words.length) % words.length; updateCard(); }
+        function nextCard() { if (currentIndex < words.length - 1) { currentIndex++; updateCard(); } }
+        function prevCard() { if (currentIndex > 0) { currentIndex--; updateCard(); } }
+        function goToFirst() { currentIndex = 0; updateCard(); }
     </script>
 </body>
 </html>
