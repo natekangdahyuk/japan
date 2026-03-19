@@ -3,53 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>다혁 일본어 학습 - 통합 모드 (v1.3)</title>
+    <title>다혁 일본어 학습 - 통합 모드 (v1.4)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700&family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #4A90E2; --bg: #f5f7fa; }
-        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        h1 { color: #333; margin-bottom: 10px; font-size: 1.5rem; text-align: center; }
+        :root {
+            --primary: #4A90E2;
+            --bg: #f8f9fa;
+            --text: #2d3436;
+            --accent: #e67e22;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px; /* 상단 여백 축소 */
+            margin: 0;
+            color: var(--text);
+        }
+
+        /* 1. 타이틀 영역 크기 절반으로 축소 및 상단 밀착 */
+        h1 {
+            font-size: 0.85rem;
+            color: #888;
+            margin: 5px 0 15px 0;
+            font-weight: 400;
+            letter-spacing: -0.5px;
+        }
+
         .container { width: 100%; max-width: 400px; }
-        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center; position: relative; cursor: default; }
-        .question { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; word-break: keep-all; }
-        .answer { display: none; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; text-align: left; }
-        .reading { font-size: 1.2rem; color: #666; font-weight: bold; }
-        .meaning { font-size: 1.1rem; color: #333; margin: 10px 0; font-weight: 600; }
-        .usage { font-size: 0.85rem; color: #e67e22; background: #fff5eb; padding: 8px; border-radius: 5px; margin-bottom: 10px; border-left: 3px solid #e67e22; }
-        .example { font-size: 0.95rem; color: #444; font-weight: 500; line-height: 1.6; white-space: pre-wrap; margin-bottom: 15px; }
-        .tip-box { background: #fff9c4; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #555; border-left: 4px solid #fbc02d; }
-        .nav-main { margin-top: 25px; display: flex; gap: 10px; width: 100%; }
-        button { padding: 15px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; flex: 1; }
-        .btn-view { background: #546e7a; color: white; }
+
+        /* 카드 내부 여백 및 구조 최적화 */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            text-align: center;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 2. 한자 가독성 폰트 적용 및 간격 조정 */
+        .question {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px 0;
+            word-break: break-all;
+            line-height: 1.2;
+        }
+
+        .answer {
+            display: none;
+            border-top: 1px dashed #eee;
+            padding-top: 15px;
+            text-align: left;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .reading { font-size: 1.1rem; color: #666; font-weight: 600; margin-bottom: 4px; }
+
+        /* 3. 의미(m)와 분류(u) 통합 라인 */
+        .info-line {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+        .meaning { font-size: 1.2rem; font-weight: 700; color: #111; }
+        .usage-tag { font-size: 0.85rem; color: var(--accent); font-weight: 500; }
+
+        .example {
+            font-size: 0.95rem;
+            color: #444;
+            line-height: 1.6;
+            background: #f1f3f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+        }
+
+        .tip-box {
+            background: #fffbe6;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #665c33;
+            border-left: 3px solid #ffe58f;
+        }
+
+        /* 네비게이션 및 버튼 */
+        .nav-main { margin-top: 20px; display: flex; gap: 10px; }
+        button {
+            padding: 14px; border: none; border-radius: 10px;
+            font-size: 1rem; font-weight: bold; cursor: pointer;
+            transition: 0.2s; flex: 1;
+        }
+        .btn-view { background: #475569; color: white; }
         .btn-next { background: var(--primary); color: white; }
-        button:active { transform: scale(0.98); opacity: 0.9; }
-        .nav-sub { margin-top: 20px; display: flex; gap: 20px; justify-content: center; }
-        .nav-sub a { text-decoration: none; color: #888; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+        button:active { transform: scale(0.96); }
+
+        .nav-sub { margin-top: 15px; display: flex; gap: 20px; justify-content: center; }
+        .nav-sub a { text-decoration: none; color: #bbb; font-size: 0.85rem; cursor: pointer; }
         .nav-sub a:hover { color: var(--primary); }
-        .status { margin-top: 15px; font-size: 0.9rem; color: #999; text-align: center; }
+
+        .status { margin-top: 12px; font-size: 0.8rem; color: #ccc; text-align: center; }
     </style>
 </head>
 <body>
-    <h1 id="study-title">학습 페이지</h1>
+    <h1 id="study-title">Loading...</h1>
+
     <div class="container">
         <div class="card">
-            <div id="question" class="question">데이터 로딩 중...</div>
+            <div id="question" class="question">...</div>
+
             <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
-                <div id="meaning" class="meaning"></div>
-                <div id="usage" class="usage"></div>
+                <div class="info-line">
+                    <span id="meaning" class="meaning"></span>
+                    <span id="usage" class="usage-tag"></span>
+                </div>
                 <div id="example" class="example"></div>
                 <div id="tip" class="tip-box"></div>
             </div>
         </div>
+
         <div class="nav-main">
             <button class="btn-view" onclick="toggleAnswer()">내용 보기</button>
             <button class="btn-next" onclick="nextCard()">다음 카드</button>
         </div>
+
         <div class="nav-sub">
             <a onclick="prevCard()">이전</a>
             <a onclick="goToFirst()">처음</a>
             <a href="index.html">목록</a>
         </div>
+
         <div class="status"><span id="current">0</span> / <span id="total">0</span></div>
     </div>
 
@@ -57,24 +155,22 @@
         let words = [];
         let currentIndex = 0;
         const urlParams = new URLSearchParams(window.location.search);
-        const dataId = urlParams.get('id') || '1'; // 기본값 1.json
+        const dataId = urlParams.get('id') || '1';
 
-        // JSON 데이터 불러오기
         async function loadData() {
             try {
-              const seasonId = urlParams.get('s') || '01'; // 시즌 번호 가져오기
-              const response = await fetch(`./data/season${seasonId}/${dataId}.json`);
-                if (!response.ok) throw new Error('파일을 찾을 수 없습니다.');
+                const seasonId = urlParams.get('s') || '01';
+                const response = await fetch(`./data/season${seasonId}/${dataId}.json`);
+                if (!response.ok) throw new Error('ERR');
                 words = await response.json();
                 init();
             } catch (error) {
-                document.getElementById('question').innerText = "❌ 데이터를 불러올 수 없습니다.";
-                console.error(error);
+                document.getElementById('question').innerText = "파일을 찾을 수 없음";
             }
         }
 
         function init() {
-            document.getElementById('study-title').innerText = `${dataId}번 학습 세트`;
+            document.getElementById('study-title').innerText = `SET ${dataId}`;
             const savedIndex = localStorage.getItem(`study_idx_${dataId}`);
             const hash = window.location.hash.replace('#card', '');
 
@@ -88,12 +184,16 @@
         function updateCard() {
             if (words.length === 0) return;
             const word = words[currentIndex];
+
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
-            document.getElementById('usage').innerText = "해설: " + word.u;
+
+            // 3. 괄호 형식으로 통합 표시
+            document.getElementById('usage').innerText = word.u ? `(${word.u})` : "";
+
             document.getElementById('example').innerText = word.e;
-            document.getElementById('tip').innerHTML = "<strong>💡 Tip:</strong> " + word.tip;
+            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${word.tip}`;
 
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
