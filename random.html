@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다혁 일본어 - 시즌 랜덤 모드</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700&family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #e67e22; --bg: #f8f9fa; --text: #2d3436; --accent: #d35400; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; color: var(--text); }
+        h1 { font-size: 0.85rem; color: #888; margin: 5px 0 15px 0; font-weight: 400; }
+        .container { width: 100%; max-width: 400px; }
+        .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; min-height: 380px; display: flex; flex-direction: column; position: relative; }
+        .question { font-family: 'Noto Sans JP', sans-serif; font-size: 2.4rem; font-weight: 700; color: var(--primary); margin: 20px 0; line-height: 1.2; }
+        .answer { display: none; border-top: 1px dashed #eee; padding-top: 15px; text-align: left; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .reading { font-size: 1.1rem; color: #666; font-weight: 600; margin-bottom: 4px; }
+        .info-line { display: flex; align-items: baseline; gap: 6px; margin-bottom: 15px; }
+        .meaning { font-size: 1.2rem; font-weight: 700; color: #111; }
+        .usage-tag { font-size: 0.85rem; color: var(--accent); font-weight: 500; }
+        .example { font-size: 0.95rem; color: #444; line-height: 1.6; background: #f1f3f5; padding: 12px; border-radius: 8px; margin-bottom: 12px; white-space: pre-wrap; }
+        .tip-box { background: #fffbe6; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #665c33; border-left: 3px solid #ffe58f; }
+        .nav-main { margin-top: 20px; display: flex; gap: 10px; }
+        button { padding: 14px; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; flex: 1; transition: 0.2s; }
+        .btn-view { background: #475569; color: white; }
+        .btn-next { background: var(--primary); color: white; }
+        button:active { transform: scale(0.96); }
+        .nav-sub { margin-top: 15px; display: flex; gap: 20px; justify-content: center; }
+        .nav-sub a { text-decoration: none; color: #bbb; font-size: 0.85rem; cursor: pointer; }
+        .status { margin-top: 12px; font-size: 0.8rem; color: #ccc; text-align: center; }
+        .loading-msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #aaa; }
+    </style>
+</head>
+<body>
+    <h1 id="study-title">시즌 랜덤 모드 (30Q)</h1>
+
+    <div class="container">
+        <div class="card">
+            <div id="loading" class="loading-msg">시즌 데이터를 불러오는 중...</div>
+            <div id="question" class="question"></div>
+
+            <div id="answer" class="answer">
+                <div id="reading" class="reading"></div>
+                <div class="info-line">
+                    <span id="meaning" class="meaning"></span>
+                    <span id="usage" class="usage-tag"></span>
+                </div>
+                <div id="example" class="example"></div>
+                <div id="tip" class="tip-box"></div>
+            </div>
+        </div>
+
+        <div class="nav-main">
+            <button class="btn-view" onclick="toggleAnswer()">내용 보기</button>
+            <button class="btn-next" onclick="nextCard()">다음 카드</button>
+        </div>
+
+        <div class="nav-sub">
+            <a onclick="location.reload()">새로 섞기</a>
+            <a href="index.html">목록으로</a>
+        </div>
+
+        <div class="status"><span id="current">0</span> / <span id="total">0</span></div>
+    </div>
+
+    <script>
+        let allWords = [];
+        let currentIndex = 0;
+        const urlParams = new URLSearchParams(window.location.search);
+        const seasonId = urlParams.get('s') || '01';
+
+        async function loadSeasonData() {
+            // 시즌 시작 ID 계산 (s=01 -> 1, s=02 -> 11)
+            const startId = (parseInt(seasonId) - 1) * 10 + 1;
+            const promises = [];
+
+            for (let i = 0; i < 10; i++) {
+                const id = String(startId + i).padStart(3, '0');
+                promises.push(
+                    fetch(`./data/season${seasonId}/${id}.json`)
+                    .then(res => res.ok ? res.json() : [])
+                    .catch(() => [])
+                );
+            }
+
+            try {
+                const results = await Promise.all(promises);
+                let combinedWords = results.flat(); // 모든 JSON 데이터를 하나로 합침
+                
+                if (combinedWords.length === 0) throw new Error("데이터 없음");
+                
+                shuffle(combinedWords); // 전체 무작위 셔플
+                
+                // 🔥 섞인 데이터 중 앞의 30개만 추출 (다혁이의 요청사항)
+                allWords = combinedWords.slice(0, 30); 
+                
+                init();
+            } catch (error) {
+                document.getElementById('loading').innerText = "데이터를 불러오지 못했습니다.";
+            }
+        }
+
+        // 피셔-예이츠 셔플 알고리즘
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function init() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('study-title').innerText = `SEASON ${seasonId} RANDOM (30문항)`;
+            document.getElementById('total').innerText = allWords.length;
+            updateCard();
+        }
+
+        function updateCard() {
+            const word = allWords[currentIndex];
+            document.getElementById('question').innerText = word.q;
+            document.getElementById('reading').innerText = word.r;
+            document.getElementById('meaning').innerText = word.m;
+            document.getElementById('usage').innerText = word.u ? `(${word.u})` : "";
+            document.getElementById('example').innerText = word.e;
+            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${word.tip}`;
+
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('current').innerText = currentIndex + 1;
+        }
+
+        function toggleAnswer() {
+            const ans = document.getElementById('answer');
+            ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
+        }
+
+        function nextCard() {
+            if (currentIndex < allWords.length - 1) {
+                currentIndex++;
+                updateCard();
+            } else {
+                alert("축하합니다! 시즌 30문항 랜덤 학습을 완료했습니다.");
+                location.reload(); // 다시 섞기
+            }
+        }
+
+        window.onload = loadSeasonData;
+    </script>
+</body>
+</html>
