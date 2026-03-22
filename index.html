@@ -9,7 +9,6 @@
             --s1-color: #4CAF50; --s1-bg: #f1f8e9;
             --s2-color: #1976d2; --s2-bg: #e3f2fd;
             --s3-color: #ef6c00; --s3-bg: #fff3e0;
-            --s4-color: #7b1fa2; --s4-bg: #f3e5f5;
         }
         body {
             font-family: 'Pretendard', sans-serif;
@@ -28,7 +27,7 @@
         }
         .season-title {
             padding: 12px 15px; font-weight: bold; font-size: 1rem;
-            color: white; display: flex; justify-content: space-between;
+            color: white; display: flex; justify-content: space-between; align-items: center;
         }
         .grid-container {
             display: grid; grid-template-columns: repeat(5, 1fr);
@@ -40,8 +39,6 @@
         .season-01 .season-title { background-color: var(--s1-color); }
         .season-02 { background-color: var(--s2-bg); }
         .season-02 .season-title { background-color: var(--s2-color); }
-        .season-03 { background-color: var(--s3-bg); }
-        .season-03 .season-title { background-color: var(--s3-color); }
 
         .btn {
             display: flex; justify-content: center; align-items: center;
@@ -49,12 +46,16 @@
             border-radius: 8px; font-weight: bold; font-size: 0.9rem;
             transition: transform 0.1s, opacity 0.2s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
         }
         .season-01 .btn { background-color: var(--s1-color); }
         .season-02 .btn { background-color: var(--s2-color); }
-        .season-03 .btn { background-color: var(--s3-color); }
 
         .btn:active { transform: scale(0.92); opacity: 0.8; }
+        
+        /* 랜덤 모드 전용 스타일 */
+        .random-master { background-color: #333 !important; }
+        .random-master .season-title { background-color: #222 !important; }
     </style>
 </head>
 <body>
@@ -63,6 +64,23 @@
         <h1>🇯🇵 다혁 전용 일본어 학습</h1>
         <p>시즌별 10개씩, 총 100개의 관문을 정복하자!</p>
     </header>
+
+    <section class="season-section random-master">
+        <div class="season-title">
+            <span>🔥 RANDOM MASTER (30Q)</span>
+            <span style="font-size: 0.7rem; opacity: 0.6;">시즌 전체 섞기</span>
+        </div>
+        <div style="display: flex; gap: 12px; padding: 15px;">
+            <a href="random.html?s=01" class="btn" style="background-color: var(--s1-color); flex: 1; height: 60px; flex-direction: column; gap: 4px;">
+                <span style="font-size: 0.7rem; opacity: 0.9;">SEASON 01</span>
+                무한 랜덤
+            </a>
+            <a href="random.html?s=02" class="btn" style="background-color: var(--s2-color); flex: 1; height: 60px; flex-direction: column; gap: 4px;">
+                <span style="font-size: 0.7rem; opacity: 0.9;">SEASON 02</span>
+                무한 랜덤
+            </a>
+        </div>
+    </section>
 
     <section class="season-section season-01">
         <div class="season-title"><span>🌱 SEASON 01</span> <span>001 - 010</span></div>
@@ -96,5 +114,5 @@
         </div>
     </section>
 
-    </body>
+</body>
 </html>
