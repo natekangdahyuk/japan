@@ -3,43 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>일본어 - 관리자 모드</title>
+    <title>일본어 - 스마트 관리자 v1.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #2d3436; --accent: #e67e22; --bg: #f4f7f6; }
-        body { font-family: 'Pretendard', sans-serif; background: var(--bg); padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { font-size: 1.4rem; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); padding: 20px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; font-size: 0.9rem; }
+        .control-bar { display: flex; gap: 15px; align-items: center; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee; }
+        .control-bar select, .control-bar input { padding: 8px; border-radius: 4px; border: 1px solid #ddd; font-family: inherit; }
+        
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; } /* 테이블 레이아웃 고정 */
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; font-size: 0.85rem; vertical-align: top; }
         th { background: #f8f9fa; color: #666; }
         
-        .edit-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        .btn-group { display: flex; gap: 5px; }
-        button { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
+        /* 입력창 스타일 최적화 */
+        .edit-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: inherit; font-size: 0.85rem; }
+        .edit-area { width: 100%; min-height: 80px; resize: vertical; } /* 예문/팁 전용 */
+        
+        .btn-group { display: flex; flex-direction: column; gap: 5px; }
+        button { padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.75rem; }
         .btn-edit { background: #edf2f7; color: #4a5568; }
         .btn-save { background: var(--accent); color: white; display: none; }
         .btn-cancel { background: #e2e8f0; color: #4a5568; display: none; }
         
-        .status-msg { margin-top: 15px; font-size: 0.85rem; color: #e67e22; font-weight: bold; }
+        .view-text { white-space: pre-wrap; word-break: break-all; color: #444; }
+        .status-msg { font-size: 0.85rem; color: #e67e22; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🇯🇵 데이터 관리자 (Season 01 / Set 001)</h1>
-        
-        <div id="status" class="status-msg">데이터를 불러오는 중...</div>
+        <div class="control-bar">
+            <h1 style="font-size: 1.1rem; margin:0;">🇯🇵 관리 v1.2</h1>
+            <select id="select-season" onchange="loadData()">
+                <option value="s01">Season 01</option>
+                <option value="s02">Season 02</option>
+            </select>
+            <input type="text" id="input-set" value="001" style="width: 60px; text-align: center;">
+            <button class="btn-edit" onclick="loadData()" style="background: #333; color: white;">불러오기</button>
+            <div id="status" class="status-msg">대기 중...</div>
+        </div>
 
         <table id="word-table">
             <thead>
                 <tr>
-                    <th style="width: 5%">#</th>
-                    <th style="width: 20%">한자(Q)</th>
-                    <th style="width: 20%">읽기(R)</th>
-                    <th style="width: 35%">의미(M)</th>
-                    <th style="width: 20%">관리</th>
+                    <th style="width: 4%">#</th>
+                    <th style="width: 12%">한자/읽기</th>
+                    <th style="width: 15%">의미(M)</th>
+                    <th style="width: 25%">예문(E)</th>
+                    <th style="width: 34%">Tip</th>
+                    <th style="width: 10%">관리</th>
                 </tr>
             </thead>
             <tbody id="word-list"></tbody>
@@ -50,7 +64,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
-        // 1. 아름 파이어베이스 Config 설정
         const firebaseConfig = {
             apiKey: "AIzaSyCxhDRXkY5Li5rXItmQpMhxEYRKsyZJHoo",
             authDomain: "japanese-fd10c.firebaseapp.com",
@@ -58,35 +71,42 @@
             storageBucket: "japanese-fd10c.firebasestorage.app",
             messagingSenderId: "636416095711",
             appId: "1:636416095711:web:d9b5473a87f7dbd6c3c06a",
-            // 🔥 여기를 네 콘솔에 떠 있는 주소로 정확히 바꿨어!
             databaseURL: "https://japanese-fd10c-default-rtdb.asia-southeast1.firebasedatabase.app/" 
         };
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // 2. 데이터 로드 함수 (seasons/s01/001 경로 기준)
         function loadData() {
-            db.ref('seasons/s01/001').on('value', (snapshot) => {
+            const sId = document.getElementById('select-season').value;
+            const setId = document.getElementById('input-set').value;
+            const path = `seasons/${sId}/${setId}`;
+
+            document.getElementById('status').innerText = "불러오는 중...";
+            db.ref(path).off();
+            db.ref(path).on('value', (snapshot) => {
                 const words = snapshot.val();
                 const listBody = document.getElementById('word-list');
-                const status = document.getElementById('status');
                 listBody.innerHTML = "";
 
                 if (!words) {
-                    status.innerText = "데이터가 없습니다. JSON을 먼저 Import 하세요!";
+                    document.getElementById('status').innerText = "데이터 없음!";
                     return;
                 }
 
-                status.innerText = "데이터 로드 완료 (실시간 연결 중)";
+                document.getElementById('status').innerText = `${path} 로드 완료`;
                 
                 words.forEach((word, index) => {
                     const row = `
                         <tr id="row-${index}">
                             <td>${index + 1}</td>
-                            <td class="col-q"><span class="view">${word.q}</span><input type="text" class="edit-input edit" value="${word.q}" style="display:none;"></td>
-                            <td class="col-r"><span class="view">${word.r}</span><input type="text" class="edit-input edit" value="${word.r}" style="display:none;"></td>
-                            <td class="col-m"><span class="view">${word.m}</span><input type="text" class="edit-input edit" value="${word.m}" style="display:none;"></td>
+                            <td>
+                                <div class="col-q"><span class="view">${word.q}</span><input type="text" class="edit-input edit" value="${word.q}" style="display:none;"></div>
+                                <div class="col-r" style="margin-top:5px; color:#888;"><span class="view">${word.r}</span><input type="text" class="edit-input edit" value="${word.r}" style="display:none;"></div>
+                            </td>
+                            <td class="col-m"><span class="view view-text">${word.m}</span><input type="text" class="edit-input edit" value="${word.m}" style="display:none;"></td>
+                            <td class="col-e"><span class="view view-text">${word.e || ''}</span><textarea class="edit-input edit edit-area" style="display:none;">${word.e || ''}</textarea></td>
+                            <td class="col-tip"><span class="view view-text">${word.tip || ''}</span><textarea class="edit-input edit edit-area" style="display:none;">${word.tip || ''}</textarea></td>
                             <td>
                                 <div class="btn-group">
                                     <button class="btn-edit view" onclick="toggleEdit(${index}, true)">수정</button>
@@ -101,27 +121,30 @@
             });
         }
 
-        // 3. 수정 모드 전환
         function toggleEdit(index, isEdit) {
             const row = document.getElementById(`row-${index}`);
-            row.querySelectorAll('.view').forEach(el => el.style.display = isEdit ? 'none' : 'inline');
-            row.querySelectorAll('.edit').forEach(el => el.style.display = isEdit ? 'inline' : 'none');
+            row.querySelectorAll('.view').forEach(el => el.style.display = isEdit ? 'none' : 'block');
+            row.querySelectorAll('.edit').forEach(el => el.style.display = isEdit ? 'block' : 'none');
         }
 
-        // 4. 데이터 저장 (Update)
         function saveData(index) {
+            const sId = document.getElementById('select-season').value;
+            const setId = document.getElementById('input-set').value;
+            const path = `seasons/${sId}/${setId}/${index}`;
+
             const row = document.getElementById(`row-${index}`);
             const updatedData = {
                 q: row.querySelector('.col-q input').value,
                 r: row.querySelector('.col-r input').value,
-                m: row.querySelector('.col-m input').value
+                m: row.querySelector('.col-m input').value,
+                e: row.querySelector('.col-e textarea').value,
+                tip: row.querySelector('.col-tip textarea').value
             };
 
-            db.ref(`seasons/s01/001/${index}`).update(updatedData).then(() => {
-                alert("성공적으로 저장되었습니다!");
-            }).catch(err => {
-                alert("오류 발생: " + err.message);
-            });
+            db.ref(path).update(updatedData).then(() => {
+                alert("저장 성공!");
+                toggleEdit(index, false);
+            }).catch(err => alert("오류: " + err.message));
         }
 
         window.onload = loadData;
