@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>다혁 일본어 학습 - 통합 모드 (v1.4)</title>
+    <title>다혁 일본어 학습 - 실시간 모드 (v1.5)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700&family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,12 +19,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 10px; /* 상단 여백 축소 */
+            padding: 10px;
             margin: 0;
             color: var(--text);
         }
 
-        /* 1. 타이틀 영역 크기 절반으로 축소 및 상단 밀착 */
         h1 {
             font-size: 0.85rem;
             color: #888;
@@ -35,7 +34,6 @@
 
         .container { width: 100%; max-width: 400px; }
 
-        /* 카드 내부 여백 및 구조 최적화 */
         .card {
             background: white;
             border-radius: 16px;
@@ -48,7 +46,6 @@
             position: relative;
         }
 
-        /* 2. 한자 가독성 폰트 적용 및 간격 조정 */
         .question {
             font-family: 'Noto Sans JP', sans-serif;
             font-size: 2.4rem;
@@ -71,7 +68,6 @@
 
         .reading { font-size: 1.1rem; color: #666; font-weight: 600; margin-bottom: 4px; }
 
-        /* 3. 의미(m)와 분류(u) 통합 라인 */
         .info-line {
             display: flex;
             align-items: baseline;
@@ -101,7 +97,6 @@
             border-left: 3px solid #ffe58f;
         }
 
-        /* 네비게이션 및 버튼 */
         .nav-main { margin-top: 20px; display: flex; gap: 10px; }
         button {
             padding: 14px; border: none; border-radius: 10px;
@@ -124,7 +119,7 @@
 
     <div class="container">
         <div class="card">
-            <div id="question" class="question">...</div>
+            <div id="question" class="question">데이터를 불러오는 중...</div>
 
             <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
@@ -151,48 +146,56 @@
         <div class="status"><span id="current">0</span> / <span id="total">0</span></div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
+        // 1. 파이어베이스 설정 (다혁이의 japanese 프로젝트 설정)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxhDRXkY5Li5rXItmQpMhxEYRKsyZJHoo",
+            authDomain: "japanese-fd10c.firebaseapp.com",
+            projectId: "japanese-fd10c",
+            storageBucket: "japanese-fd10c.firebasestorage.app",
+            messagingSenderId: "636416095711",
+            appId: "1:636416095711:web:d9b5473a87f7dbd6c3c06a",
+            databaseURL: "https://japanese-fd10c-default-rtdb.asia-southeast1.firebasedatabase.app/" 
+        };
+
+        // 파이어베이스 초기화
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         let words = [];
         let currentIndex = 0;
         const urlParams = new URLSearchParams(window.location.search);
-        const dataId = urlParams.get('id') || '1';
+        
+        // URL 파라미터에서 시즌(s)과 세트(id) 가져오기
+        const seasonId = urlParams.get('s') || 's01';
+        const dataId = urlParams.get('id') || '001';
 
-        /*
-        async function loadData() {
-            try {
-                const seasonId = urlParams.get('s') || '01';
-                const response = await fetch(`./data/season${seasonId}/${dataId}.json`);
-                if (!response.ok) throw new Error('ERR');
-                words = await response.json();
-                init();
-            } catch (error) {
-                document.getElementById('question').innerText = "파일을 찾을 수 없음";
-            }
-        }
-        */
- 
-        async function loadData() {
-            const sId = urlParams.get('s') || 's01'; // 's01' 형태 확인
-            const dataId = urlParams.get('id') || '001';
-    
-            // 파이어베이스 경로 설정 (관리자와 동일하게)
-            const dbPath = `seasons/${sId}/${dataId}`;
-    
-            firebase.database().ref(dbPath).once('value').then((snapshot) => {
-                words = snapshot.val();
-                if (!words) {
-                    alert("데이터를 불러올 수 없습니다!");
+        // 2. 파이어베이스에서 데이터 실시간 로드
+        function loadData() {
+            const dbPath = `seasons/${seasonId}/${dataId}`;
+            
+            db.ref(dbPath).on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (!data) {
+                    document.getElementById('question').innerText = "데이터가 없습니다.";
                     return;
                 }
-                init(); // 기존 초기화 함수 실행
+                words = data;
+                init();
+            }, (error) => {
+                document.getElementById('question').innerText = "권한 에러!";
+                console.error(error);
             });
         }
 
-        
-
         function init() {
             document.getElementById('study-title').innerText = `SET ${dataId}`;
-            const savedIndex = localStorage.getItem(`study_idx_${dataId}`);
+            
+            // 로컬 스토리지에서 마지막 학습 위치 복구
+            const savedIndex = localStorage.getItem(`study_idx_${seasonId}_${dataId}`);
             const hash = window.location.hash.replace('#card', '');
 
             if (hash && !isNaN(hash)) currentIndex = parseInt(hash) - 1;
@@ -209,17 +212,15 @@
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
-
-            // 3. 괄호 형식으로 통합 표시
             document.getElementById('usage').innerText = word.u ? `(${word.u})` : "";
-
-            document.getElementById('example').innerText = word.e;
-            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${word.tip}`;
+            document.getElementById('example').innerText = word.e || "예문이 없습니다.";
+            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${word.tip || "준비된 팁이 없습니다."}`;
 
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
 
-            localStorage.setItem(`study_idx_${dataId}`, currentIndex);
+            // 위치 저장
+            localStorage.setItem(`study_idx_${seasonId}_${dataId}`, currentIndex);
             window.location.hash = `card${currentIndex + 1}`;
         }
 
@@ -232,6 +233,7 @@
         function prevCard() { if (currentIndex > 0) { currentIndex--; updateCard(); } }
         function goToFirst() { currentIndex = 0; updateCard(); }
 
+        // 페이지 로드 시 파이어베이스 통신 시작
         window.onload = loadData;
     </script>
 </body>
