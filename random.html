@@ -143,7 +143,9 @@
             document.getElementById('meaning').innerText = currentWord.m;
             document.getElementById('usage').innerText = currentWord.u ? `(${currentWord.u})` : "";
             document.getElementById('example').innerText = currentWord.e || "예문이 없습니다.";
-            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${currentWord.tip || "팁이 없습니다."}`;
+            
+            const tipContent = currentWord.tip ? currentWord.tip.replace(/\n/g, '<br>') : "팁이 없습니다.";
+            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${tipContent}`;
             
             document.getElementById('origin').innerText = `Source: [${currentWord.originSeason}-${currentWord.originSet}]`;
 
