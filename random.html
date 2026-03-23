@@ -3,28 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>일본어 - 무한 랜덤 모드 (v1.5)</title>
+    <title>다혁 일본어 - 무한 랜덤 모드 (v1.6)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700&family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1976d2; --bg: #f0f4f8; --text: #2d3436; --accent: #e67e22; }
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; color: var(--text); }
         h1 { font-size: 0.9rem; color: #546e7a; margin: 10px 0 20px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        
         .container { width: 100%; max-width: 400px; }
-        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; min-height: 400px; display: flex; flex-direction: column; position: relative; border: 1px solid rgba(25, 118, 210, 0.1); }
+        .card { 
+            background: white; border-radius: 20px; padding: 25px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; 
+            min-height: 420px; display: flex; flex-direction: column; 
+            position: relative; border: 1px solid rgba(25, 118, 210, 0.1); 
+            cursor: pointer;
+        }
+
         .question { font-family: 'Noto Sans JP', sans-serif; font-size: 2.6rem; font-weight: 700; color: var(--primary); margin: auto 0; word-break: break-all; line-height: 1.2; }
+        
         .answer { display: none; border-top: 1px solid #edf2f7; padding-top: 20px; text-align: left; animation: slideUp 0.3s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .reading { font-size: 1.15rem; color: #78909c; font-weight: 600; margin-bottom: 6px; }
         .info-line { display: flex; align-items: baseline; gap: 8px; margin-bottom: 15px; }
         .meaning { font-size: 1.3rem; font-weight: 700; color: #263238; }
         .usage-tag { font-size: 0.85rem; color: var(--accent); font-weight: 600; }
+        
         .example { font-size: 0.95rem; color: #455a64; line-height: 1.6; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 12px; white-space: pre-wrap; border-left: 4px solid #cbd5e1; }
         .tip-box { background: #fff9db; padding: 12px; border-radius: 10px; font-size: 0.85rem; color: #856404; border: 1px solid #ffeeba; }
+        
+        /* 🔥 출처 태그 스타일 */
+        .origin-tag { display: block; margin-top: 15px; font-size: 0.75rem; color: #b0bec5; font-weight: 500; text-align: right; letter-spacing: 0.5px; }
+
         .nav-main { margin-top: 25px; display: flex; gap: 12px; width: 100%; }
         button { padding: 16px; border: none; border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: 0.2s; flex: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-view { background: #cfd8dc; color: #455a64; }
         .btn-next { background: var(--primary); color: white; }
         button:active { transform: translateY(2px); box-shadow: none; }
+        
         .nav-sub { margin-top: 20px; }
         .nav-sub a { text-decoration: none; color: #90a4ae; font-size: 0.9rem; font-weight: 500; }
         .status { margin-top: 15px; font-size: 0.85rem; color: #b0bec5; font-weight: 600; }
@@ -34,7 +50,7 @@
     <h1 id="study-title">RANDOM MODE</h1>
 
     <div class="container">
-        <div class="card" onclick="toggleAnswer()">
+        <div class="card" id="main-card" onclick="toggleAnswer()">
             <div id="question" class="question">데이터 충전 중...</div>
             <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
@@ -44,6 +60,7 @@
                 </div>
                 <div id="example" class="example"></div>
                 <div id="tip" class="tip-box"></div>
+                <div id="origin" class="origin-tag"></div>
             </div>
         </div>
 
@@ -77,14 +94,12 @@
         const db = firebase.database();
 
         let allWords = [];
-        let currentWord = null;
         let solvedCount = 0;
 
         const urlParams = new URLSearchParams(window.location.search);
         let sParam = urlParams.get('s') || 's01';
         const seasonId = sParam.startsWith('s') ? sParam : 's' + sParam;
 
-        // 🔥 시즌 전체 데이터를 한 번에 긁어와서 섞기
         function loadSeasonData() {
             const dbPath = `seasons/${seasonId}`;
             
@@ -95,10 +110,19 @@
                     return;
                 }
 
-                // 모든 세트(001, 002...)의 단어들을 하나의 배열로 합침
                 allWords = [];
-                Object.values(seasonData).forEach(set => {
-                    if(Array.isArray(set)) allWords = allWords.concat(set);
+                // 🔥 데이터를 합칠 때 어떤 세트에서 왔는지 정보를 주입함
+                Object.keys(seasonData).forEach(setKey => {
+                    const setData = seasonData[setKey];
+                    if(Array.isArray(setData)) {
+                        setData.forEach(word => {
+                            allWords.push({
+                                ...word,
+                                originSeason: seasonId.toUpperCase(),
+                                originSet: setKey
+                            });
+                        });
+                    }
                 });
 
                 document.getElementById('study-title').innerText = `${seasonId.toUpperCase()} RANDOM`;
@@ -112,9 +136,8 @@
         function nextCard() {
             if (allWords.length === 0) return;
             
-            // 랜덤하게 하나 뽑기
             const randomIndex = Math.floor(Math.random() * allWords.length);
-            currentWord = allWords[randomIndex];
+            const currentWord = allWords[randomIndex];
 
             // 화면 업데이트
             document.getElementById('question').innerText = currentWord.q;
@@ -123,11 +146,13 @@
             document.getElementById('usage').innerText = currentWord.u ? `(${currentWord.u})` : "";
             document.getElementById('example').innerText = currentWord.e || "예문이 없습니다.";
             document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${currentWord.tip || "팁이 없습니다."}`;
+            
+            // 🔥 출처 업데이트 (정답 확인 시 보임)
+            document.getElementById('origin').innerText = `Source: [${currentWord.originSeason}-${currentWord.originSet}]`;
 
             document.getElementById('answer').style.display = 'none';
-            
             solvedCount++;
-            document.getElementById('count').innerText = solvedCount - 1; // 로딩 제외 카운트
+            document.getElementById('count').innerText = solvedCount - 1;
         }
 
         function toggleAnswer() {
