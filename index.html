@@ -6,56 +6,112 @@
     <title>다혁 일본어 학습 센터</title>
     <style>
         :root {
-            --s1-color: #4CAF50; --s1-bg: #f1f8e9;
-            --s2-color: #1976d2; --s2-bg: #e3f2fd;
-            --s3-color: #ef6c00; --s3-bg: #fff3e0;
-        }
-        body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: #f8f9fa;
-            display: flex; flex-direction: column; align-items: center;
-            padding: 20px; margin: 0;
-        }
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { font-size: 1.5rem; color: #333; margin: 0; }
-        header p { font-size: 0.9rem; color: #666; }
+    --bg-dark: #121212;       /* 전체 어두운 배경 */
+    --card-bg: #1e1e1e;       /* 각 시즌 박스 배경 (약간 밝은 검정) */
+    --border-color: #333;     /* 박스 외곽선 */
+    --text-main: #e0e0e0;     /* 메인 글자색 */
+    --s1-color: #4CAF50;      /* 시즌 1 포인트 컬러 */
+    --s2-color: #1976d2;      /* 시즌 2 포인트 컬러 */
+}
 
-        .season-section {
-            width: 100%; max-width: 450px;
-            margin-bottom: 25px; border-radius: 15px;
-            overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .season-title {
-            padding: 12px 15px; font-weight: bold; font-size: 1rem;
-            color: white; display: flex; justify-content: space-between; align-items: center;
-        }
-        .grid-container {
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            gap: 10px; padding: 15px;
-        }
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Pretendard', sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        /* 시즌별 스타일링 */
-        .season-01 { background-color: var(--s1-bg); }
-        .season-01 .season-title { background-color: var(--s1-color); }
-        .season-02 { background-color: var(--s2-bg); }
-        .season-02 .season-title { background-color: var(--s2-color); }
+/* 상단 타이틀 바 */
+.header-bar {
+    width: 100%;
+    max-width: 450px;
+    background: #252525;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .btn {
-            display: flex; justify-content: center; align-items: center;
-            height: 45px; color: white; text-decoration: none;
-            border-radius: 8px; font-weight: bold; font-size: 0.9rem;
-            transition: transform 0.1s, opacity 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .season-01 .btn { background-color: var(--s1-color); }
-        .season-02 .btn { background-color: var(--s2-color); }
+/* 시즌 박스 공통 */
+.season-section {
+    width: 100%;
+    max-width: 450px;
+    background-color: var(--card-bg); /* 배경보다 약간 밝게 */
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid var(--border-color); /* 외곽선 추가 */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); /* 그림자로 깊이감 */
+}
 
-        .btn:active { transform: scale(0.92); opacity: 0.8; }
-        
-        /* 랜덤 모드 전용 스타일 */
-        .random-master { background-color: #333 !important; }
-        .random-master .season-title { background-color: #222 !important; }
+/* 시즌 타이틀 영역 */
+.season-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.season-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 버튼 그리드 */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+/* 번호 버튼 스타일 */
+.btn-num {
+    aspect-ratio: 1 / 1;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.2s;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 시즌 1 색상 */
+.s1 .btn-num { background-color: #2e7d32; }
+.s1 .btn-num:hover { background-color: #4caf50; transform: translateY(-2px); }
+.s1 .season-title { color: #81c784; }
+
+/* 시즌 2 색상 */
+.s2 .btn-num { background-color: #1565c0; }
+.s2 .btn-num:hover { background-color: #1e88e5; transform: translateY(-2px); }
+.s2 .season-title { color: #64b5f6; }
+
+/* 하단 랜덤 버튼 등 */
+.btn-random {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
     </style>
 </head>
 <body>
