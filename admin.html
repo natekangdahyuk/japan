@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일본어 - 관리자 모드</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #2d3436; --accent: #e67e22; --bg: #f4f7f6; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.4rem; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; font-size: 0.9rem; }
+        th { background: #f8f9fa; color: #666; }
+        
+        .edit-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn-group { display: flex; gap: 5px; }
+        button { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
+        .btn-edit { background: #edf2f7; color: #4a5568; }
+        .btn-save { background: var(--accent); color: white; display: none; }
+        .btn-cancel { background: #e2e8f0; color: #4a5568; display: none; }
+        
+        .status-msg { margin-top: 15px; font-size: 0.85rem; color: #e67e22; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🇯🇵 데이터 관리자 (Season 01 / Set 001)</h1>
+        
+        <div id="status" class="status-msg">데이터를 불러오는 중...</div>
+
+        <table id="word-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">#</th>
+                    <th style="width: 20%">한자(Q)</th>
+                    <th style="width: 20%">읽기(R)</th>
+                    <th style="width: 35%">의미(M)</th>
+                    <th style="width: 20%">관리</th>
+                </tr>
+            </thead>
+            <tbody id="word-list"></tbody>
+        </table>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // 1. 아름 파이어베이스 Config 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxhDRXkY5Li5rXItmQpMhxEYRKsyZJHoo",
+            authDomain: "japanese-fd10c.firebaseapp.com",
+            projectId: "japanese-fd10c",
+            storageBucket: "japanese-fd10c.firebasestorage.app",
+            messagingSenderId: "636416095711",
+            appId: "1:636416095711:web:d9b5473a87f7dbd6c3c06a",
+            // 🔥 중요: Realtime Database 탭 상단 주소를 여기에 넣으세요!
+            databaseURL: "https://japanese-fd10c-default-rtdb.firebaseio.com/" 
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // 2. 데이터 로드 함수 (seasons/s01/001 경로 기준)
+        function loadData() {
+            db.ref('seasons/s01/001').on('value', (snapshot) => {
+                const words = snapshot.val();
+                const listBody = document.getElementById('word-list');
+                const status = document.getElementById('status');
+                listBody.innerHTML = "";
+
+                if (!words) {
+                    status.innerText = "데이터가 없습니다. JSON을 먼저 Import 하세요!";
+                    return;
+                }
+
+                status.innerText = "데이터 로드 완료 (실시간 연결 중)";
+                
+                words.forEach((word, index) => {
+                    const row = `
+                        <tr id="row-${index}">
+                            <td>${index + 1}</td>
+                            <td class="col-q"><span class="view">${word.q}</span><input type="text" class="edit-input edit" value="${word.q}" style="display:none;"></td>
+                            <td class="col-r"><span class="view">${word.r}</span><input type="text" class="edit-input edit" value="${word.r}" style="display:none;"></td>
+                            <td class="col-m"><span class="view">${word.m}</span><input type="text" class="edit-input edit" value="${word.m}" style="display:none;"></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn-edit view" onclick="toggleEdit(${index}, true)">수정</button>
+                                    <button class="btn-save edit" onclick="saveData(${index})" style="display:none;">저장</button>
+                                    <button class="btn-cancel edit" onclick="toggleEdit(${index}, false)" style="display:none;">취소</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    listBody.innerHTML += row;
+                });
+            });
+        }
+
+        // 3. 수정 모드 전환
+        function toggleEdit(index, isEdit) {
+            const row = document.getElementById(`row-${index}`);
+            row.querySelectorAll('.view').forEach(el => el.style.display = isEdit ? 'none' : 'inline');
+            row.querySelectorAll('.edit').forEach(el => el.style.display = isEdit ? 'inline' : 'none');
+        }
+
+        // 4. 데이터 저장 (Update)
+        function saveData(index) {
+            const row = document.getElementById(`row-${index}`);
+            const updatedData = {
+                q: row.querySelector('.col-q input').value,
+                r: row.querySelector('.col-r input').value,
+                m: row.querySelector('.col-m input').value
+            };
+
+            db.ref(`seasons/s01/001/${index}`).update(updatedData).then(() => {
+                alert("성공적으로 저장되었습니다!");
+            }).catch(err => {
+                alert("오류 발생: " + err.message);
+            });
+        }
+
+        window.onload = loadData;
+    </script>
+</body>
+</html>
