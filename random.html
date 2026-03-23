@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>다혁 일본어 - 무한 랜덤 모드 (v1.6)</title>
+    <title>다혁 일본어 - 무한 랜덤 모드 (v1.7)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700&family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1976d2; --bg: #f0f4f8; --text: #2d3436; --accent: #e67e22; }
@@ -16,7 +16,8 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; 
             min-height: 420px; display: flex; flex-direction: column; 
             position: relative; border: 1px solid rgba(25, 118, 210, 0.1); 
-            cursor: pointer;
+            /* 🔥 클릭 커서 제거 (이제 카드는 버튼이 아님) */
+            cursor: default; 
         }
 
         .question { font-family: 'Noto Sans JP', sans-serif; font-size: 2.6rem; font-weight: 700; color: var(--primary); margin: auto 0; word-break: break-all; line-height: 1.2; }
@@ -32,7 +33,6 @@
         .example { font-size: 0.95rem; color: #455a64; line-height: 1.6; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 12px; white-space: pre-wrap; border-left: 4px solid #cbd5e1; }
         .tip-box { background: #fff9db; padding: 12px; border-radius: 10px; font-size: 0.85rem; color: #856404; border: 1px solid #ffeeba; }
         
-        /* 🔥 출처 태그 스타일 */
         .origin-tag { display: block; margin-top: 15px; font-size: 0.75rem; color: #b0bec5; font-weight: 500; text-align: right; letter-spacing: 0.5px; }
 
         .nav-main { margin-top: 25px; display: flex; gap: 12px; width: 100%; }
@@ -50,7 +50,7 @@
     <h1 id="study-title">RANDOM MODE</h1>
 
     <div class="container">
-        <div class="card" id="main-card" onclick="toggleAnswer()">
+        <div class="card" id="main-card">
             <div id="question" class="question">데이터 충전 중...</div>
             <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
@@ -111,7 +111,6 @@
                 }
 
                 allWords = [];
-                // 🔥 데이터를 합칠 때 어떤 세트에서 왔는지 정보를 주입함
                 Object.keys(seasonData).forEach(setKey => {
                     const setData = seasonData[setKey];
                     if(Array.isArray(setData)) {
@@ -139,7 +138,6 @@
             const randomIndex = Math.floor(Math.random() * allWords.length);
             const currentWord = allWords[randomIndex];
 
-            // 화면 업데이트
             document.getElementById('question').innerText = currentWord.q;
             document.getElementById('reading').innerText = currentWord.r;
             document.getElementById('meaning').innerText = currentWord.m;
@@ -147,7 +145,6 @@
             document.getElementById('example').innerText = currentWord.e || "예문이 없습니다.";
             document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${currentWord.tip || "팁이 없습니다."}`;
             
-            // 🔥 출처 업데이트 (정답 확인 시 보임)
             document.getElementById('origin').innerText = `Source: [${currentWord.originSeason}-${currentWord.originSet}]`;
 
             document.getElementById('answer').style.display = 'none';
