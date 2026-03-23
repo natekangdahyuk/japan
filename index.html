@@ -3,172 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>다혁 일본어 학습 센터</title>
+    <title>다혁 일본어 학습 - 메인</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-    --bg-dark: #121212;       /* 전체 어두운 배경 */
-    --card-bg: #1e1e1e;       /* 각 시즌 박스 배경 (약간 밝은 검정) */
-    --border-color: #333;     /* 박스 외곽선 */
-    --text-main: #e0e0e0;     /* 메인 글자색 */
-    --s1-color: #4CAF50;      /* 시즌 1 포인트 컬러 */
-    --s2-color: #1976d2;      /* 시즌 2 포인트 컬러 */
-}
+            --bg-dark: #121212;       /* 전체 딥 블랙 배경 */
+            --card-bg: #1e1e1e;       /* 섹션 박스 배경 (약간 밝은 그레이) */
+            --border-color: #333333;  /* 박스 경계선 */
+            --text-main: #e0e0e0;     /* 기본 글자색 */
+            --text-muted: #888888;    /* 흐린 글자색 */
+            --s1-point: #4CAF50;      /* 시즌 1 포인트 (초록) */
+            --s2-point: #1976d2;      /* 시즌 2 포인트 (파랑) */
+        }
 
-body {
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    font-family: 'Pretendard', sans-serif;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-/* 상단 타이틀 바 */
-.header-bar {
-    width: 100%;
-    max-width: 450px;
-    background: #252525;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        /* 헤더 바 */
+        .header {
+            width: 100%;
+            max-width: 450px;
+            padding: 10px 0;
+            text-align: left;
+            margin-bottom: 20px;
+        }
 
-/* 시즌 박스 공통 */
-.season-section {
-    width: 100%;
-    max-width: 450px;
-    background-color: var(--card-bg); /* 배경보다 약간 밝게 */
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 25px;
-    border: 1px solid var(--border-color); /* 외곽선 추가 */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); /* 그림자로 깊이감 */
-}
+        .header h1 {
+            font-size: 1.2rem;
+            margin: 0;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
 
-/* 시즌 타이틀 영역 */
-.season-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #333;
-}
+        /* 시즌 섹션 공통 */
+        .season-section {
+            width: 100%;
+            max-width: 450px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color); /* 외곽선으로 경계 명확화 */
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* 그림자로 공중 부양 효과 */
+            box-sizing: border-box;
+        }
 
-.season-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+        .season-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
 
-/* 버튼 그리드 */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-}
+        .season-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
 
-/* 번호 버튼 스타일 */
-.btn-num {
-    aspect-ratio: 1 / 1;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: 0.2s;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .season-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
 
-/* 시즌 1 색상 */
-.s1 .btn-num { background-color: #2e7d32; }
-.s1 .btn-num:hover { background-color: #4caf50; transform: translateY(-2px); }
-.s1 .season-title { color: #81c784; }
+        /* 버튼 그리드 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-/* 시즌 2 색상 */
-.s2 .btn-num { background-color: #1565c0; }
-.s2 .btn-num:hover { background-color: #1e88e5; transform: translateY(-2px); }
-.s2 .season-title { color: #64b5f6; }
+        .btn-num {
+            aspect-ratio: 1 / 1;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.2s, background-color 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-/* 하단 랜덤 버튼 등 */
-.btn-random {
-    width: 100%;
-    padding: 15px;
-    border-radius: 10px;
-    border: none;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
+        .btn-num:active { transform: scale(0.9); }
+
+        /* 시즌 1 스타일 */
+        .s1 .season-title { color: var(--s1-point); }
+        .s1 .btn-num { background-color: #2e7d32; }
+        .s1 .btn-num:hover { background-color: var(--s1-point); }
+
+        /* 시즌 2 스타일 */
+        .s2 .season-title { color: var(--s2-point); }
+        .s2 .btn-num { background-color: #1565c0; }
+        .s2 .btn-num:hover { background-color: var(--s2-point); }
+
+        /* 랜덤 버튼 스타일 */
+        .btn-random {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            box-sizing: border-box;
+            transition: 0.2s;
+        }
+
+        .s1 .btn-random { background-color: #1b5e20; }
+        .s1 .btn-random:hover { background-color: #2e7d32; }
+
+        .s2 .btn-random { background-color: #0d47a1; }
+        .s2 .btn-random:hover { background-color: #1565c0; }
+
+        /* 하단 푸터 */
+        .footer {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
     </style>
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
 
-    <header>        
-        <p>시즌별 10개씩</p>
-    </header>
+    <div class="header">
+        <h1>🇯🇵 DA-HYUK JAPANESE</h1>
+    </div>
 
-    <section class="season-section random-master">
-        <div class="season-title">
-            <span>🔥 RANDOM MASTER (30Q)</span>
-            <span style="font-size: 0.7rem; opacity: 0.6;">시즌 전체 섞기</span>
+    <div class="season-section s1">
+        <div class="season-header">
+            <span class="season-title">SEASON 01</span>
+            <span class="season-desc">기초 다지기</span>
         </div>
-        <div style="display: flex; gap: 12px; padding: 15px;">
-            <a href="random.html?s=01" class="btn" style="background-color: var(--s1-color); flex: 1; height: 60px; flex-direction: column; gap: 4px;">
-                <span style="font-size: 0.7rem; opacity: 0.9;">SEASON 01</span>
-                무한 랜덤
-            </a>
-            <a href="random.html?s=02" class="btn" style="background-color: var(--s2-color); flex: 1; height: 60px; flex-direction: column; gap: 4px;">
-                <span style="font-size: 0.7rem; opacity: 0.9;">SEASON 02</span>
-                무한 랜덤
-            </a>
-        </div>
-    </section>
+        <div class="grid">
+            <a href="study.html?s=s01&id=001" class="btn-num">1</a>
+            <a href="study.html?s=s01&id=002" class="btn-num">2</a>
+            <a href="study.html?s=s01&id=003" class="btn-num">3</a>
+            <a href="study.html?s=s01&id=004" class="btn-num">4</a>
+            <a href="study.html?s=s01&id=005" class="btn-num">5</a>
+            <a href="study.html?s=s01&id=006" class="btn-num">6</a>
+            <a href="study.html?s=s01&id=007" class="btn-num">7</a>
+            <a href="study.html?s=s01&id=008" class="btn-num">8</a>
+            <a href="study.html?s=s01&id=011" class="btn-num">11</a>
+            </div>
+        <a href="random.html?s=s01" class="btn-random">시즌 1 무한 랜덤 학습</a>
+    </div>
 
-    <section class="season-section season-01">
-        <div class="season-title"><span>🌱 SEASON 01</span> <span>001 - 010</span></div>
-        <div class="grid-container">
-            <a href="study.html?s=s01&id=001" class="btn">1</a>
-            <a href="study.html?s=s01&id=002" class="btn">2</a>
-            <a href="study.html?s=s01&id=003" class="btn">3</a>
-            <a href="study.html?s=s01&id=004" class="btn">4</a>
-            <a href="study.html?s=s01&id=005" class="btn">5</a>
-            <a href="study.html?s=s01&id=006" class="btn">6</a>
-            <a href="study.html?s=s01&id=007" class="btn">7</a>
-            <a href="study.html?s=s01&id=008" class="btn">8</a>
-            <a href="study.html?s=s01&id=009" class="btn">9</a>
-            <a href="study.html?s=s01&id=010" class="btn">10</a>
+    <div class="season-section s2">
+        <div class="season-header">
+            <span class="season-title">SEASON 02</span>
+            <span class="season-desc">심화 표현</span>
         </div>
-    </section>
+        <div class="grid">
+            <a href="study.html?s=s02&id=001" class="btn-num">1</a>
+            <a href="study.html?s=s02&id=002" class="btn-num">2</a>
+            <a href="study.html?s=s02&id=003" class="btn-num">3</a>
+            <a href="study.html?s=s02&id=004" class="btn-num">4</a>
+            <a href="study.html?s=s02&id=005" class="btn-num">5</a>
+            </div>
+        <a href="random.html?s=s02" class="btn-random">시즌 2 무한 랜덤 학습</a>
+    </div>
 
-    <section class="season-section season-02">
-        <div class="season-title"><span>🔹 SEASON 02</span> <span>011 - 020</span></div>
-        <div class="grid-container">
-            <a href="study.html?s=s02&id=011" class="btn">11</a>
-            <a href="study.html?s=s02&id=012" class="btn">12</a>
-            <a href="study.html?s=s02&id=013" class="btn">13</a>
-            <a href="study.html?s=s02&id=014" class="btn">14</a>
-            <a href="study.html?s=s02&id=015" class="btn">15</a>
-            <a href="study.html?s=s02&id=016" class="btn">16</a>
-            <a href="study.html?s=s02&id=017" class="btn">17</a>
-            <a href="study.html?s=s02&id=018" class="btn">18</a>
-            <a href="study.html?s=s02&id=019" class="btn">19</a>
-            <a href="study.html?s=s02&id=020" class="btn">20</a>
-        </div>
-    </section>
+    <div class="footer">
+        © 2026 Dahyuk. Powered by Firebase.
+    </div>
 
 </body>
 </html>
