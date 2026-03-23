@@ -170,7 +170,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         
         // URL 파라미터에서 시즌(s)과 세트(id) 가져오기
-        const seasonId = urlParams.get('s') || 's01';
+        const seasonId = urlParams.get('s') || '01';
         const dataId = urlParams.get('id') || '001';
 
         // 2. 파이어베이스에서 데이터 실시간 로드
