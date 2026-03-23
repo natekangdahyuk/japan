@@ -217,7 +217,9 @@
             document.getElementById('meaning').innerText = word.m;
             document.getElementById('usage').innerText = word.u ? `(${word.u})` : "";
             document.getElementById('example').innerText = word.e || "예문이 없습니다.";
-            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${word.tip || "준비된 팁이 없습니다."}`;
+            
+            const tipContent = word.tip ? word.tip.replace(/\n/g, '<br>') : "준비된 팁이 없습니다.";
+            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${tipContent}`;
 
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
