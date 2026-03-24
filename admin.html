@@ -3,43 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>일본어 - 관리자 모드</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
+    <title>일본어 - 스마트 관리자 v1.4</title>    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
         :root { --primary: #2d3436; --accent: #e67e22; --bg: #f4f7f6; }
-        body { font-family: 'Pretendard', sans-serif; background: var(--bg); padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { font-size: 1.4rem; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); padding: 20px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; font-size: 0.9rem; }
+        .control-bar { display: flex; gap: 15px; align-items: center; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee; }
+        .control-bar select { padding: 8px; border-radius: 4px; border: 1px solid #ddd; font-family: inherit; min-width: 120px; }
+        
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; font-size: 0.85rem; vertical-align: top; }
         th { background: #f8f9fa; color: #666; }
         
-        .edit-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        .btn-group { display: flex; gap: 5px; }
-        button { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
-        .btn-edit { background: #edf2f7; color: #4a5568; }
-        .btn-save { background: var(--accent); color: white; display: none; }
-        .btn-cancel { background: #e2e8f0; color: #4a5568; display: none; }
+        /* 수정 모드 전용 스타일 */
+        .editing-row { background: #fff !important; }
+        .editing-row td { border: none !important; padding: 20px 0; }
+        .hidden-row { display: none !important; }
         
-        .status-msg { margin-top: 15px; font-size: 0.85rem; color: #e67e22; font-weight: bold; }
+        .edit-input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; transition: border-color 0.2s; }
+        .edit-input:focus { border-color: var(--accent); outline: none; }
+        .edit-area { width: 100%; min-height: 300px; resize: vertical; line-height: 1.6; } /* 높이 대폭 확장 */
+        
+        .btn-group { display: flex; flex-direction: column; gap: 8px; }
+        .editing-row .btn-group { flex-direction: row; justify-content: flex-end; padding-top: 20px; }
+        
+        button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
+        .btn-edit { background: #edf2f7; color: #4a5568; }
+        .btn-save { background: var(--accent); color: white; display: none; padding: 10px 25px; font-size: 0.9rem; }
+        .btn-cancel { background: #e2e8f0; color: #4a5568; display: none; padding: 10px 25px; font-size: 0.9rem; }
+        
+        .view-text { white-space: pre-wrap; word-break: break-all; color: #444; }
+        .status-msg { font-size: 0.85rem; color: #e67e22; font-weight: bold; }
+
+        /* 수정 화면 레이아웃 최적화 */
+        .edit-label { font-weight: bold; margin-bottom: 5px; color: var(--accent); display: block; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🇯🇵 데이터 관리자 (Season 01 / Set 001)</h1>
-        
-        <div id="status" class="status-msg">데이터를 불러오는 중...</div>
+        <div class="control-bar" id="control-bar">
+            <h1 style="font-size: 1.1rem; margin:0;">🇯🇵 스마트 관리 v1.4</h1>
+            
+            <select id="select-season" onchange="updateSetList()">
+                <option value="s01">Season 01</option>
+                <option value="s02">Season 02</option>
+                <option value="s03">Season 03</option>
+            </select>
+
+            <select id="select-set" onchange="loadData()">
+                <option value="">세트 선택</option>
+            </select>
+
+            <div id="status" class="status-msg">시즌을 선택하세요.</div>
+        </div>
 
         <table id="word-table">
-            <thead>
+            <thead id="table-head">
                 <tr>
-                    <th style="width: 5%">#</th>
-                    <th style="width: 20%">한자(Q)</th>
-                    <th style="width: 20%">읽기(R)</th>
-                    <th style="width: 35%">의미(M)</th>
-                    <th style="width: 20%">관리</th>
+                    <th style="width: 4%">#</th>
+                    <th style="width: 12%">한자/읽기</th>
+                    <th style="width: 15%">의미(M)</th>
+                    <th style="width: 25%">예문(E)</th>
+                    <th style="width: 34%">Tip</th>
+                    <th style="width: 10%">관리</th>
                 </tr>
             </thead>
             <tbody id="word-list"></tbody>
@@ -50,7 +79,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
-        // 1. 아름 파이어베이스 Config 설정
         const firebaseConfig = {
             apiKey: "AIzaSyCxhDRXkY5Li5rXItmQpMhxEYRKsyZJHoo",
             authDomain: "japanese-fd10c.firebaseapp.com",
@@ -58,73 +86,131 @@
             storageBucket: "japanese-fd10c.firebasestorage.app",
             messagingSenderId: "636416095711",
             appId: "1:636416095711:web:d9b5473a87f7dbd6c3c06a",
-            // 🔥 중요: Realtime Database 탭 상단 주소를 여기에 넣으세요!
-            databaseURL: "https://japanese-fd10c-default-rtdb.firebaseio.com/" 
+            databaseURL: "https://japanese-fd10c-default-rtdb.asia-southeast1.firebasedatabase.app/" 
         };
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // 2. 데이터 로드 함수 (seasons/s01/001 경로 기준)
+        function updateSetList() {
+            const sId = document.getElementById('select-season').value;
+            const setSelect = document.getElementById('select-set');
+            const status = document.getElementById('status');
+            status.innerText = "목록 확인 중...";
+            
+            db.ref("seasons/" + sId).once('value', (snapshot) => {
+                setSelect.innerHTML = '<option value="">세트 선택</option>';
+                const data = snapshot.val();
+                if (data) {
+                    Object.keys(data).sort().forEach(setKey => {
+                        const option = document.createElement('option');
+                        option.value = setKey;
+                        option.innerText = "Set " + setKey;
+                        setSelect.appendChild(option);
+                    });
+                    status.innerText = "세트를 선택해주세요.";
+                } else {
+                    status.innerText = "데이터가 없습니다.";
+                }
+            });
+        }
+
         function loadData() {
-            db.ref('seasons/s01/001').on('value', (snapshot) => {
+            const sId = document.getElementById('select-season').value;
+            const setId = document.getElementById('select-set').value;
+            if (!setId) return;
+
+            const path = "seasons/" + sId + "/" + setId;
+            db.ref(path).off();
+            db.ref(path).on('value', (snapshot) => {
                 const words = snapshot.val();
                 const listBody = document.getElementById('word-list');
-                const status = document.getElementById('status');
                 listBody.innerHTML = "";
+                if (!words) return;
 
-                if (!words) {
-                    status.innerText = "데이터가 없습니다. JSON을 먼저 Import 하세요!";
-                    return;
-                }
-
-                status.innerText = "데이터 로드 완료 (실시간 연결 중)";
-                
                 words.forEach((word, index) => {
-                    const row = `
-                        <tr id="row-${index}">
-                            <td>${index + 1}</td>
-                            <td class="col-q"><span class="view">${word.q}</span><input type="text" class="edit-input edit" value="${word.q}" style="display:none;"></td>
-                            <td class="col-r"><span class="view">${word.r}</span><input type="text" class="edit-input edit" value="${word.r}" style="display:none;"></td>
-                            <td class="col-m"><span class="view">${word.m}</span><input type="text" class="edit-input edit" value="${word.m}" style="display:none;"></td>
-                            <td>
-                                <div class="btn-group">
-                                    <button class="btn-edit view" onclick="toggleEdit(${index}, true)">수정</button>
-                                    <button class="btn-save edit" onclick="saveData(${index})" style="display:none;">저장</button>
-                                    <button class="btn-cancel edit" onclick="toggleEdit(${index}, false)" style="display:none;">취소</button>
-                                </div>
-                            </td>
-                        </tr>
+                    const row = document.createElement('tr');
+                    row.id = "row-" + index;
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td class="col-q">
+                            <span class="view">${word.q}</span>
+                            <div class="edit" style="display:none;"><label class="edit-label">한자(Q)</label><input type="text" class="edit-input" value="${word.q}"></div>
+                            <div class="col-r" style="margin-top:5px; color:#888;">
+                                <span class="view">${word.r}</span>
+                                <div class="edit" style="display:none; margin-top:10px;"><label class="edit-label">읽기(R)</label><input type="text" class="edit-input" value="${word.r}"></div>
+                            </div>
+                        </td>
+                        <td class="col-m">
+                            <span class="view view-text">${word.m}</span>
+                            <div class="edit" style="display:none;"><label class="edit-label">의미(M)</label><input type="text" class="edit-input" value="${word.m}"></div>
+                        </td>
+                        <td class="col-e">
+                            <span class="view view-text">${word.e || ''}</span>
+                            <div class="edit" style="display:none;"><label class="edit-label">예문(E)</label><textarea class="edit-input edit-area">${word.e || ''}</textarea></div>
+                        </td>
+                        <td class="col-tip">
+                            <span class="view view-text">${word.tip || ''}</span>
+                            <div class="edit" style="display:none;"><label class="edit-label">Tip (한자구성/설명)</label><textarea class="edit-input edit-area">${word.tip || ''}</textarea></div>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn-edit view" onclick="toggleEdit(${index}, true)">수정</button>
+                                <button class="btn-save edit" onclick="saveData(${index})" style="display:none;">저장하기</button>
+                                <button class="btn-cancel edit" onclick="toggleEdit(${index}, false)" style="display:none;">취소</button>
+                            </div>
+                        </td>
                     `;
-                    listBody.innerHTML += row;
+                    listBody.appendChild(row);
                 });
             });
         }
 
-        // 3. 수정 모드 전환
         function toggleEdit(index, isEdit) {
-            const row = document.getElementById(`row-${index}`);
-            row.querySelectorAll('.view').forEach(el => el.style.display = isEdit ? 'none' : 'inline');
-            row.querySelectorAll('.edit').forEach(el => el.style.display = isEdit ? 'inline' : 'none');
+            const allRows = document.querySelectorAll('#word-list tr');
+            const targetRow = document.getElementById("row-" + index);
+            const tableHead = document.getElementById('table-head');
+            const controlBar = document.getElementById('control-bar');
+
+            if (isEdit) {
+                allRows.forEach(row => row.classList.add('hidden-row'));
+                tableHead.classList.add('hidden-row');
+                targetRow.classList.remove('hidden-row');
+                targetRow.classList.add('editing-row');
+                
+                // 수정 모드 시 불필요한 번호 셀 등 숨기기 처리 가능
+                targetRow.querySelectorAll('.view').forEach(el => el.style.display = 'none');
+                targetRow.querySelectorAll('.edit').forEach(el => el.style.display = 'block');
+                window.scrollTo(0, 0);
+            } else {
+                allRows.forEach(row => row.classList.remove('hidden-row'));
+                tableHead.classList.remove('hidden-row');
+                targetRow.classList.remove('editing-row');
+                
+                targetRow.querySelectorAll('.view').forEach(el => el.style.display = 'block');
+                targetRow.querySelectorAll('.edit').forEach(el => el.style.display = 'none');
+            }
         }
 
-        // 4. 데이터 저장 (Update)
         function saveData(index) {
-            const row = document.getElementById(`row-${index}`);
+            const sId = document.getElementById('select-season').value;
+            const setId = document.getElementById('select-set').value;
+            const row = document.getElementById("row-" + index);
+            
             const updatedData = {
                 q: row.querySelector('.col-q input').value,
                 r: row.querySelector('.col-r input').value,
-                m: row.querySelector('.col-m input').value
+                m: row.querySelector('.col-m input').value,
+                e: row.querySelector('.col-e textarea').value,
+                tip: row.querySelector('.col-tip textarea').value
             };
 
-            db.ref(`seasons/s01/001/${index}`).update(updatedData).then(() => {
-                alert("성공적으로 저장되었습니다!");
-            }).catch(err => {
-                alert("오류 발생: " + err.message);
-            });
+            db.ref("seasons/" + sId + "/" + setId + "/" + index).update(updatedData).then(() => {
+                toggleEdit(index, false);
+            }).catch(err => alert("오류: " + err.message));
         }
 
-        window.onload = loadData;
+        window.onload = updateSetList;
     </script>
 </body>
 </html>

@@ -2,43 +2,57 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>다혁 일본어 - 시즌 랜덤 모드</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700&family=Pretendard:wght@400;600&display=swap" rel="stylesheet">
+    <title>다혁 일본어 - 무한 랜덤 모드 (v1.7)</title>    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <style>
-        :root { --primary: #e67e22; --bg: #f8f9fa; --text: #2d3436; --accent: #d35400; }
+        :root { --primary: #1976d2; --bg: #f0f4f8; --text: #2d3436; --accent: #e67e22; }
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 10px; margin: 0; color: var(--text); }
-        h1 { font-size: 0.85rem; color: #888; margin: 5px 0 15px 0; font-weight: 400; }
+        h1 { font-size: 0.9rem; color: #546e7a; margin: 10px 0 20px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        
         .container { width: 100%; max-width: 400px; }
-        .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; min-height: 380px; display: flex; flex-direction: column; position: relative; }
-        .question { font-family: 'Noto Sans JP', sans-serif; font-size: 2.4rem; font-weight: 700; color: var(--primary); margin: 20px 0; line-height: 1.2; }
-        .answer { display: none; border-top: 1px dashed #eee; padding-top: 15px; text-align: left; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .reading { font-size: 1.1rem; color: #666; font-weight: 600; margin-bottom: 4px; }
-        .info-line { display: flex; align-items: baseline; gap: 6px; margin-bottom: 15px; }
-        .meaning { font-size: 1.2rem; font-weight: 700; color: #111; }
-        .usage-tag { font-size: 0.85rem; color: var(--accent); font-weight: 500; }
-        .example { font-size: 0.95rem; color: #444; line-height: 1.6; background: #f1f3f5; padding: 12px; border-radius: 8px; margin-bottom: 12px; white-space: pre-wrap; }
-        .tip-box { background: #fffbe6; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #665c33; border-left: 3px solid #ffe58f; }
-        .nav-main { margin-top: 20px; display: flex; gap: 10px; }
-        button { padding: 14px; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; flex: 1; transition: 0.2s; }
-        .btn-view { background: #475569; color: white; }
+        .card { 
+            background: white; border-radius: 20px; padding: 25px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; 
+            min-height: 420px; display: flex; flex-direction: column; 
+            position: relative; border: 1px solid rgba(25, 118, 210, 0.1); 
+            /* 🔥 클릭 커서 제거 (이제 카드는 버튼이 아님) */
+            cursor: default; 
+        }
+
+        .question { font-family: 'Noto Sans JP', sans-serif; font-size: 2.6rem; font-weight: 700; color: var(--primary); margin: auto 0; word-break: break-all; line-height: 1.2; }
+        
+        .answer { display: none; border-top: 1px solid #edf2f7; padding-top: 20px; text-align: left; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .reading { font-size: 1.15rem; color: #78909c; font-weight: 600; margin-bottom: 6px; }
+        .info-line { display: flex; align-items: baseline; gap: 8px; margin-bottom: 15px; }
+        .meaning { font-size: 1.3rem; font-weight: 700; color: #263238; }
+        .usage-tag { font-size: 0.85rem; color: var(--accent); font-weight: 600; }
+        
+        .example { font-size: 0.95rem; color: #455a64; line-height: 1.6; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 12px; white-space: pre-wrap; border-left: 4px solid #cbd5e1; }
+        .tip-box { background: #fff9db; padding: 12px; border-radius: 10px; font-size: 0.85rem; color: #856404; border: 1px solid #ffeeba; white-space: pre-wrap; }
+        
+        .origin-tag { display: block; margin-top: 15px; font-size: 0.75rem; color: #b0bec5; font-weight: 500; text-align: right; letter-spacing: 0.5px; }
+
+        .nav-main { margin-top: 25px; display: flex; gap: 12px; width: 100%; }
+        button { padding: 16px; border: none; border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: 0.2s; flex: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-view { background: #cfd8dc; color: #455a64; }
         .btn-next { background: var(--primary); color: white; }
-        button:active { transform: scale(0.96); }
-        .nav-sub { margin-top: 15px; display: flex; gap: 20px; justify-content: center; }
-        .nav-sub a { text-decoration: none; color: #bbb; font-size: 0.85rem; cursor: pointer; }
-        .status { margin-top: 12px; font-size: 0.8rem; color: #ccc; text-align: center; }
-        .loading-msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #aaa; }
+        button:active { transform: translateY(2px); box-shadow: none; }
+        
+        .nav-sub { margin-top: 20px; }
+        .nav-sub a { text-decoration: none; color: #90a4ae; font-size: 0.9rem; font-weight: 500; }
+        .status { margin-top: 15px; font-size: 0.85rem; color: #b0bec5; font-weight: 600; }
     </style>
 </head>
 <body>
-    <h1 id="study-title">시즌 랜덤 모드 (30Q)</h1>
+    <h1 id="study-title">RANDOM MODE</h1>
 
     <div class="container">
-        <div class="card">
-            <div id="loading" class="loading-msg">시즌 데이터를 불러오는 중...</div>
-            <div id="question" class="question"></div>
-
+        <div class="card" id="main-card">
+            <div id="question" class="question">데이터 충전 중...</div>
             <div id="answer" class="answer">
                 <div id="reading" class="reading"></div>
                 <div class="info-line">
@@ -47,100 +61,103 @@
                 </div>
                 <div id="example" class="example"></div>
                 <div id="tip" class="tip-box"></div>
+                <div id="origin" class="origin-tag"></div>
             </div>
         </div>
 
         <div class="nav-main">
-            <button class="btn-view" onclick="toggleAnswer()">내용 보기</button>
-            <button class="btn-next" onclick="nextCard()">다음 카드</button>
+            <button class="btn-view" onclick="toggleAnswer()">정답 확인</button>
+            <button class="btn-next" onclick="nextCard()">다음 단어</button>
         </div>
 
         <div class="nav-sub">
-            <a onclick="location.reload()">새로 섞기</a>
-            <a href="index.html">목록으로</a>
+            <a href="index.html">← 목록으로 돌아가기</a>
         </div>
 
-        <div class="status"><span id="current">0</span> / <span id="total">0</span></div>
+        <div class="status">학습한 단어: <span id="count">0</span>개</div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxhDRXkY5Li5rXItmQpMhxEYRKsyZJHoo",
+            authDomain: "japanese-fd10c.firebaseapp.com",
+            projectId: "japanese-fd10c",
+            storageBucket: "japanese-fd10c.firebasestorage.app",
+            messagingSenderId: "636416095711",
+            appId: "1:636416095711:web:d9b5473a87f7dbd6c3c06a",
+            databaseURL: "https://japanese-fd10c-default-rtdb.asia-southeast1.firebasedatabase.app/" 
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         let allWords = [];
-        let currentIndex = 0;
+        let solvedCount = 0;
+
         const urlParams = new URLSearchParams(window.location.search);
-        const seasonId = urlParams.get('s') || '01';
+        let sParam = urlParams.get('s') || 's01';
+        const seasonId = sParam.startsWith('s') ? sParam : 's' + sParam;
 
-        async function loadSeasonData() {
-            // 시즌 시작 ID 계산 (s=01 -> 1, s=02 -> 11)
-            const startId = (parseInt(seasonId) - 1) * 10 + 1;
-            const promises = [];
+        function loadSeasonData() {
+            const dbPath = `seasons/${seasonId}`;
+            
+            db.ref(dbPath).once('value').then((snapshot) => {
+                const seasonData = snapshot.val();
+                if (!seasonData) {
+                    document.getElementById('question').innerText = "데이터가 없습니다.";
+                    return;
+                }
 
-            for (let i = 0; i < 10; i++) {
-                const id = String(startId + i).padStart(3, '0');
-                promises.push(
-                    fetch(`./data/season${seasonId}/${id}.json`)
-                    .then(res => res.ok ? res.json() : [])
-                    .catch(() => [])
-                );
-            }
+                allWords = [];
+                Object.keys(seasonData).forEach(setKey => {
+                    const setData = seasonData[setKey];
+                    if(Array.isArray(setData)) {
+                        setData.forEach(word => {
+                            allWords.push({
+                                ...word,
+                                originSeason: seasonId.toUpperCase(),
+                                originSet: setKey
+                            });
+                        });
+                    }
+                });
 
-            try {
-                const results = await Promise.all(promises);
-                let combinedWords = results.flat(); // 모든 JSON 데이터를 하나로 합침
-                
-                if (combinedWords.length === 0) throw new Error("데이터 없음");
-                
-                shuffle(combinedWords); // 전체 무작위 셔플
-                
-                // 🔥 섞인 데이터 중 앞의 30개만 추출 (다혁이의 요청사항)
-                allWords = combinedWords.slice(0, 30); 
-                
-                init();
-            } catch (error) {
-                document.getElementById('loading').innerText = "데이터를 불러오지 못했습니다.";
-            }
+                document.getElementById('study-title').innerText = `${seasonId.toUpperCase()} RANDOM`;
+                nextCard();
+            }).catch(err => {
+                document.getElementById('question').innerText = "연결 오류!";
+                console.error(err);
+            });
         }
 
-        // 피셔-예이츠 셔플 알고리즘
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
+        function nextCard() {
+            if (allWords.length === 0) return;
+            
+            const randomIndex = Math.floor(Math.random() * allWords.length);
+            const currentWord = allWords[randomIndex];
 
-        function init() {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('study-title').innerText = `SEASON ${seasonId} RANDOM (30문항)`;
-            document.getElementById('total').innerText = allWords.length;
-            updateCard();
-        }
-
-        function updateCard() {
-            const word = allWords[currentIndex];
-            document.getElementById('question').innerText = word.q;
-            document.getElementById('reading').innerText = word.r;
-            document.getElementById('meaning').innerText = word.m;
-            document.getElementById('usage').innerText = word.u ? `(${word.u})` : "";
-            document.getElementById('example').innerText = word.e;
-            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${word.tip}`;
+            document.getElementById('question').innerText = currentWord.q;
+            document.getElementById('reading').innerText = currentWord.r;
+            document.getElementById('meaning').innerText = currentWord.m;
+            document.getElementById('usage').innerText = currentWord.u ? `(${currentWord.u})` : "";
+            document.getElementById('example').innerText = currentWord.e || "예문이 없습니다.";
+            
+            const tipContent = currentWord.tip ? currentWord.tip.replace(/\n/g, '<br>') : "팁이 없습니다.";
+            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${tipContent}`;
+            
+            document.getElementById('origin').innerText = `Source: [${currentWord.originSeason}-${currentWord.originSet}]`;
 
             document.getElementById('answer').style.display = 'none';
-            document.getElementById('current').innerText = currentIndex + 1;
+            solvedCount++;
+            document.getElementById('count').innerText = solvedCount - 1;
         }
 
         function toggleAnswer() {
             const ans = document.getElementById('answer');
             ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
-        }
-
-        function nextCard() {
-            if (currentIndex < allWords.length - 1) {
-                currentIndex++;
-                updateCard();
-            } else {
-                alert("축하합니다! 시즌 30문항 랜덤 학습을 완료했습니다.");
-                location.reload(); // 다시 섞기
-            }
         }
 
         window.onload = loadSeasonData;
