@@ -1,14 +1,14 @@
 /**
- * 가져오기: Firebase Realtime DB → 로컬
+ * fb_to_dev — 주체: Firebase(클라우드) → 내 PC(로컬)
  *
  *   RTDB seasons/sXX/NNN  →  data/seasons/sXX/NNN.json
  *
- * npm run export-data
+ * 실행: npm run fb-to-dev
  *
- * - 키 정렬 후 저장, 내용 동일 시 덮어쓰기 생략 (Git diff 최소화)
- * - 시즌 키는 s01 형태로 정규화 (import·git 페이지와 동일)
+ * - 키 정렬 후 저장, 내용 동일 시 파일 덮어쓰기 생략
+ * - 시즌 키는 s01 형태로 정규화
  *
- * 인증: rtdb-sync-shared.mjs 참고
+ * 공통: rtdb-sync-shared.mjs
  */
 
 import admin from 'firebase-admin';
@@ -19,17 +19,8 @@ import {
   DATABASE_URL,
   resolveServiceAccountPath,
   normalizeSeasonKey,
+  sortKeysDeep,
 } from './rtdb-sync-shared.mjs';
-
-function sortKeysDeep(v) {
-  if (v === null || typeof v !== 'object') return v;
-  if (Array.isArray(v)) return v.map(sortKeysDeep);
-  const out = {};
-  for (const k of Object.keys(v).sort()) {
-    out[k] = sortKeysDeep(v[k]);
-  }
-  return out;
-}
 
 function formatJsonStable(data) {
   return JSON.stringify(sortKeysDeep(data), null, 2) + '\n';
@@ -49,6 +40,8 @@ function writeIfChanged(filePath, newContent) {
 }
 
 function main() {
+  console.log('fb_to_dev — Firebase → 이 PC (data/seasons/...)');
+
   const credPath = resolveServiceAccountPath();
   const serviceAccount = JSON.parse(readFileSync(credPath, 'utf8'));
 
@@ -107,7 +100,7 @@ function main() {
       }
 
       console.log(
-        '완료: 갱신 ' +
+        '완료 [fb_to_dev]: 갱신 ' +
           updated +
           '개, 동일 건너뜀 ' +
           skipped +
@@ -115,9 +108,13 @@ function main() {
           (ignoredSeason ? ', 무시된 시즌키 ' + ignoredSeason + '개' : '')
       );
     })
-    .then(() => process.exit(0))
-    .catch((err) => {
+    .then(async () => {
+      if (admin.apps.length) await admin.app().delete().catch(() => {});
+      process.exit(0);
+    })
+    .catch(async (err) => {
       console.error(err);
+      if (admin.apps.length) await admin.app().delete().catch(() => {});
       process.exit(1);
     });
 }
