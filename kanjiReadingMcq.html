@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한자 음독 객관식 (CC4J4)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&family=Noto+Sans+KR:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f7f6;
+      --card: #fff;
+      --text: #2d3436;
+      --muted: #636e72;
+      --accent: #e67e22;
+      --ok: #27ae60;
+      --bad: #c0392b;
+      --line: #dfe6e9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: 'Noto Sans KR', 'BIZ UDGothic', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap { max-width: 560px; margin: 0 auto; }
+    h1 { font-size: 1.05rem; font-weight: 700; margin: 0 0 4px; }
+    .sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+
+    .panel {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      border: 1px solid var(--line);
+    }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+    .row:last-child { margin-bottom: 0; }
+    label.lbl { font-size: 0.8rem; color: var(--muted); min-width: 4.5rem; }
+    select, button {
+      font: inherit;
+      font-size: 0.85rem;
+    }
+    select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      background: #edf2f7;
+      color: #4a5568;
+    }
+    button.primary { background: var(--accent); color: #fff; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+
+    .progress { font-size: 0.8rem; color: var(--muted); margin-left: auto; }
+
+    .stats-bar {
+      display: none;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .stats-bar.show { display: flex; }
+    .stats-bar strong { color: var(--text); font-weight: 700; }
+    .stats-bar .rate-ok strong { color: var(--ok); }
+    .stats-bar .rate-bad strong { color: var(--bad); }
+
+    .common-q {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed var(--line);
+    }
+    .sentence {
+      font-family: 'BIZ UDGothic', 'Noto Sans KR', sans-serif;
+      font-size: 1.15rem;
+      line-height: 1.65;
+      margin-bottom: 16px;
+      word-break: break-word;
+    }
+    .sentence .ul {
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+      font-weight: 700;
+      color: #0984e3;
+    }
+    .choices { display: flex; flex-direction: column; gap: 8px; }
+    .choice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 2px solid var(--line);
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+    .choice:hover { border-color: #b2bec3; }
+    .choice input { accent-color: var(--accent); }
+    .choice.correct { border-color: var(--ok); background: #e8f8ef; }
+    .choice.wrong-pick { border-color: var(--bad); background: #fdeaea; }
+
+    .feedback { margin-top: 14px; display: none; }
+    .feedback.show { display: block; }
+    .fb-ok { color: var(--ok); font-weight: 700; }
+    .fb-bad { color: var(--bad); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>한자 · 음독 객관식</h1>
+    <p class="sub">CC4J4 문제 세트</p>
+
+    <div class="panel">
+      <div class="row">
+        <span class="lbl">문제 세트</span>
+        <select id="quiz-set">
+          <option value="">선택…</option>
+          <option value="data/CC4J4/cc4j4_001.json" selected>cc4j4_001.json</option>
+          <option value="data/CC4J4/cc4j4_022.json">cc4j4_022.json</option>
+        </select>
+        <span class="progress" id="progress-text"></span>
+      </div>
+      <div class="stats-bar" id="stats-bar">
+        <span>정답 <strong id="stat-ok">0</strong></span>
+        <span>오답 <strong id="stat-ng">0</strong></span>
+        <span class="rate-ok">정답률 <strong id="rate-ok">0%</strong></span>
+        <span class="rate-bad">오답률 <strong id="rate-ng">0%</strong></span>
+      </div>
+    </div>
+
+    <div class="panel" id="quiz-panel" style="display:none;">
+      <div class="common-q" id="common-q"></div>
+      <div class="sentence" id="sentence"></div>
+      <div class="choices" id="choices"></div>
+      <div class="row" style="margin-top:14px;">
+        <button type="button" class="primary" id="btn-check">채점</button>
+        <button type="button" id="btn-next" disabled>다음</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <p class="sub" id="empty-msg" style="text-align:center;padding:24px;">문제 세트를 선택하세요.</p>
+  </div>
+
+  <script>
+    /** @type {{ common_question?: string, quiz_list: object[] }} */
+    let data = null;
+    let pool = [];
+    let poolPos = 0;
+    let current = null;
+    let answered = false;
+    let correctCount = 0;
+    let wrongCount = 0;
+
+    function esc(s) {
+      return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function underlineHTML(qText, ul) {
+      const q = String(qText ?? '');
+      const u = String(ul ?? '');
+      const i = q.indexOf(u);
+      if (i === -1) {
+        return esc(q) + (u ? ' <span class="ul">' + esc(u) + '</span>' : '');
+      }
+      return esc(q.slice(0, i)) + '<span class="ul">' + esc(u) + '</span>' + esc(q.slice(i + u.length));
+    }
+
+    function updateProgressText() {
+      const el = document.getElementById('progress-text');
+      if (!data || !pool.length) {
+        el.textContent = '';
+        return;
+      }
+      el.textContent = poolPos < pool.length ? poolPos + 1 + ' / ' + pool.length : '';
+    }
+
+    function resetStats() {
+      correctCount = 0;
+      wrongCount = 0;
+      updateStatsBar();
+    }
+
+    function updateStatsBar() {
+      const bar = document.getElementById('stats-bar');
+      const total = correctCount + wrongCount;
+      document.getElementById('stat-ok').textContent = String(correctCount);
+      document.getElementById('stat-ng').textContent = String(wrongCount);
+      if (total === 0) {
+        document.getElementById('rate-ok').textContent = '—';
+        document.getElementById('rate-ng').textContent = '—';
+      } else {
+        const okPct = (correctCount / total) * 100;
+        const ngPct = (wrongCount / total) * 100;
+        document.getElementById('rate-ok').textContent = okPct.toFixed(1) + '%';
+        document.getElementById('rate-ng').textContent = ngPct.toFixed(1) + '%';
+      }
+      if (data) {
+        bar.classList.add('show');
+      } else {
+        bar.classList.remove('show');
+      }
+    }
+
+    function buildPool() {
+      if (!data) return;
+      const list = data.quiz_list.map((item, idx) => ({ item, idx }));
+      pool = list;
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      poolPos = 0;
+    }
+
+    function applyData(json) {
+      if (!json || !Array.isArray(json.quiz_list)) {
+        alert('quiz_list 배열이 있는 JSON이 필요합니다.');
+        return;
+      }
+      data = json;
+      resetStats();
+      document.getElementById('empty-msg').style.display = 'none';
+      document.getElementById('quiz-panel').style.display = 'block';
+      buildPool();
+      showQuestion();
+    }
+
+    function showQuestion() {
+      answered = false;
+      const fb = document.getElementById('feedback');
+      fb.classList.remove('show');
+      fb.innerHTML = '';
+      document.getElementById('btn-check').disabled = false;
+      document.getElementById('btn-next').disabled = true;
+
+      if (!pool.length || poolPos >= pool.length) {
+        document.getElementById('common-q').textContent = data.common_question || '';
+        document.getElementById('sentence').innerHTML =
+          '<p style="color:var(--muted);">문제가 없습니다.</p>';
+        document.getElementById('choices').innerHTML = '';
+        document.getElementById('btn-check').disabled = true;
+        document.getElementById('btn-next').disabled = true;
+        updateProgressText();
+        return;
+      }
+
+      const { item } = pool[poolPos];
+      current = item;
+      document.getElementById('common-q').textContent = data.common_question || '';
+      document.getElementById('sentence').innerHTML = underlineHTML(item.q_text, item.underline);
+
+      const labels = ['a1', 'a2', 'a3', 'a4'];
+      document.getElementById('choices').innerHTML = labels.map((key, i) => {
+        const text = item[key] ?? '';
+        return (
+          '<label class="choice" data-i="' + (i + 1) + '">' +
+          '<input type="radio" name="mcq" value="' + (i + 1) + '" />' +
+          '<span>' + (i + 1) + '. ' + esc(text) + '</span></label>'
+        );
+      }).join('');
+
+      updateProgressText();
+      updateStatsBar();
+    }
+
+    function onCheck() {
+      if (answered || !current) return;
+      const picked = document.querySelector('input[name="mcq"]:checked');
+      if (!picked) {
+        alert('보기를 선택하세요.');
+        return;
+      }
+      answered = true;
+      const pick = Number(picked.value, 10);
+      const ans = Number(current.answer, 10);
+      const ok = pick === ans;
+      if (ok) correctCount++;
+      else wrongCount++;
+      updateStatsBar();
+
+      document.querySelectorAll('.choice').forEach((el) => {
+        const i = Number(el.dataset.i, 10);
+        if (i === ans) el.classList.add('correct');
+        if (i === pick && !ok) el.classList.add('wrong-pick');
+      });
+
+      const fb = document.getElementById('feedback');
+      fb.innerHTML = ok
+        ? '<div class="fb-ok">정답입니다.</div>'
+        : '<div class="fb-bad">오답입니다. (정답: ' + ans + '번)</div>';
+      fb.classList.add('show');
+      document.getElementById('btn-check').disabled = true;
+      document.getElementById('btn-next').disabled = false;
+    }
+
+    function onNext() {
+      poolPos++;
+      if (poolPos >= pool.length) {
+        buildPool();
+      }
+      showQuestion();
+    }
+
+    function loadSelectedQuiz() {
+      const path = document.getElementById('quiz-set').value;
+      if (!path) {
+        data = null;
+        pool = [];
+        poolPos = 0;
+        resetStats();
+        document.getElementById('stats-bar').classList.remove('show');
+        document.getElementById('quiz-panel').style.display = 'none';
+        document.getElementById('empty-msg').style.display = 'block';
+        document.getElementById('progress-text').textContent = '';
+        return;
+      }
+      fetch(path)
+        .then((r) => {
+          if (!r.ok) throw new Error(String(r.status));
+          return r.json();
+        })
+        .then(applyData)
+        .catch(() => alert('불러오기에 실패했습니다.'));
+    }
+
+    document.getElementById('quiz-set').addEventListener('change', loadSelectedQuiz);
+    document.addEventListener('DOMContentLoaded', loadSelectedQuiz);
+    document.getElementById('btn-check').addEventListener('click', onCheck);
+    document.getElementById('btn-next').addEventListener('click', onNext);
+  </script>
+</body>
+</html>
