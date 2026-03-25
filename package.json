@@ -1,0 +1,11 @@
+{
+  "name": "study",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "export-data": "node scripts/export-rtdb-to-data.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}
