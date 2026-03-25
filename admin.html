@@ -10,33 +10,76 @@
     <style>
         :root { --primary: #2d3436; --accent: #e67e22; --bg: #f4f7f6; }
         body { font-family: 'BIZ UDGothic', sans-serif; background: var(--bg); padding: 20px; margin: 0; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow-x: auto; box-sizing: border-box; }
         
         .control-bar { display: flex; gap: 15px; align-items: center; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee; }
         .control-bar select { padding: 8px; border-radius: 4px; border: 1px solid #ddd; font-family: inherit; min-width: 120px; }
         
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        table { width: 100%; max-width: 100%; border-collapse: collapse; table-layout: fixed; }
         th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; font-size: 0.85rem; vertical-align: top; }
+        #word-list td[colspan="6"] { width: 100%; max-width: 100%; box-sizing: border-box; }
         th { background: #f8f9fa; color: #666; }
         
         /* 수정 모드 전용 스타일 */
         .editing-row { background: #fff !important; }
-        .editing-row td { border: none !important; padding: 20px 0; }
+        .editing-row td { border: none !important; padding: 12px 0 !important; }
         .hidden-row { display: none !important; }
         
         .edit-input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 0.9rem; transition: border-color 0.2s; }
         .edit-input:focus { border-color: var(--accent); outline: none; }
-        .edit-area { width: 100%; min-height: 300px; resize: vertical; line-height: 1.6; } /* 높이 대폭 확장 */
+        .edit-line { min-height: 176px; resize: vertical; line-height: 1.55; }
+
+        /* minmax(0,…) + 자식 min-width:0 로 긴 Tip 이 관리 열을 밀어내지 않게 함 */
+        .word-row-view {
+            display: grid;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            grid-template-columns:
+                2rem
+                minmax(0, 1fr)
+                minmax(0, 1fr)
+                minmax(0, 1.35fr)
+                minmax(0, 1.6fr)
+                5.25rem;
+            gap: 8px 10px;
+            align-items: start;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .word-row-view > * {
+            min-width: 0;
+        }
+        .word-row-view > div:last-child {
+            min-width: 5.25rem;
+        }
+        .word-row-edit { padding: 8px 0 16px; }
+        .edit-top-line {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+        @media (max-width: 900px) {
+            .edit-top-line { grid-template-columns: 1fr; }
+            .word-row-view { grid-template-columns: 1fr; }
+        }
+        .edit-field .edit-label { margin-bottom: 6px; }
         
         .btn-group { display: flex; flex-direction: column; gap: 8px; }
-        .editing-row .btn-group { flex-direction: row; justify-content: flex-end; padding-top: 20px; }
+        .word-row-edit .btn-group { gap: 10px; }
         
         button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
         .btn-edit { background: #edf2f7; color: #4a5568; }
-        .btn-save { background: var(--accent); color: white; display: none; padding: 10px 25px; font-size: 0.9rem; }
-        .btn-cancel { background: #e2e8f0; color: #4a5568; display: none; padding: 10px 25px; font-size: 0.9rem; }
+        .btn-save { background: var(--accent); color: white; padding: 10px 25px; font-size: 0.9rem; }
+        .btn-cancel { background: #e2e8f0; color: #4a5568; padding: 10px 25px; font-size: 0.9rem; }
         
-        .view-text { white-space: pre-wrap; word-break: break-all; color: #444; }
+        .view-text {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            color: #444;
+        }
         .status-msg { font-size: 0.85rem; color: #e67e22; font-weight: bold; }
 
         /* 수정 화면 레이아웃 최적화 */
@@ -130,36 +173,70 @@
                 listBody.innerHTML = "";
                 if (!words) return;
 
+                function escAttr(s) {
+                    return String(s ?? '')
+                        .replace(/&/g, '&amp;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/</g, '&lt;');
+                }
+                function escTextarea(s) {
+                    return String(s ?? '')
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;');
+                }
+
                 words.forEach((word, index) => {
                     const row = document.createElement('tr');
                     row.id = "row-" + index;
+                    const q = escAttr(word.q);
+                    const r = escAttr(word.r);
+                    const m = escAttr(word.m);
+                    const e = escTextarea(word.e || '');
+                    const tip = escTextarea(word.tip || '');
                     row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td class="col-q">
-                            <span class="view">${word.q}</span>
-                            <div class="edit" style="display:none;"><label class="edit-label">한자(Q)</label><input type="text" class="edit-input" value="${word.q}"></div>
-                            <div class="col-r" style="margin-top:5px; color:#888;">
-                                <span class="view">${word.r}</span>
-                                <div class="edit" style="display:none; margin-top:10px;"><label class="edit-label">읽기(R)</label><input type="text" class="edit-input" value="${word.r}"></div>
+                        <td colspan="6" style="padding: 0; vertical-align: top;">
+                            <div class="mode-view word-row-view">
+                                <div>${index + 1}</div>
+                                <div class="col-q-view">
+                                    <div class="view-text">${escTextarea(word.q)}</div>
+                                    <div class="view-text" style="margin-top:4px;color:#888;">${escTextarea(word.r)}</div>
+                                </div>
+                                <div class="view-text">${escTextarea(word.m)}</div>
+                                <div class="view-text">${escTextarea(word.e || '')}</div>
+                                <div class="view-text">${escTextarea(word.tip || '')}</div>
+                                <div>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn-edit" onclick="toggleEdit(${index}, true)">수정</button>
+                                    </div>
+                                </div>
                             </div>
-                        </td>
-                        <td class="col-m">
-                            <span class="view view-text">${word.m}</span>
-                            <div class="edit" style="display:none;"><label class="edit-label">의미(M)</label><input type="text" class="edit-input" value="${word.m}"></div>
-                        </td>
-                        <td class="col-e">
-                            <span class="view view-text">${word.e || ''}</span>
-                            <div class="edit" style="display:none;"><label class="edit-label">예문(E)</label><textarea class="edit-input edit-area">${word.e || ''}</textarea></div>
-                        </td>
-                        <td class="col-tip">
-                            <span class="view view-text">${word.tip || ''}</span>
-                            <div class="edit" style="display:none;"><label class="edit-label">Tip (한자구성/설명)</label><textarea class="edit-input edit-area">${word.tip || ''}</textarea></div>
-                        </td>
-                        <td>
-                            <div class="btn-group">
-                                <button class="btn-edit view" onclick="toggleEdit(${index}, true)">수정</button>
-                                <button class="btn-save edit" onclick="saveData(${index})" style="display:none;">저장하기</button>
-                                <button class="btn-cancel edit" onclick="toggleEdit(${index}, false)" style="display:none;">취소</button>
+                            <div class="mode-edit word-row-edit" style="display:none;">
+                                <div class="edit-top-line">
+                                    <div class="edit-field">
+                                        <label class="edit-label">한자 (Q)</label>
+                                        <input type="text" class="edit-input edit-q" value="${q}">
+                                    </div>
+                                    <div class="edit-field">
+                                        <label class="edit-label">의미 (M)</label>
+                                        <input type="text" class="edit-input edit-m" value="${m}">
+                                    </div>
+                                    <div class="edit-field">
+                                        <label class="edit-label">읽기 (R)</label>
+                                        <input type="text" class="edit-input edit-r" value="${r}">
+                                    </div>
+                                </div>
+                                <div class="edit-field" style="margin-bottom:14px;">
+                                    <label class="edit-label">예문 (E)</label>
+                                    <textarea class="edit-input edit-line edit-e">${e}</textarea>
+                                </div>
+                                <div class="edit-field" style="margin-bottom:14px;">
+                                    <label class="edit-label">TIP</label>
+                                    <textarea class="edit-input edit-line edit-tip">${tip}</textarea>
+                                </div>
+                                <div class="btn-group" style="flex-direction: row; justify-content: flex-end;">
+                                    <button type="button" class="btn-save" onclick="saveData(${index})">저장하기</button>
+                                    <button type="button" class="btn-cancel" onclick="toggleEdit(${index}, false)">취소</button>
+                                </div>
                             </div>
                         </td>
                     `;
@@ -179,18 +256,19 @@
                 tableHead.classList.add('hidden-row');
                 targetRow.classList.remove('hidden-row');
                 targetRow.classList.add('editing-row');
-                
-                // 수정 모드 시 불필요한 번호 셀 등 숨기기 처리 가능
-                targetRow.querySelectorAll('.view').forEach(el => el.style.display = 'none');
-                targetRow.querySelectorAll('.edit').forEach(el => el.style.display = 'block');
+                const mv = targetRow.querySelector('.mode-view');
+                const me = targetRow.querySelector('.mode-edit');
+                if (mv) mv.style.display = 'none';
+                if (me) me.style.display = 'block';
                 window.scrollTo(0, 0);
             } else {
                 allRows.forEach(row => row.classList.remove('hidden-row'));
                 tableHead.classList.remove('hidden-row');
                 targetRow.classList.remove('editing-row');
-                
-                targetRow.querySelectorAll('.view').forEach(el => el.style.display = 'block');
-                targetRow.querySelectorAll('.edit').forEach(el => el.style.display = 'none');
+                const mv = targetRow.querySelector('.mode-view');
+                const me = targetRow.querySelector('.mode-edit');
+                if (mv) mv.style.display = 'grid';
+                if (me) me.style.display = 'none';
             }
         }
 
@@ -200,11 +278,11 @@
             const row = document.getElementById("row-" + index);
             
             const updatedData = {
-                q: row.querySelector('.col-q input').value,
-                r: row.querySelector('.col-r input').value,
-                m: row.querySelector('.col-m input').value,
-                e: row.querySelector('.col-e textarea').value,
-                tip: row.querySelector('.col-tip textarea').value
+                q: row.querySelector('.edit-q').value,
+                r: row.querySelector('.edit-r').value,
+                m: row.querySelector('.edit-m').value,
+                e: row.querySelector('.edit-e').value,
+                tip: row.querySelector('.edit-tip').value
             };
 
             db.ref("seasons/" + sId + "/" + setId + "/" + index).update(updatedData).then(() => {
