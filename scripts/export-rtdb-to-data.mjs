@@ -10,6 +10,7 @@
  *    - 또는 secrets\ 안의 *-firebase-adminsdk-*.json (콘솔에서 받은 기본 이름 그대로 가능)
  * 3) 프로젝트 루트에서: npm install
  * 4) 수동 실행: npm run export-data
+ *    - 객체 키를 정렬해 항상 같은 문자열로 저장하고, 내용이 이전과 같으면 파일을 덮어쓰지 않음 → Git 에는 진짜 변경만 잡힘
  * 5) 작업 스케줄러: 프로그램 "cmd.exe", 인수 /c "cd /d d:\@Dev\study && npm run export-data"
  *    시작 위치: d:\@Dev\study
  *    (또는 GOOGLE_APPLICATION_CREDENTIALS 를 시스템 환경 변수로 등록)
@@ -57,6 +58,34 @@ function seasonKeyToFolder(seasonKey) {
   return 'season' + num;
 }
 
+/** RTDB 객체 키 순서와 무관하게 동일한 JSON 문자열이 나오도록 */
+function sortKeysDeep(v) {
+  if (v === null || typeof v !== 'object') return v;
+  if (Array.isArray(v)) return v.map(sortKeysDeep);
+  const out = {};
+  for (const k of Object.keys(v).sort()) {
+    out[k] = sortKeysDeep(v[k]);
+  }
+  return out;
+}
+
+function formatJsonStable(data) {
+  return JSON.stringify(sortKeysDeep(data), null, 2) + '\n';
+}
+
+function normalizeEol(s) {
+  return s.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+}
+
+function writeIfChanged(filePath, newContent) {
+  if (existsSync(filePath)) {
+    const prev = normalizeEol(readFileSync(filePath, 'utf8'));
+    if (prev === newContent) return false;
+  }
+  writeFileSync(filePath, newContent, 'utf8');
+  return true;
+}
+
 function main() {
   const credPath = resolveServiceAccountPath();
   const serviceAccount = JSON.parse(readFileSync(credPath, 'utf8'));
@@ -81,7 +110,8 @@ function main() {
         return;
       }
 
-      let fileCount = 0;
+      let updated = 0;
+      let skipped = 0;
       for (const seasonKey of Object.keys(seasons)) {
         const seasonVal = seasons[seasonKey];
         if (!seasonVal || typeof seasonVal !== 'object') continue;
@@ -95,13 +125,18 @@ function main() {
           if (!Array.isArray(setData)) continue;
 
           const filePath = join(outDir, `${setKey}.json`);
-          writeFileSync(filePath, JSON.stringify(setData, null, 2) + '\n', 'utf8');
-          fileCount++;
-          console.log('wrote', filePath);
+          const payload = formatJsonStable(setData);
+          if (writeIfChanged(filePath, payload)) {
+            updated++;
+            console.log('wrote', filePath);
+          } else {
+            skipped++;
+            console.log('skip (unchanged)', filePath);
+          }
         }
       }
 
-      console.log('완료: ' + fileCount + '개 JSON 파일');
+      console.log('완료: 갱신 ' + updated + '개, 동일로 건너뜀 ' + skipped + '개');
     })
     .then(() => process.exit(0))
     .catch((err) => {
