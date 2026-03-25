@@ -151,15 +151,9 @@
     </div>
 
     <script>
-        function seasonIdToFolder(seasonId) {
-            const num = String(seasonId).replace(/^s/i, '').padStart(2, '0');
-            return 'season' + num;
-        }
-
         function jsonUrl(seasonId, dataId) {
-            const folder = seasonIdToFolder(seasonId);
             const id = String(dataId).padStart(3, '0');
-            return 'data/' + folder + '/' + id + '.json';
+            return 'data/seasons/' + seasonId + '/' + id + '.json';
         }
 
         let words = [];

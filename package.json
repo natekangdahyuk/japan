@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "export-data": "node scripts/export-rtdb-to-data.mjs"
+    "export-data": "node scripts/export-rtdb-to-data.mjs",
+    "import-data": "node scripts/import-data-to-rtdb.mjs"
   },
   "dependencies": {
     "firebase-admin": "^13.0.0"

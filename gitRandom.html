@@ -79,11 +79,6 @@
     </div>
 
     <script>
-        function seasonIdToFolder(seasonId) {
-            const num = String(seasonId).replace(/^s/i, '').padStart(2, '0');
-            return 'season' + num;
-        }
-
         function setIdsForSeason(seasonId) {
             const n = parseInt(String(seasonId).replace(/^s/i, ''), 10);
             if (n === 1) {
@@ -112,7 +107,6 @@
         const seasonId = sParam.startsWith('s') ? sParam : 's' + sParam;
 
         function loadSeasonData() {
-            const folder = seasonIdToFolder(seasonId);
             const ids = setIdsForSeason(seasonId);
             if (ids.length === 0) {
                 document.getElementById('question').innerText = '지원하지 않는 시즌입니다.';
@@ -120,7 +114,7 @@
             }
 
             const tasks = ids.map(function (id) {
-                return fetch('data/' + folder + '/' + id + '.json').then(function (res) {
+                return fetch('data/seasons/' + seasonId + '/' + id + '.json').then(function (res) {
                     if (!res.ok) return null;
                     return res.json().then(function (arr) {
                         return { id: id, arr: arr };
@@ -143,7 +137,7 @@
 
                     if (allWords.length === 0) {
                         document.getElementById('question').innerText =
-                            '데이터가 없습니다. 로컬 서버로 열었는지 확인하세요. (data/' + folder + '/*.json)';
+                            '데이터가 없습니다. 로컬 서버로 열었는지 확인하세요. (data/seasons/' + seasonId + '/*.json)';
                         return;
                     }
 
