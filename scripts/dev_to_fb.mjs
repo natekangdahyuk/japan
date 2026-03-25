@@ -23,13 +23,8 @@ import {
   normalizeSeasonKey,
   sortKeysDeep,
   stableJsonSignature,
+  deleteFirebaseAdminApp,
 } from './rtdb-sync-shared.mjs';
-
-async function shutdownAdmin() {
-  if (admin.apps && admin.apps.length) {
-    await admin.app().delete().catch(() => {});
-  }
-}
 
 async function main() {
   console.log('dev_to_fb — 이 PC (data/seasons/...) → Firebase');
@@ -139,7 +134,7 @@ async function main() {
     console.error(err);
     return 1;
   } finally {
-    await shutdownAdmin();
+    await deleteFirebaseAdminApp(admin);
   }
 }
 

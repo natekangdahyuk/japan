@@ -20,6 +20,7 @@ import {
   resolveServiceAccountPath,
   normalizeSeasonKey,
   sortKeysDeep,
+  deleteFirebaseAdminApp,
 } from './rtdb-sync-shared.mjs';
 
 function formatJsonStable(data) {
@@ -109,12 +110,12 @@ function main() {
       );
     })
     .then(async () => {
-      if (admin.apps.length) await admin.app().delete().catch(() => {});
+      await deleteFirebaseAdminApp(admin);
       process.exit(0);
     })
     .catch(async (err) => {
       console.error(err);
-      if (admin.apps.length) await admin.app().delete().catch(() => {});
+      await deleteFirebaseAdminApp(admin);
       process.exit(1);
     });
 }

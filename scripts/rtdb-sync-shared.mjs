@@ -65,6 +65,18 @@ export function stableJsonSignature(value) {
   return JSON.stringify(sortKeysDeep(normalizeArrayLike(value)));
 }
 
+/**
+ * Firebase Admin 앱 삭제가 일부 환경(Windows 작업 스케줄러 등)에서 끝나지 않으면
+ * Node가 종료되지 않아 작업이 "실행 중"으로 남습니다. 상한 시간 후에는 진행합니다.
+ */
+export async function deleteFirebaseAdminApp(adminModule, timeoutMs = 5000) {
+  if (!adminModule?.apps?.length) return;
+  await Promise.race([
+    adminModule.app().delete().catch(() => {}),
+    new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+  ]);
+}
+
 export function resolveServiceAccountPath() {
   if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     return process.env.GOOGLE_APPLICATION_CREDENTIALS;
