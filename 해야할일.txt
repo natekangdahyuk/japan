@@ -4,3 +4,18 @@
 스쿼드 레벨3 - 어날리틱스에 반영
 
 
+* 플랫폼- 액션 대마인 에러 확인
+1. 에러 발생 시간 한국시간으로 보내 주기
+2. 라이브중에 복사 갯수는 맞는지
+3. 커넥션 에러는 왜 나왔는지
+
+-- 슬로우 싱크에서 발생 한걸로 보아..굳이 커넥션을 외부로 나갔다 들어와서 그런것 아닐까?
+-- 슬로우 싱크의 경우를 굳이 라이브 운영툴에서 실행 시킬 필요가 있을까....
+-- 별도로 로컬에서 돌리는게 좋지 않을까?
+액션ETL ETL SlowSync (T_Log_UserRGacha)
+액션ETL ControlService (History Cleanup)
+액션ETL ETL SlowSync (T_Log_UserRoomFigureSlot)
+액션ETL ETL SlowSync (T_Log_UserRoomPosePreset)
+
+
+

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>다혁 일본어 - 무한 랜덤 모드 (v1.7)</title>
+    <title>다혁 일본어 - 무한 랜덤 모드 (로컬)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
@@ -19,7 +19,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; 
             min-height: 420px; display: flex; flex-direction: column; 
             position: relative; border: 1px solid rgba(25, 118, 210, 0.1); 
-            /* 🔥 클릭 커서 제거 (이제 카드는 버튼이 아님) */
             cursor: default; 
         }
 
@@ -73,28 +72,37 @@
         </div>
 
         <div class="nav-sub">
-            <a href="index.html">← 목록으로 돌아가기</a>
+            <a href="gitIndex.html">← 목록으로 돌아가기</a>
         </div>
 
         <div class="status">학습한 단어: <span id="count">0</span>개</div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCxhDRXkY5Li5rXItmQpMhxEYRKsyZJHoo",
-            authDomain: "japanese-fd10c.firebaseapp.com",
-            projectId: "japanese-fd10c",
-            storageBucket: "japanese-fd10c.firebasestorage.app",
-            messagingSenderId: "636416095711",
-            appId: "1:636416095711:web:d9b5473a87f7dbd6c3c06a",
-            databaseURL: "https://japanese-fd10c-default-rtdb.asia-southeast1.firebasedatabase.app/" 
-        };
+        function seasonIdToFolder(seasonId) {
+            const num = String(seasonId).replace(/^s/i, '').padStart(2, '0');
+            return 'season' + num;
+        }
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        function setIdsForSeason(seasonId) {
+            const n = parseInt(String(seasonId).replace(/^s/i, ''), 10);
+            if (n === 1) {
+                return Array.from({ length: 10 }, function (_, i) {
+                    return String(i + 1).padStart(3, '0');
+                });
+            }
+            if (n === 2) {
+                return Array.from({ length: 10 }, function (_, i) {
+                    return String(i + 11).padStart(3, '0');
+                });
+            }
+            if (n === 3) {
+                return Array.from({ length: 10 }, function (_, i) {
+                    return String(i + 21).padStart(3, '0');
+                });
+            }
+            return [];
+        }
 
         let allWords = [];
         let solvedCount = 0;
@@ -104,53 +112,67 @@
         const seasonId = sParam.startsWith('s') ? sParam : 's' + sParam;
 
         function loadSeasonData() {
-            const dbPath = `seasons/${seasonId}`;
-            
-            db.ref(dbPath).once('value').then((snapshot) => {
-                const seasonData = snapshot.val();
-                if (!seasonData) {
-                    document.getElementById('question').innerText = "데이터가 없습니다.";
-                    return;
-                }
+            const folder = seasonIdToFolder(seasonId);
+            const ids = setIdsForSeason(seasonId);
+            if (ids.length === 0) {
+                document.getElementById('question').innerText = '지원하지 않는 시즌입니다.';
+                return;
+            }
 
-                allWords = [];
-                Object.keys(seasonData).forEach(setKey => {
-                    const setData = seasonData[setKey];
-                    if(Array.isArray(setData)) {
-                        setData.forEach(word => {
-                            allWords.push({
-                                ...word,
-                                originSeason: seasonId.toUpperCase(),
-                                originSet: setKey
-                            });
-                        });
-                    }
+            const tasks = ids.map(function (id) {
+                return fetch('data/' + folder + '/' + id + '.json').then(function (res) {
+                    if (!res.ok) return null;
+                    return res.json().then(function (arr) {
+                        return { id: id, arr: arr };
+                    });
                 });
-
-                document.getElementById('study-title').innerText = `${seasonId.toUpperCase()} RANDOM`;
-                nextCard();
-            }).catch(err => {
-                document.getElementById('question').innerText = "연결 오류!";
-                console.error(err);
             });
+
+            Promise.all(tasks)
+                .then(function (results) {
+                    allWords = [];
+                    results.forEach(function (item) {
+                        if (!item || !item.arr || !Array.isArray(item.arr)) return;
+                        item.arr.forEach(function (word) {
+                            allWords.push(Object.assign({}, word, {
+                                originSeason: seasonId.toUpperCase(),
+                                originSet: item.id
+                            }));
+                        });
+                    });
+
+                    if (allWords.length === 0) {
+                        document.getElementById('question').innerText =
+                            '데이터가 없습니다. 로컬 서버로 열었는지 확인하세요. (data/' + folder + '/*.json)';
+                        return;
+                    }
+
+                    document.getElementById('study-title').innerText = seasonId.toUpperCase() + ' RANDOM';
+                    nextCard();
+                })
+                .catch(function (err) {
+                    document.getElementById('question').innerText = '불러오기 오류!';
+                    console.error(err);
+                });
         }
 
         function nextCard() {
             if (allWords.length === 0) return;
-            
+
             const randomIndex = Math.floor(Math.random() * allWords.length);
             const currentWord = allWords[randomIndex];
 
             document.getElementById('question').innerText = currentWord.q;
             document.getElementById('reading').innerText = currentWord.r;
             document.getElementById('meaning').innerText = currentWord.m;
-            document.getElementById('usage').innerText = currentWord.u ? `(${currentWord.u})` : "";
-            document.getElementById('example').innerText = currentWord.e || "예문이 없습니다.";
-            
-            const tipContent = currentWord.tip ? currentWord.tip.replace(/\n/g, '<br>') : "팁이 없습니다.";
-            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${tipContent}`;
-            
-            document.getElementById('origin').innerText = `Source: [${currentWord.originSeason}-${currentWord.originSet}]`;
+            document.getElementById('usage').innerText = currentWord.u ? `(${currentWord.u})` : '';
+            document.getElementById('example').innerText = currentWord.e || '예문이 없습니다.';
+
+            const tipContent = currentWord.tip ? currentWord.tip.replace(/\n/g, '<br>') : '팁이 없습니다.';
+            document.getElementById('tip').innerHTML = '<strong>💡 Tip</strong><br>' + tipContent;
+
+            document.getElementById('origin').innerText =
+                'Source: [' + currentWord.originSeason + '-' + currentWord.originSet + ']';
 
             document.getElementById('answer').style.display = 'none';
             solvedCount++;

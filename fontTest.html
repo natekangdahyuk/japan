@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>폰트 미리보기 — BIZ UD Gothic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --card: #fff;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'BIZ UDGothic', sans-serif;
+            margin: 0;
+            padding: 16px;
+            background: var(--bg);
+            color: #1e293b;
+            max-width: 720px;
+            margin-inline: auto;
+        }
+        h1 { font-size: 1.1rem; font-weight: 700; margin: 0 0 8px 0; }
+        .hint {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 16px;
+            line-height: 1.55;
+        }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: #475569; }
+        textarea {
+            width: 100%;
+            min-height: 72px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'BIZ UDGothic', sans-serif;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+        .size-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .size-row input[type="range"] { flex: 1; min-width: 120px; }
+        .size-val { font-variant-numeric: tabular-nums; min-width: 3.5rem; font-size: 0.9rem; color: var(--muted); }
+
+        .font-block {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px 14px 6px;
+            margin-bottom: 14px;
+        }
+        .font-block .block-title {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 10px 0;
+            letter-spacing: 0.02em;
+        }
+        .sample {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+        }
+        .sample header {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+        .sample header .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #e0e7ff;
+            color: #3730a3;
+            margin-right: 6px;
+        }
+        .sample header .tag.body { background: #dcfce7; color: #166534; }
+        .kanji {
+            font-family: 'BIZ UDGothic', sans-serif;
+            font-weight: 700;
+            line-height: 1.3;
+            word-break: break-all;
+            color: #1d4ed8;
+        }
+        .kanji.body-line {
+            font-weight: 500;
+            color: #334155;
+        }
+
+        footer {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+        code { font-size: 0.85em; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>BIZ UD Gothic — 문제 / 본문 크기 조절</h1>
+    <p class="hint">
+        프로젝트 전체에 적용 중인 <strong>BIZ UDGothic</strong> (Google Fonts, CSS 이름은 공백 없이 <code>'BIZ UDGothic'</code>) 미리보기입니다.
+    </p>
+
+    <label for="text">테스트 문장</label>
+    <textarea id="text" spellcheck="false">最近の若者は、憂鬱な薔薇を眺めながら體操をする傾向があります。</textarea>
+
+    <div class="size-row">
+        <label for="sizeQ" style="margin:0;">문제 화면 글자 크기</label>
+        <input type="range" id="sizeQ" min="22" max="56" value="38">
+        <span class="size-val" id="sizeQVal">38px</span>
+    </div>
+    <div class="size-row">
+        <label for="sizeB" style="margin:0;">본문 글자 크기</label>
+        <input type="range" id="sizeB" min="14" max="24" value="17">
+        <span class="size-val" id="sizeBVal">17px</span>
+    </div>
+
+    <div id="samples">
+        <section class="font-block">
+            <p class="block-title">BIZ UD Gothic — Google Fonts</p>
+            <div class="sample">
+                <header><span class="tag">문제</span> BIZ UDGothic</header>
+                <div class="kanji" data-line data-size="q"></div>
+            </div>
+            <div class="sample">
+                <header><span class="tag body">본문</span> BIZ UDGothic</header>
+                <div class="kanji body-line" data-line data-size="b"></div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        전역 적용: <code>font-family: 'BIZ UDGothic', sans-serif;</code>
+    </footer>
+
+    <script>
+        var textEl = document.getElementById('text');
+        var sizeQ = document.getElementById('sizeQ');
+        var sizeB = document.getElementById('sizeB');
+        var sizeQVal = document.getElementById('sizeQVal');
+        var sizeBVal = document.getElementById('sizeBVal');
+        var lines = document.querySelectorAll('[data-line]');
+
+        function sync() {
+            var t = textEl.value || ' ';
+            var qPx = sizeQ.value + 'px';
+            var bPx = sizeB.value + 'px';
+            sizeQVal.textContent = qPx;
+            sizeBVal.textContent = bPx;
+            lines.forEach(function (el) {
+                el.textContent = t;
+                el.style.fontSize = el.getAttribute('data-size') === 'b' ? bPx : qPx;
+            });
+        }
+
+        textEl.addEventListener('input', sync);
+        sizeQ.addEventListener('input', sync);
+        sizeB.addEventListener('input', sync);
+        sync();
+    </script>
+</body>
+</html>

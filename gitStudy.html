@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>다혁 일본어 학습 - 실시간 모드 (v1.5)</title>
+    <title>다혁 일본어 학습 - 로컬 모드</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
@@ -144,68 +144,63 @@
         <div class="nav-sub">
             <a onclick="prevCard()">이전</a>
             <a onclick="goToFirst()">처음</a>
-            <a href="index.html">목록</a>
+            <a href="gitIndex.html">목록</a>
         </div>
 
         <div class="status"><span id="current">0</span> / <span id="total">0</span></div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
     <script>
-        // 1. 파이어베이스 설정 (다혁이의 japanese 프로젝트 설정)
-        const firebaseConfig = {
-            apiKey: "AIzaSyCxhDRXkY5Li5rXItmQpMhxEYRKsyZJHoo",
-            authDomain: "japanese-fd10c.firebaseapp.com",
-            projectId: "japanese-fd10c",
-            storageBucket: "japanese-fd10c.firebasestorage.app",
-            messagingSenderId: "636416095711",
-            appId: "1:636416095711:web:d9b5473a87f7dbd6c3c06a",
-            databaseURL: "https://japanese-fd10c-default-rtdb.asia-southeast1.firebasedatabase.app/" 
-        };
+        function seasonIdToFolder(seasonId) {
+            const num = String(seasonId).replace(/^s/i, '').padStart(2, '0');
+            return 'season' + num;
+        }
 
-        // 파이어베이스 초기화
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        function jsonUrl(seasonId, dataId) {
+            const folder = seasonIdToFolder(seasonId);
+            const id = String(dataId).padStart(3, '0');
+            return 'data/' + folder + '/' + id + '.json';
+        }
 
         let words = [];
         let currentIndex = 0;
         const urlParams = new URLSearchParams(window.location.search);
-        
-        // URL 파라미터에서 시즌(s)과 세트(id) 가져오기
+
         let sParam = urlParams.get('s') || '01';
-        const seasonId = sParam.startsWith('s') ? sParam : 's' + sParam;        
-        
+        const seasonId = sParam.startsWith('s') ? sParam : 's' + sParam;
+
         const dataId = urlParams.get('id') || '001';
 
-        // 2. 파이어베이스에서 데이터 실시간 로드
         function loadData() {
-            const dbPath = `seasons/${seasonId}/${dataId}`;
-            
-            db.ref(dbPath).on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (!data) {
-                    document.getElementById('question').innerText = "데이터가 없습니다.";
-                    return;
-                }
-                words = data;
-                init();
-            }, (error) => {
-                document.getElementById('question').innerText = "권한 에러!";
-                console.error(error);
-            });
+            const url = jsonUrl(seasonId, dataId);
+            fetch(url)
+                .then(function (res) {
+                    if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+                    return res.json();
+                })
+                .then(function (data) {
+                    if (!data || !Array.isArray(data)) {
+                        document.getElementById('question').innerText = '데이터가 없습니다.';
+                        return;
+                    }
+                    words = data;
+                    init();
+                })
+                .catch(function (err) {
+                    document.getElementById('question').innerText =
+                        '파일을 불러올 수 없습니다. (로컬 서버로 열었는지 확인: ' + url + ')';
+                    console.error(err);
+                });
         }
 
         function init() {
             document.getElementById('study-title').innerText = `SET ${dataId}`;
-            
-            // 로컬 스토리지에서 마지막 학습 위치 복구
+
             const savedIndex = localStorage.getItem(`study_idx_${seasonId}_${dataId}`);
             const hash = window.location.hash.replace('#card', '');
 
-            if (hash && !isNaN(hash)) currentIndex = parseInt(hash) - 1;
-            else if (savedIndex) currentIndex = parseInt(savedIndex);
+            if (hash && !isNaN(hash)) currentIndex = parseInt(hash, 10) - 1;
+            else if (savedIndex) currentIndex = parseInt(savedIndex, 10);
 
             document.getElementById('total').innerText = words.length;
             updateCard();
@@ -218,16 +213,15 @@
             document.getElementById('question').innerText = word.q;
             document.getElementById('reading').innerText = word.r;
             document.getElementById('meaning').innerText = word.m;
-            document.getElementById('usage').innerText = word.u ? `(${word.u})` : "";
-            document.getElementById('example').innerText = word.e || "예문이 없습니다.";
-            
-            const tipContent = word.tip ? word.tip.replace(/\n/g, '<br>') : "준비된 팁이 없습니다.";
-            document.getElementById('tip').innerHTML = `<strong>💡 Tip</strong><br>${tipContent}`;
+            document.getElementById('usage').innerText = word.u ? `(${word.u})` : '';
+            document.getElementById('example').innerText = word.e || '예문이 없습니다.';
+
+            const tipContent = word.tip ? word.tip.replace(/\n/g, '<br>') : '준비된 팁이 없습니다.';
+            document.getElementById('tip').innerHTML = '<strong>💡 Tip</strong><br>' + tipContent;
 
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
 
-            // 위치 저장
             localStorage.setItem(`study_idx_${seasonId}_${dataId}`, currentIndex);
             window.location.hash = `card${currentIndex + 1}`;
         }
@@ -241,7 +235,6 @@
         function prevCard() { if (currentIndex > 0) { currentIndex--; updateCard(); } }
         function goToFirst() { currentIndex = 0; updateCard(); }
 
-        // 페이지 로드 시 파이어베이스 통신 시작
         window.onload = loadData;
     </script>
 </body>
