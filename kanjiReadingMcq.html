@@ -61,9 +61,19 @@
       font-weight: 600;
       background: #edf2f7;
       color: #4a5568;
+      transition: background 0.2s, color 0.2s, opacity 0.2s;
     }
     button.primary { background: var(--accent); color: #fff; }
     button:disabled { opacity: .45; cursor: not-allowed; }
+    /* 채점 후 활성화된 「다음」 */
+    #btn-next:not(:disabled) {
+      background: var(--ok);
+      color: #fff;
+      opacity: 1;
+    }
+    #btn-next:not(:disabled):hover {
+      filter: brightness(1.06);
+    }
 
     .progress { font-size: 0.8rem; color: var(--muted); margin-left: auto; }
 
@@ -124,6 +134,15 @@
     .feedback.show { display: block; }
     .fb-ok { color: var(--ok); font-weight: 700; }
     .fb-bad { color: var(--bad); font-weight: 700; }
+    .ex, .tip {
+      font-size: 0.88rem;
+      white-space: pre-wrap;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    .ex { background: #f1f3f5; color: #444; }
+    .tip { background: #fffbe6; border-left: 3px solid #ffe58f; color: #665c33; }
   </style>
 </head>
 <body>
@@ -311,9 +330,16 @@
       });
 
       const fb = document.getElementById('feedback');
-      fb.innerHTML = ok
+      let html = ok
         ? '<div class="fb-ok">정답입니다.</div>'
         : '<div class="fb-bad">오답입니다. (정답: ' + ans + '번)</div>';
+      if (current.e) {
+        html += '<div class="ex"><strong>예문</strong>\n' + esc(current.e) + '</div>';
+      }
+      if (current.tip) {
+        html += '<div class="tip"><strong>TIP</strong>\n' + esc(current.tip) + '</div>';
+      }
+      fb.innerHTML = html;
       fb.classList.add('show');
       document.getElementById('btn-check').disabled = true;
       document.getElementById('btn-next').disabled = false;
