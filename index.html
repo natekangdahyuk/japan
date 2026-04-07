@@ -18,6 +18,7 @@
             --s1-point: #4CAF50;      /* 시즌 1 포인트 (초록) */
             --s2-point: #1976d2;      /* 시즌 2 포인트 (파랑) */
             --s3-point: #8e24aa;      /* 시즌 3 포인트 (보라) */
+            --s4-point: #ff9800;      /* 시즌 4 포인트 (오렌지) */
         }
 
         body {
@@ -104,20 +105,22 @@
 
         .btn-num:active { transform: scale(0.9); }
 
-        /* 시즌 1 스타일 */
+        /* 시즌별 스타일링 */
         .s1 .season-title { color: var(--s1-point); }
         .s1 .btn-num { background-color: #2e7d32; }
         .s1 .btn-num:hover { background-color: var(--s1-point); }
 
-        /* 시즌 2 스타일 */
         .s2 .season-title { color: var(--s2-point); }
         .s2 .btn-num { background-color: #1565c0; }
         .s2 .btn-num:hover { background-color: var(--s2-point); }
 
-        /* 시즌 3 스타일 */
         .s3 .season-title { color: var(--s3-point); }
         .s3 .btn-num { background-color: #6a1b9a; }
         .s3 .btn-num:hover { background-color: var(--s3-point); }
+
+        .s4 .season-title { color: var(--s4-point); }
+        .s4 .btn-num { background-color: #e65100; }
+        .s4 .btn-num:hover { background-color: var(--s4-point); }
 
         /* 랜덤 버튼 스타일 */
         .btn-random {
@@ -145,6 +148,9 @@
         .s3 .btn-random { background-color: #4a148c; }
         .s3 .btn-random:hover { background-color: #6a1b9a; }
 
+        .s4 .btn-random { background-color: #bf360c; }
+        .s4 .btn-random:hover { background-color: #e65100; }
+
         /* 하단 푸터 */
         .footer {
             margin-top: 10px;
@@ -159,44 +165,24 @@
         <h1>🇯🇵 DA-HYUK JAPANESE</h1>
     </div>
 
-    <div class="season-section s1">
+    <div class="season-section s4">
         <div class="season-header">
-            <span class="season-title">SEASON 01</span>
-            <span class="season-desc">기초 다지기</span>
+            <span class="season-title">SEASON 04</span>
+            <span class="season-desc">비즈니스 · 실전</span>
         </div>
         <div class="grid">
-            <a href="study.html?s=s01&id=001" class="btn-num">1</a>
-            <a href="study.html?s=s01&id=002" class="btn-num">2</a>
-            <a href="study.html?s=s01&id=003" class="btn-num">3</a>
-            <a href="study.html?s=s01&id=004" class="btn-num">4</a>
-            <a href="study.html?s=s01&id=005" class="btn-num">5</a>
-            <a href="study.html?s=s01&id=006" class="btn-num">6</a>
-            <a href="study.html?s=s01&id=007" class="btn-num">7</a>
-            <a href="study.html?s=s01&id=008" class="btn-num">8</a>
-            <a href="study.html?s=s01&id=009" class="btn-num">9</a>
-            <a href="study.html?s=s01&id=010" class="btn-num">10</a>
-            </div>
-        <a href="random.html?s=s01" class="btn-random">시즌 1 무한 랜덤 학습</a>
-    </div>
-
-    <div class="season-section s2">
-        <div class="season-header">
-            <span class="season-title">SEASON 02</span>
-            <span class="season-desc">심화 표현</span>
+            <a href="study.html?s=s04&id=031" class="btn-num">31</a>
+            <a href="study.html?s=s04&id=032" class="btn-num">32</a>
+            <a href="study.html?s=s04&id=033" class="btn-num">33</a>
+            <a href="study.html?s=s04&id=034" class="btn-num">34</a>
+            <a href="study.html?s=s04&id=035" class="btn-num">35</a>
+            <a href="study.html?s=s04&id=036" class="btn-num">36</a>
+            <a href="study.html?s=s04&id=037" class="btn-num">37</a>
+            <a href="study.html?s=s04&id=038" class="btn-num">38</a>
+            <a href="study.html?s=s04&id=039" class="btn-num">39</a>
+            <a href="study.html?s=s04&id=040" class="btn-num">40</a>
         </div>
-        <div class="grid">
-            <a href="study.html?s=s02&id=011" class="btn-num">11</a>
-            <a href="study.html?s=s02&id=012" class="btn-num">12</a>
-            <a href="study.html?s=s02&id=013" class="btn-num">13</a>
-            <a href="study.html?s=s02&id=014" class="btn-num">14</a>
-            <a href="study.html?s=s02&id=015" class="btn-num">15</a>
-            <a href="study.html?s=s02&id=016" class="btn-num">16</a>
-            <a href="study.html?s=s02&id=017" class="btn-num">17</a>
-            <a href="study.html?s=s02&id=018" class="btn-num">18</a>
-            <a href="study.html?s=s02&id=019" class="btn-num">19</a>
-            <a href="study.html?s=s02&id=020" class="btn-num">20</a>
-            </div>
-        <a href="random.html?s=s02" class="btn-random">시즌 2 무한 랜덤 학습</a>
+        <a href="random.html?s=s04" class="btn-random">시즌 4 무한 랜덤 학습</a>
     </div>
 
     <div class="season-section s3">
@@ -217,6 +203,46 @@
             <a href="study.html?s=s03&id=030" class="btn-num">30</a>
         </div>
         <a href="random.html?s=s03" class="btn-random">시즌 3 무한 랜덤 학습</a>
+    </div>
+
+    <div class="season-section s2">
+        <div class="season-header">
+            <span class="season-title">SEASON 02</span>
+            <span class="season-desc">심화 표현</span>
+        </div>
+        <div class="grid">
+            <a href="study.html?s=s02&id=011" class="btn-num">11</a>
+            <a href="study.html?s=s02&id=012" class="btn-num">12</a>
+            <a href="study.html?s=s02&id=013" class="btn-num">13</a>
+            <a href="study.html?s=s02&id=014" class="btn-num">14</a>
+            <a href="study.html?s=s02&id=015" class="btn-num">15</a>
+            <a href="study.html?s=s02&id=016" class="btn-num">16</a>
+            <a href="study.html?s=s02&id=017" class="btn-num">17</a>
+            <a href="study.html?s=s02&id=018" class="btn-num">18</a>
+            <a href="study.html?s=s02&id=019" class="btn-num">19</a>
+            <a href="study.html?s=s02&id=020" class="btn-num">20</a>
+        </div>
+        <a href="random.html?s=s02" class="btn-random">시즌 2 무한 랜덤 학습</a>
+    </div>
+
+    <div class="season-section s1">
+        <div class="season-header">
+            <span class="season-title">SEASON 01</span>
+            <span class="season-desc">기초 다지기</span>
+        </div>
+        <div class="grid">
+            <a href="study.html?s=s01&id=001" class="btn-num">1</a>
+            <a href="study.html?s=s01&id=002" class="btn-num">2</a>
+            <a href="study.html?s=s01&id=003" class="btn-num">3</a>
+            <a href="study.html?s=s01&id=004" class="btn-num">4</a>
+            <a href="study.html?s=s01&id=005" class="btn-num">5</a>
+            <a href="study.html?s=s01&id=006" class="btn-num">6</a>
+            <a href="study.html?s=s01&id=007" class="btn-num">7</a>
+            <a href="study.html?s=s01&id=008" class="btn-num">8</a>
+            <a href="study.html?s=s01&id=009" class="btn-num">9</a>
+            <a href="study.html?s=s01&id=010" class="btn-num">10</a>
+        </div>
+        <a href="random.html?s=s01" class="btn-random">시즌 1 무한 랜덤 학습</a>
     </div>
 
     <div class="footer">
