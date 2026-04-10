@@ -14,7 +14,6 @@
             --bg: #f0f2f5;
             --text: #2d3436;
             --accent: #e67e22;
-            --answer-bg: #ffffff;
         }
 
         body {
@@ -47,7 +46,6 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            transition: all 0.3s ease;
         }
 
         /* 문제 영역: 한글(k) */
@@ -60,7 +58,6 @@
         }
 
         #question {
-            font-size: 2.2rem; /* 기본 크기 */
             font-weight: 700;
             color: #1a1a1a;
             line-height: 1.4;
@@ -78,7 +75,6 @@
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 핵심 정답: 예문(e) */
         .example-main {
             font-size: 1.3rem;
             color: #d35400;
@@ -159,7 +155,7 @@
         <div class="nav-sub">
             <a onclick="prevCard()">이전</a>
             <a onclick="goToFirst()">처음으로</a>
-            <a href="gitIndex.html">목록</a>
+            <a href="kIndex.html">목록</a>
         </div>
 
         <div class="status"><span id="current">0</span> / <span id="total">0</span></div>
@@ -179,7 +175,7 @@
             
             fetch(url)
                 .then(res => {
-                    if (!res.ok) throw new Error('파일을 찾을 수 없습니다.');
+                    if (!res.ok) throw new Error('파일 없음');
                     return res.json();
                 })
                 .then(data => {
@@ -187,7 +183,7 @@
                     init();
                 })
                 .catch(err => {
-                    document.getElementById('question').innerText = "JSON 데이터를 불러올 수 없습니다.\n(파일 확인 필요)";
+                    document.getElementById('question').innerText = "데이터를 불러올 수 없습니다.\n(kIndex에서 다시 시도해주세요)";
                     document.getElementById('question').style.fontSize = "1.2rem";
                 });
         }
@@ -206,16 +202,16 @@
             const word = words[currentIndex];
             const qElement = document.getElementById('question');
 
-            // 1. 문제(k) 세팅 및 폰트 크기 조절
-            const kText = word.k || "문제가 정의되지 않았습니다.";
+            const kText = word.k || "질문(k) 필드가 비어있습니다.";
             qElement.innerText = kText;
             
+            // 유동적 폰트 크기 조절
             if (kText.length > 30) qElement.style.fontSize = "1.4rem";
             else if (kText.length > 15) qElement.style.fontSize = "1.8rem";
             else qElement.style.fontSize = "2.2rem";
 
-            // 2. 정답 데이터 세팅
-            document.getElementById('example').innerText = word.e || "정답 예문이 없습니다.";
+            // 정답 세팅 (e 필드)
+            document.getElementById('example').innerText = word.e || "예문이 없습니다.";
             document.getElementById('word-q').innerText = word.q || "";
             document.getElementById('word-r').innerText = word.r ? `[${word.r}]` : "";
             document.getElementById('usage').innerText = word.u ? `#${word.u}` : "";
@@ -223,18 +219,20 @@
             const tipContent = word.tip ? word.tip.replace(/\n/g, '<br>') : '팁이 없습니다.';
             document.getElementById('tip').innerHTML = '<strong>💡 학습 노트</strong><br>' + tipContent;
 
-            // UI 초기화
             document.getElementById('answer').style.display = 'none';
             document.getElementById('current').innerText = currentIndex + 1;
             
             localStorage.setItem(`kstudy_idx_${seasonId}_${dataId}`, currentIndex);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function toggleAnswer() {
             const ans = document.getElementById('answer');
             ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
             if (ans.style.display === 'block') {
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                setTimeout(() => {
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                }, 100);
             }
         }
 
