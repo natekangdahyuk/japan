@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>    
+    <meta charset="UTF-8">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다혁 일본어 학습 - K-Mode</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --bg: #f0f2f5;
+            --text: #2d3436;
+            --accent: #e67e22;
+            --answer-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'BIZ UDGothic', sans-serif;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            margin: 0;
+            color: var(--text);
+        }
+
+        h1 {
+            font-size: 0.85rem;
+            color: #888;
+            margin: 5px 0 15px 0;
+            font-weight: 400;
+        }
+
+        .container { width: 100%; max-width: 450px; }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* 문제 영역: 한글(k) */
+        .question-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        #question {
+            font-size: 2.2rem; /* 기본 크기 */
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1.4;
+            word-break: keep-all;
+        }
+
+        /* 정답 영역 */
+        .answer {
+            display: none;
+            border-top: 2px solid #f1f3f5;
+            padding-top: 20px;
+            text-align: left;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 핵심 정답: 예문(e) */
+        .example-main {
+            font-size: 1.3rem;
+            color: #d35400;
+            font-weight: 700;
+            background: #fff5eb;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .sub-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .word-q { font-size: 1.1rem; color: var(--primary); font-weight: 700; }
+        .word-r { color: #666; }
+        .usage-tag { color: var(--accent); font-weight: 600; }
+
+        .tip-box {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #555;
+            border-left: 4px solid #ccd1d1;
+            white-space: pre-wrap;
+            margin-top: 10px;
+        }
+
+        .nav-main { margin-top: 20px; display: flex; gap: 12px; width: 100%; }
+        button {
+            padding: 16px; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            transition: 0.2s; flex: 1;
+        }
+        .btn-view { background: #475569; color: white; }
+        .btn-next { background: #2c3e50; color: white; }
+        button:active { transform: scale(0.95); }
+
+        .nav-sub { margin-top: 20px; display: flex; gap: 20px; justify-content: center; }
+        .nav-sub a { text-decoration: none; color: #999; font-size: 0.9rem; cursor: pointer; }
+        .nav-sub a:hover { color: var(--primary); }
+
+        .status { margin-top: 15px; font-size: 0.85rem; color: #bbb; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1 id="study-title">Loading...</h1>
+
+    <div class="container">
+        <div class="card">
+            <div class="question-box">
+                <div id="question">데이터 로딩 중...</div>
+            </div>
+
+            <div id="answer" class="answer">
+                <div id="example" class="example-main"></div>
+                <div class="sub-info">
+                    <span id="word-q" class="word-q"></span>
+                    <span id="word-r" class="word-r"></span>
+                    <span id="usage" class="usage-tag"></span>
+                </div>
+                <div id="tip" class="tip-box"></div>
+            </div>
+        </div>
+
+        <div class="nav-main">
+            <button class="btn-view" onclick="toggleAnswer()">정답 확인</button>
+            <button class="btn-next" onclick="nextCard()">다음 문장</button>
+        </div>
+
+        <div class="nav-sub">
+            <a onclick="prevCard()">이전</a>
+            <a onclick="goToFirst()">처음으로</a>
+            <a href="gitIndex.html">목록</a>
+        </div>
+
+        <div class="status"><span id="current">0</span> / <span id="total">0</span></div>
+    </div>
+
+    <script>
+        let words = [];
+        let currentIndex = 0;
+        const urlParams = new URLSearchParams(window.location.search);
+        let sParam = urlParams.get('s') || '01';
+        const seasonId = sParam.startsWith('s') ? sParam : 's' + sParam;
+        const dataId = urlParams.get('id') || '001';
+
+        function loadData() {
+            const id = String(dataId).padStart(3, '0');
+            const url = `data/seasons/${seasonId}/${id}.json`;
+            
+            fetch(url)
+                .then(res => {
+                    if (!res.ok) throw new Error('파일을 찾을 수 없습니다.');
+                    return res.json();
+                })
+                .then(data => {
+                    words = data;
+                    init();
+                })
+                .catch(err => {
+                    document.getElementById('question').innerText = "JSON 데이터를 불러올 수 없습니다.\n(파일 확인 필요)";
+                    document.getElementById('question').style.fontSize = "1.2rem";
+                });
+        }
+
+        function init() {
+            document.getElementById('study-title').innerText = `K-STUDY SET ${dataId}`;
+            const savedIndex = localStorage.getItem(`kstudy_idx_${seasonId}_${dataId}`);
+            if (savedIndex) currentIndex = parseInt(savedIndex, 10);
+            
+            document.getElementById('total').innerText = words.length;
+            updateCard();
+        }
+
+        function updateCard() {
+            if (words.length === 0) return;
+            const word = words[currentIndex];
+            const qElement = document.getElementById('question');
+
+            // 1. 문제(k) 세팅 및 폰트 크기 조절
+            const kText = word.k || "문제가 정의되지 않았습니다.";
+            qElement.innerText = kText;
+            
+            if (kText.length > 30) qElement.style.fontSize = "1.4rem";
+            else if (kText.length > 15) qElement.style.fontSize = "1.8rem";
+            else qElement.style.fontSize = "2.2rem";
+
+            // 2. 정답 데이터 세팅
+            document.getElementById('example').innerText = word.e || "정답 예문이 없습니다.";
+            document.getElementById('word-q').innerText = word.q || "";
+            document.getElementById('word-r').innerText = word.r ? `[${word.r}]` : "";
+            document.getElementById('usage').innerText = word.u ? `#${word.u}` : "";
+            
+            const tipContent = word.tip ? word.tip.replace(/\n/g, '<br>') : '팁이 없습니다.';
+            document.getElementById('tip').innerHTML = '<strong>💡 학습 노트</strong><br>' + tipContent;
+
+            // UI 초기화
+            document.getElementById('answer').style.display = 'none';
+            document.getElementById('current').innerText = currentIndex + 1;
+            
+            localStorage.setItem(`kstudy_idx_${seasonId}_${dataId}`, currentIndex);
+        }
+
+        function toggleAnswer() {
+            const ans = document.getElementById('answer');
+            ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
+            if (ans.style.display === 'block') {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }
+        }
+
+        function nextCard() { if (currentIndex < words.length - 1) { currentIndex++; updateCard(); } }
+        function prevCard() { if (currentIndex > 0) { currentIndex--; updateCard(); } }
+        function goToFirst() { currentIndex = 0; updateCard(); }
+
+        window.onload = loadData;
+    </script>
+</body>
+</html>
