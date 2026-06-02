@@ -6,7 +6,8 @@
     "fb-to-dev": "node scripts/fb_to_dev.mjs",
     "dev-to-fb": "node scripts/dev_to_fb.mjs",
     "export-data": "node scripts/fb_to_dev.mjs",
-    "import-data": "node scripts/dev_to_fb.mjs"
+    "import-data": "node scripts/dev_to_fb.mjs",
+    "serve": "npx --yes serve -l 3082"
   },
   "dependencies": {
     "firebase-admin": "^13.0.0"

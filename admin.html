@@ -12,9 +12,30 @@
         body { font-family: 'Noto Sans KR', 'BIZ UDGothic', system-ui, sans-serif; background: var(--bg); padding: 20px; margin: 0; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow-x: auto; box-sizing: border-box; }
         
-        .control-bar { display: flex; gap: 15px; align-items: center; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee; }
-        .control-bar select, .search-input { padding: 8px; border-radius: 4px; border: 1px solid #ddd; font-family: inherit; }
-        .search-input { min-width: 250px; flex-grow: 1; border: 1px solid #ddd; }
+        .control-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 12px;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            box-sizing: border-box;
+        }
+        .control-bar h1 { flex: 0 1 auto; min-width: 0; }
+        .control-row-selects { display: flex; gap: 12px; align-items: center; flex: 0 1 auto; min-width: 0; }
+        .control-row-selects select { flex: 0 1 auto; }
+        .control-bar select, .search-input {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-family: inherit;
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+        .search-input { min-width: 0; flex: 1 1 12rem; border: 1px solid #ddd; }
         
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; font-size: 0.85rem; vertical-align: top; }
@@ -28,15 +49,38 @@
         .edit-input:focus { border-color: var(--accent); outline: none; }
         .edit-line { min-height: 150px; resize: vertical; line-height: 1.55; }
 
-        /* 리스트 보기 레이아웃 (그리드) */
+        /* 리스트 보기: 상단(단어·의미) + 하단(예문), Tip은 수정 화면에서만 */
         .word-row-view {
-            display: grid;
+            display: block;
             width: 100%;
-            grid-template-columns: 2.5rem minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1.8fr) 5.5rem;
-            gap: 10px;
-            padding: 12px 0;
+            padding: 14px 0;
             border-bottom: 1px solid #eee;
+            box-sizing: border-box;
         }
+        .word-row-main {
+            display: grid;
+            grid-template-columns: 2.5rem minmax(0, 1.2fr) minmax(0, 1fr) auto;
+            gap: 10px 12px;
+            align-items: start;
+        }
+        .word-num { color: #666; font-size: 0.95rem; font-weight: 700; line-height: 1.3; }
+        .word-num--empty { color: #bbb; font-weight: 400; }
+        .edit-num { max-width: 8rem; }
+        .word-head b { font-size: 1rem; }
+        .word-head small { color: #888; }
+        .word-meta { font-size: 0.9rem; line-height: 1.45; }
+        .word-meta .word-u { color: var(--accent); font-weight: bold; }
+        .word-actions { text-align: right; }
+        .word-row-example {
+            margin-top: 10px;
+            padding: 10px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            border-left: 3px solid #e8ecef;
+        }
+        .word-row-example:empty { display: none; }
         
         /* 수정 모드 레이아웃 (요청하신 2줄 배치) */
         .word-row-edit { padding: 8px 0 16px; }
@@ -49,9 +93,36 @@
         .btn-cancel { background: #e2e8f0; color: #4a5568; padding: 10px 25px; font-size: 0.9rem; }
         
         .view-text { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; color: #444; }
-        .status-msg { font-size: 0.85rem; color: #e67e22; font-weight: bold; margin-left: auto; }
+        .status-msg { font-size: 0.85rem; color: #e67e22; font-weight: bold; margin-left: auto; flex: 0 1 auto; min-width: 0; }
         .edit-label { font-weight: bold; margin-bottom: 5px; color: var(--accent); display: block; }
         .tag-badge { background: #eee; padding: 2px 5px; border-radius: 3px; font-size: 0.75rem; margin-right: 3px; }
+
+        @media (max-width: 640px) {
+            body { padding: 10px; }
+            .container { padding: 12px; overflow-x: hidden; }
+            .control-bar { flex-direction: column; align-items: stretch; gap: 10px; }
+            .control-bar h1 { width: 100%; font-size: 1rem; }
+            .control-bar .control-row-selects {
+                display: flex;
+                gap: 10px;
+                width: 100%;
+            }
+            .control-bar .control-row-selects select { flex: 1 1 0; min-width: 0; width: 100%; }
+            .search-input { flex: none; width: 100%; }
+            .status-msg { margin-left: 0; width: 100%; text-align: left; }
+            .word-row-main {
+                grid-template-columns: 2rem 1fr auto;
+                grid-template-areas:
+                    "num head actions"
+                    "meta meta meta";
+            }
+            .word-num { grid-area: num; }
+            .word-head { grid-area: head; min-width: 0; }
+            .word-meta { grid-area: meta; }
+            .word-actions { grid-area: actions; align-self: start; }
+            .word-row-example { margin-top: 8px; }
+            .edit-row-group { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -60,21 +131,23 @@
         <div class="control-bar" id="control-bar">
             <h1 style="font-size: 1.1rem; margin:0;">🇯🇵 스마트 관리 v1.7</h1>
             
-            <select id="select-season" onchange="updateSetList()">
-                <option value="s01">Season 01</option>
-                <option value="s02">Season 02</option>
-                <option value="s03">Season 03</option>
-                <option value="s04">Season 04</option>
-                <option value="s05">Season 05</option>
-                <option value="s06">Season 06</option>
-                <option value="s07">Season 07</option>
-                <option value="s08">Season 08</option>
-                <option value="s09">Season 09</option>
-            </select>
+            <div class="control-row-selects">
+                <select id="select-season" onchange="updateSetList()">
+                    <option value="s01">Season 01</option>
+                    <option value="s02">Season 02</option>
+                    <option value="s03">Season 03</option>
+                    <option value="s04">Season 04</option>
+                    <option value="s05">Season 05</option>
+                    <option value="s06">Season 06</option>
+                    <option value="s07">Season 07</option>
+                    <option value="s08">Season 08</option>
+                    <option value="s09">Season 09</option>
+                </select>
 
-            <select id="select-set" onchange="loadData()">
-                <option value="">세트 선택</option>
-            </select>
+                <select id="select-set" onchange="loadData()">
+                    <option value="">세트 선택</option>
+                </select>
+            </div>
 
             <input type="text" id="tag-search" class="search-input" placeholder="태그 검색..." onkeyup="filterByTag()">
 
@@ -107,6 +180,25 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        /** 저장 후 loadData 재렌더 시 해당 행으로 스크롤 */
+        let pendingScrollToIndex = null;
+
+        function hasBookNum(word) {
+            return word.num != null && word.num !== '';
+        }
+
+        function bookNumMain(word) {
+            return hasBookNum(word) ? word.num : '—';
+        }
+
+        function scrollToRow(index) {
+            const row = document.getElementById('row-' + index);
+            if (!row) return;
+            const bar = document.getElementById('control-bar');
+            const offset = (bar ? bar.offsetHeight : 0) + 12;
+            const top = row.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+        }
 
         function updateSetList() {
             const sId = document.getElementById('select-season').value;
@@ -144,14 +236,20 @@
                     row.innerHTML = `
                         <td style="padding: 0;">
                             <div class="mode-view word-row-view">
-                                <div style="color:#999">${index + 1}</div>
-                                <div><b>${word.q}</b><br><small style="color:#888">${word.r}</small></div>
-                                <div><span style="color:var(--accent); font-weight:bold;">[${word.u || '-'}]</span><br>${word.m}</div>
-                                <div class="view-text" style="font-size:0.8rem">${word.e || ''}</div>
-                                <div class="view-text" style="font-size:0.8rem; color:#666;">${word.tip || ''}</div>
-                                <div style="text-align:right;"><button class="btn-edit" onclick="toggleEdit(${index}, true)">수정</button></div>
+                                <div class="word-row-main">
+                                    <div class="word-num${hasBookNum(word) ? '' : ' word-num--empty'}">${bookNumMain(word)}</div>
+                                    <div class="word-head"><b>${word.q}</b><br><small>${word.r}</small></div>
+                                    <div class="word-meta"><span class="word-u">[${word.u || '-'}]</span><br>${word.m}</div>
+                                    <div class="word-actions"><button class="btn-edit" onclick="toggleEdit(${index}, true)">수정</button></div>
+                                </div>
+                                <div class="word-row-example view-text">${word.e || ''}</div>
                             </div>
                             <div class="mode-edit word-row-edit" style="display:none;">
+                                <div class="edit-field" style="margin-bottom:14px;">
+                                    <label class="edit-label">교재 번호 (num)</label>
+                                    <input type="number" class="edit-input edit-num" min="1" step="1" value="${hasBookNum(word) ? word.num : ''}" placeholder="메모용 · 비우면 미지정">
+                                    <small style="color:#888;">학습 순서(목록 ${index + 1})와 무관 · 교재 쪽 번호만 기록</small>
+                                </div>
                                 <div class="edit-row-group">
                                     <div class="edit-field"><label class="edit-label">질문(Q)</label><input type="text" class="edit-input edit-q" value="${word.q}"></div>
                                     <div class="edit-field"><label class="edit-label">읽기(R)</label><input type="text" class="edit-input edit-r" value="${word.r}"></div>
@@ -173,6 +271,14 @@
                     listBody.appendChild(row);
                 });
                 document.getElementById('status').innerText = "로드 완료: " + words.length + "건";
+
+                const scrollTo = pendingScrollToIndex;
+                pendingScrollToIndex = null;
+                if (scrollTo !== null) {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => scrollToRow(scrollTo));
+                    });
+                }
             });
         }
 
@@ -191,8 +297,11 @@
             } else {
                 allRows.forEach(row => row.classList.remove('hidden-row'));
                 tableHead.classList.remove('hidden-row');
-                targetRow.querySelector('.mode-view').style.display = 'grid';
+                targetRow.querySelector('.mode-view').style.display = 'block';
                 targetRow.querySelector('.mode-edit').style.display = 'none';
+                if (pendingScrollToIndex === null) {
+                    requestAnimationFrame(() => scrollToRow(index));
+                }
             }
         }
 
@@ -208,6 +317,7 @@
             const sId = document.getElementById('select-season').value;
             const setId = document.getElementById('select-set').value;
             const row = document.getElementById("row-" + index);
+            const numRaw = row.querySelector('.edit-num').value.trim();
             const updatedData = {
                 q: row.querySelector('.edit-q').value,
                 r: row.querySelector('.edit-r').value,
@@ -217,9 +327,23 @@
                 tip: row.querySelector('.edit-tip').value,
                 tag: row.querySelector('.edit-tag').value
             };
+            if (numRaw === '') {
+                updatedData.num = null;
+            } else {
+                const n = parseInt(numRaw, 10);
+                if (Number.isNaN(n) || n < 1) {
+                    alert('교재 번호는 1 이상의 숫자로 입력하세요.');
+                    return;
+                }
+                updatedData.num = n;
+            }
+            pendingScrollToIndex = index;
             db.ref("seasons/" + sId + "/" + setId + "/" + index).update(updatedData).then(() => {
                 toggleEdit(index, false);
-            }).catch(err => alert("저장 실패: " + err.message));
+            }).catch(err => {
+                pendingScrollToIndex = null;
+                alert("저장 실패: " + err.message);
+            });
         }
 
         window.onload = updateSetList;
