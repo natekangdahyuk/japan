@@ -19,6 +19,7 @@
             --s2-point: #1976d2;      /* 시즌 2 포인트 (파랑) */
             --s3-point: #8e24aa;      /* 시즌 3 포인트 (보라) */
             --s4-point: #ff9800;      /* 시즌 4 포인트 (오렌지) */
+            --s5-point: #26a69a;      /* 시즌 5 포인트 (틸) */
         }
 
         body {
@@ -151,6 +152,12 @@
         .s4 .btn-random { background-color: #bf360c; }
         .s4 .btn-random:hover { background-color: #e65100; }
 
+        .s5 .season-title { color: var(--s5-point); }
+        .s5 .btn-num { background-color: #00695c; }
+        .s5 .btn-num:hover { background-color: var(--s5-point); }
+        .s5 .btn-random { background-color: #004d40; }
+        .s5 .btn-random:hover { background-color: #00695c; }
+
         /* 하단 푸터 */
         .footer {
             margin-top: 10px;
@@ -163,6 +170,18 @@
 
     <div class="header">
         <h1>🇯🇵 DA-HYUK JAPANESE</h1>
+    </div>
+
+    <div class="season-section s5">
+        <div class="season-header">
+            <span class="season-title">SEASON 05</span>
+            <span class="season-desc">고급 · 심화</span>
+        </div>
+        <div class="grid">
+            <a href="study.html?s=s05&id=041" class="btn-num">41</a>
+            <a href="study.html?s=s05&id=042" class="btn-num">42</a>
+        </div>
+        <a href="random.html?s=s05" class="btn-random">시즌 5 무한 랜덤 학습</a>
     </div>
 
     <div class="season-section s4">
