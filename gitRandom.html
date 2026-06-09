@@ -72,7 +72,7 @@
         </div>
 
         <div class="nav-sub">
-            <a href="gitIndex.html">← 목록으로 돌아가기</a>
+            <a href="gitIndex">← 목록으로 돌아가기</a>
         </div>
 
         <div class="status">학습한 단어: <span id="count">0</span>개</div>
@@ -80,31 +80,12 @@
 
     <script>
         function setIdsForSeason(seasonId) {
-            const n = parseInt(String(seasonId).replace(/^s/i, ''), 10);
-            if (n === 1) {
-                return Array.from({ length: 10 }, function (_, i) {
-                    return String(i + 1).padStart(3, '0');
-                });
-            }
-            if (n === 2) {
-                return Array.from({ length: 10 }, function (_, i) {
-                    return String(i + 11).padStart(3, '0');
-                });
-            }
-            if (n === 3) {
-                return Array.from({ length: 10 }, function (_, i) {
-                    return String(i + 21).padStart(3, '0');
-                });
-            }
-            if (n === 4) {
-                return Array.from({ length: 10 }, function (_, i) {
-                    return String(i + 31).padStart(3, '0');
-                });
-            }
-            if (n === 5) {
-                return ['041', '042'];
-            }
-            return [];
+            var n = parseInt(String(seasonId).replace(/^s/i, ''), 10);
+            if (!n || n < 1) return [];
+            var start = (n - 1) * 10 + 1;
+            return Array.from({ length: 10 }, function (_, i) {
+                return String(start + i).padStart(3, '0');
+            });
         }
 
         let allWords = [];
