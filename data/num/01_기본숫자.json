@@ -1,0 +1,24 @@
+{
+  "title": "1. 기본 숫자 세기 (아라비아)",
+  "data": [
+    {"num": "1", "kanji": "一", "kana": "いち", "ko": "이치", "is_exception": false},
+    {"num": "2", "kanji": "二", "kana": "に", "ko": "니", "is_exception": false},
+    {"num": "3", "kanji": "三", "kana": "さん", "ko": "산", "is_exception": false},
+    {"num": "4", "kanji": "四", "kana": "よん / し", "ko": "욘 / 시", "is_exception": true},
+    {"num": "5", "kanji": "五", "kana": "ご", "ko": "고", "is_exception": false},
+    {"num": "6", "kanji": "六", "kana": "ろく", "ko": "로쿠", "is_exception": false},
+    {"num": "7", "kanji": "七", "kana": "なな / しち", "ko": "나나 / 시치", "is_exception": true},
+    {"num": "8", "kanji": "八", "kana": "はち", "ko": "하치", "is_exception": false},
+    {"num": "9", "kanji": "九", "kana": "きゅう / く", "ko": "큐- / 쿠", "is_exception": true},
+    {"num": "10", "kanji": "十", "kana": "じゅう", "ko": "쥬-", "is_exception": false},
+    {"num": "백", "kanji": "百", "kana": "ひゃく", "ko": "햐쿠", "is_exception": false},
+    {"num": "천", "kanji": "千", "kana": "せん", "ko": "센", "is_exception": false},
+    {"num": "만", "kanji": "万", "kana": "まん", "ko": "만", "is_exception": false},
+    {"num": "몇?", "kanji": "何", "kana": "なん / なに", "ko": "난 / 나니", "is_exception": true}
+  ],
+  "tips": [
+    "<b>4(四)</b>, <b>7(七)</b>, <b>9(九)</b>는 뒤에 어떤 단위(조수사)가 붙느냐에 따라 읽는 방법이 달라지므로 두 가지 발음을 모두 숙지해야 합니다.",
+    "<b>9(九)</b>의 경우, 시간(시)이나 날짜(월)를 셀 때는 주로 짧게 <b>'쿠(く)'</b>로 발음됩니다. (예: 9시 = くじ, 9월 = くがつ)",
+    "한국어에서는 숫자 10,000을 그냥 '만'이라고 부르지만, 일본어에서는 주로 <b>'이치만(いちまん)'</b>이라고 1을 붙여서 표현합니다."
+  ]
+}

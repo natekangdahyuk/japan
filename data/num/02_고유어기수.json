@@ -1,0 +1,25 @@
+{
+  "title": "2. 고유어 숫자 세기 (기수)",
+  "data": [
+    {"num": "1", "kanji": "一つ", "kana": "ひとつ", "ko": "히토츠", "is_exception": false},
+    {"num": "2", "kanji": "二つ", "kana": "ふたつ", "ko": "후타츠", "is_exception": false},
+    {"num": "3", "kanji": "三つ", "kana": "みっつ", "ko": "밋츠", "is_exception": false},
+    {"num": "4", "kanji": "四つ", "kana": "よっつ", "ko": "욧츠", "is_exception": false},
+    {"num": "5", "kanji": "五つ", "kana": "いつつ", "ko": "이치츠", "is_exception": false},
+    {"num": "6", "kanji": "六つ", "kana": "むっつ", "ko": "뭇츠", "is_exception": false},
+    {"num": "7", "kanji": "七つ", "kana": "ななつ", "ko": "나나츠", "is_exception": false},
+    {"num": "8", "kanji": "八つ", "kana": "やっつ", "ko": "얏츠", "is_exception": false},
+    {"num": "9", "kanji": "九つ", "kana": "ここのつ", "ko": "코코노츠", "is_exception": false},
+    {"num": "10", "kanji": "十", "kana": "とお", "ko": "토오", "is_exception": true},
+    {"num": "백", "kanji": "-", "kana": "-", "ko": "-", "is_exception": false},
+    {"num": "천", "kanji": "-", "kana": "-", "ko": "-", "is_exception": false},
+    {"num": "만", "kanji": "-", "kana": "-", "ko": "-", "is_exception": false},
+    {"num": "몇개?", "kanji": "いくつ", "kana": "いくつ", "ko": "이쿠츠", "is_exception": true}
+  ],
+  "tips": [
+    "일본어 고유어 수사는 물건의 개수를 셀 때 기본적으로 쓰이며, 오직 <b>1부터 10까지만</b> 존재합니다. 11부터는 앞서 배운 아라비아 숫자(じゅういち...)를 그대로 사용합니다.",
+    "숫자 <b>3, 4, 6, 8</b>은 중간에 작은 <b>'つ(っ)'</b>가 들어가는 초음 발음이므로 뚝 끊어주듯 강하게 읽어야 정확한 발음이 됩니다.",
+    "숫자 <b>10(十)</b>은 다른 숫자들과 달리 끝에 'つ'가 붙지 않고 오직 <b>'토오(とお)'</b>라고만 읽는 유일하고 거대한 예외이므로 시험 및 일상에서 매우 중요합니다.",
+    "의문사인 <b>いくつ(이쿠츠)</b>는 '몇 개?'라는 뜻 외에도, 상대방에게 나이를 정중하게 물어볼 때 '몇 살?'이라는 의미로도 자주 사용됩니다."
+  ]
+}

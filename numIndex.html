@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일본어 조수사 마스터 시트</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            color: #333;
+            line-height: 1.2;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        /* 컨트롤 영역 스타일 */
+        .control-panel {
+            max-width: 650px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #dcdde1;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .control-panel label {
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .control-panel select {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 320px;
+        }
+
+        /* 1. 메인 데이터 표 스타일 */
+        .counter-table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 650px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .counter-table th.table-title {
+            background-color: #2c3e50;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px;
+            text-align: center;
+        }
+        .counter-table th.col-name {
+            background-color: #f2f4f4;
+            color: #34495e;
+            font-weight: bold;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            text-align: center;
+        }
+        .counter-table td {
+            padding: 8px 10px;
+            border: 1px solid #bdc3c7;
+            text-align: center;
+        }
+
+        /* 2. 하단 독립 꿀팁 테이블 스타일 */
+        .tip-table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 650px;
+            margin-bottom: 40px;
+            font-size: 12px;
+            background-color: #fafafa;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .tip-table td.tip-label {
+            background-color: #7f8c8d;
+            color: #fff;
+            font-weight: bold;
+            width: 15%;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .tip-table td.tip-content {
+            padding: 10px 14px;
+            border: 1px solid #bdc3c7;
+            text-align: left;
+            line-height: 1.5;
+            color: #444;
+        }
+
+        /* 공통 강조 스타일 */
+        .exception {
+            background-color: #ffeb3b !important;
+            font-weight: bold;
+            color: #d32f2f;
+        }
+        .text-left { text-align: left !important; }
+
+        /* 프린트 최적화 CSS */
+        @media print {
+            body { background-color: #fff; margin: 0; }
+            .control-panel { display: none; } /* 프린트 시 UI 숨김 */
+            .counter-table, .tip-table {
+                box-shadow: none;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="control-panel">
+        <label for="counter-selector">조수사 선택:</label>
+        <select id="counter-selector" onchange="loadCounterData(this.value)"></select>
+    </div>
+
+    <div id="table-container"></div>
+
+    <script>
+        const selector = document.getElementById('counter-selector');
+
+        // [최초 실행] list.json을 읽어와 셀렉트 박스를 동적으로 빌드
+        function initializeApp() {
+            fetch('data/num/list.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('목록 파일(list.json)을 찾을 수 없습니다.');
+                    return response.json();
+                })
+                .then(menuList => {
+                    // 셀렉트 박스 옵션 생성
+                    menuList.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.file;
+                        option.textContent = item.name;
+                        selector.appendChild(option);
+                    });
+
+                    // 목록 빌드가 끝나면 첫 번째 항목 데이터 바로 로드
+                    if (menuList.length > 0) {
+                        loadCounterData(menuList[0].file);
+                    }
+                })
+                .catch(error => {
+                    console.error('앱 초기화 실패:', error);
+                    document.getElementById('table-container').innerHTML = '<p style="color:red;">목록(list.json) 로드 중 오류가 발생했습니다.</p>';
+                });
+        }
+
+        // 특정 조수사 JSON 데이터를 패치해와서 표를 그리는 함수
+        function loadCounterData(jsonFileName) {
+            fetch(`data/num/${jsonFileName}`)
+                .then(response => {
+                    if (!response.ok) throw new Error(`${jsonFileName} 데이터 파일이 없거나 오류가 있습니다.`);
+                    return response.json();
+                })
+                .then(data => {
+                    renderTable(data);
+                })
+                .catch(error => {
+                    console.error('데이터 로드 실패:', error);
+                    document.getElementById('table-container').innerHTML = `<p style="color:red;">[${jsonFileName}] 파일을 불러올 수 없습니다. 아직 데이터 파일이 만들어지지 않았을 수 있습니다.</p>`;
+                });
+        }
+
+        // HTML 렌더링 템플릿 함수
+        function renderTable(group) {
+            let tableHtml = `
+                <table class="counter-table">
+                    <thead>
+                        <tr>
+                            <th colspan="4" class="table-title">${group.title}</th>
+                        </tr>
+                        <tr>
+                            <th style="width: 15%;" class="col-name">단위</th>
+                            <th style="width: 25%;" class="col-name">일본어 표기</th>
+                            <th style="width: 35%;" class="col-name">읽기(히라가나)</th>
+                            <th style="width: 25%;" class="col-name">한국어 독음</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            group.data.forEach((row, index) => {
+                const isLast = (index === group.data.length - 1);
+                const borderStyle = isLast ? 'style="border-top: 2px solid #2c3e50;"' : '';
+                const exceptionClass = row.is_exception ? 'class="exception"' : '';
+
+                tableHtml += `
+                    <tr ${borderStyle}>
+                        <td ${exceptionClass}>${row.num}</td>
+                        <td ${exceptionClass}>${row.kanji}</td>
+                        <td ${exceptionClass}>${row.kana}</td>
+                        <td ${exceptionClass}>${row.ko}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += `
+                    </tbody>
+                </table>
+            `;
+
+            if (group.tips && group.tips.length > 0) {
+                tableHtml += `
+                    <table class="tip-table">
+                        <tr>
+                            <td class="tip-label">핵심 꿀팁</td>
+                            <td class="tip-content">
+                                ${group.tips.map(tip => `• ${tip}`).join('<br>')}
+                            </td>
+                        </tr>
+                    </table>
+                `;
+            }
+
+            document.getElementById('table-container').innerHTML = tableHtml;
+        }
+
+        // 페이지 첫 로드시 실행
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
