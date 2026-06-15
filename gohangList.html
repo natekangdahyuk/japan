@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다이후쿠상의 맞춤형 사냥 지침서 v4.1</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', Arial, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 15px 8px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e293b;
+            padding: 20px 12px;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid #334155;
+        }
+
+        @media (min-width: 768px) {
+            body { padding: 30px 15px; }
+            .container { padding: 30px; }
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            color: #f8fafc;
+            font-size: 20px;
+            margin: 0 0 5px 0;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        @media (min-width: 768px) {
+            .header h1 { font-size: 26px; }
+        }
+        .header p {
+            color: #94a3b8;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .grid-half {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 768px) {
+            .grid-half { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 15px; }
+        }
+
+        .info-box {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            padding: 12px;
+            border-radius: 12px;
+        }
+        @media (min-width: 768px) {
+            .info-box { padding: 18px; }
+        }
+        .info-box.passive { border-left: 5px solid #10b981; background: #064e3b12; }
+        .info-box.danger { border-left: 5px solid #38bdf8; background: #0c4a6e12; }
+
+        .info-box h3 { margin: 0 0 8px 0; font-size: 14px; font-weight: 700; }
+        .info-box.passive h3 { color: #34d399; }
+        .info-box.danger h3 { color: #38bdf8; }
+
+        .info-box ul { margin: 0; padding-left: 16px; font-size: 12px; color: #cbd5e1; }
+        .info-box li { margin-bottom: 6px; }
+
+        .weight-tag {
+            display: inline-block;
+            margin-top: 5px;
+            background-color: #0c4a6e;
+            color: #38bdf8;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12px;
+            border: 1px solid #0284c7;
+        }
+
+        .section-title {
+            font-size: 15px;
+            color: #38bdf8;
+            border-left: 4px solid #38bdf8;
+            padding-left: 8px;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .inv-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 480px) {
+            .inv-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 768px) {
+            .inv-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        }
+
+        .inv-card {
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .inv-card h4 { margin: 0 0 8px 0; font-size: 13px; font-weight: 800; text-align: center; padding-bottom: 4px; }
+        .inv-card.armor h4 { color: #34d399; border-bottom: 2px solid #10b981; }
+        .inv-card.weapon h4 { color: #38bdf8; border-bottom: 2px solid #38bdf8; }
+        .inv-card.buff h4 { color: #fbbf24; border-bottom: 2px solid #fbbf24; }
+
+        .inv-group { margin-bottom: 6px; }
+        .inv-group-title { font-size: 10px; color: #64748b; font-weight: 700; margin-bottom: 1px; }
+        .inv-item { font-size: 12px; color: #e2e8f0; font-weight: 600; line-height: 1.3; }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        @media (min-width: 768px) {
+            .schedule-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        }
+
+        .day-box {
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 12px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #374151;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+        .day-name { font-size: 13px; font-weight: 800; color: #f8fafc; }
+        .day-date { font-size: 11px; color: #9ca3af; }
+
+        .lunch-combo {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e2e8f0;
+            line-height: 1.4;
+        }
+        .text-fiber { color: #34d399; }
+        .text-weapon { color: #38bdf8; }
+        .text-buff { color: #fbbf24; }
+        .arrow-sep { color: #64748b; margin: 0 4px; font-size: 11px; }
+
+        .day-box.box-thu { border: 1px solid #ef4444; background: #7f1d1d10; }
+        .day-box.box-thu .day-name { color: #f87171; }
+        .day-box.box-sun { border: 1px solid #10b981; background: #064e3b10; }
+        .day-box.box-sun .day-name { color: #34d399; }
+
+        .event-text {
+            margin-top: 6px;
+            background: #4c0519;
+            border: 1px dashed #f43f5e;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #fca5a5;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            font-size: 16px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>⚔️ 다이후쿠상의 주간 사냥 지침서</h1>
+        <p>인벤토리 최적화 및 유연한 사냥터 루틴 가이드 (v4.1 초압축 원라인 빌드)</p>
+    </div>
+
+    <div class="grid-half">
+        <div class="info-box passive">
+            <h3>⏰ 시간제 고정 패시브 스킬</h3>
+            <ul>
+                <li><strong>07:30 [행동식]:</strong> 과일 + 땅콩버터 1스푼 + 견과류 한 줌</li>
+                <li><strong>08:50 ~ 09:20 [오전 버프]:</strong> 보통식 + 커피</li>
+                <li><strong>13:30 ~ 13:50 [급속 충전]:</strong> 맛있는 도시락</li>
+                <li><strong>13:50 ~ 다음날 07:30 [야간 단식]:</strong> 액체 외 금식</li>
+            </ul>
+        </div>
+        <div class="info-box danger">
+            <h3>📜 이번주 공지사항 벽보</h3>
+            <ul>
+                <li><strong>[퀘스트]</strong> 13시 50분 이후 공복 유지가 가능한지 테스트가 목적.</li>
+                <li><strong>[주의]</strong> 억지로 참지 말고 힘들면 유연하게 시간을 바꾸면 됩니다.</li>
+            </ul>
+            <div class="weight-tag">현재 몸무게: 80 kg</div>
+        </div>
+    </div>
+
+    <div class="section-title">🎒 나의 인벤토리 (Inventory)</div>
+    <div class="inv-grid" id="inventory-container">
+        <div class="loading">🎒 인벤토리 데이터를 불러오는 중...</div>
+    </div>
+
+    <div class="section-title">📅 주간 사냥 플랜 가이드 (초압축 원라인)</div>
+    <div class="schedule-grid" id="schedule-container">
+        <div class="loading">📜 이번 주 사냥 플랜 데이터를 계산 중...</div>
+    </div>
+</div>
+
+<script>
+  // 날짜 자동 계산 함수
+  function getWeeklyJsonFiles() {
+      const files = [];
+      const dayShortNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      const today = new Date();
+      const currentDay = today.getDay();
+      const distanceToMonday = currentDay === 0 ? -6 : 1 - currentDay;
+
+      const monday = new Date(today);
+      monday.setDate(today.getDate() + distanceToMonday);
+
+      for (let i = 0; i < 7; i++) {
+          const targetDate = new Date(monday);
+          targetDate.setDate(monday.getDate() + i);
+          const yy = String(targetDate.getFullYear()).slice(-2);
+          const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
+          const dd = String(targetDate.getDate()).padStart(2, '0');
+          const dayName = dayShortNames[targetDate.getDay()];
+
+          files.push(`data/gohang/${yy}${mm}${dd}_${dayName}.json`);
+      }
+      return files;
+  }
+
+  async function loadAllData() {
+      const invContainer = document.getElementById('inventory-container');
+      const schedContainer = document.getElementById('schedule-container');
+      const jsonFiles = getWeeklyJsonFiles();
+      const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+
+      let debugLog = [];
+      let hasError = false;
+
+      // 1. 인벤토리 데이터 페치 및 렌더링 (0_inventory.json 경로 반영)
+      try {
+          const invRes = await fetch('data/gohang/0_inventory.json');
+          if (!invRes.ok) throw new Error(`0_inventory.json 로드 실패 (상태코드: ${invRes.status})`);
+          const invData = await invRes.json();
+
+          let invHtml = `
+              <div class="inv-card armor">
+                  <h4>${invData.armor.title}</h4>
+                  ${invData.armor.items.map(item => `<div class="inv-group"><div class="inv-item">${item}</div></div>`).join('')}
+              </div>
+              <div class="inv-card weapon">
+                  <h4>${invData.weapon.title}</h4>
+                  ${invData.weapon.items.map(item => `<div class="inv-group"><div class="inv-item">${item}</div></div>`).join('')}
+              </div>
+              <div class="inv-card buff">
+                  <h4>${invData.buff.title}</h4>
+                  ${invData.buff.items.map(item => `<div class="inv-group"><div class="inv-item">${item}</div></div>`).join('')}
+                  ${invData.buff.subTitle ? `
+                      <div class="inv-group">
+                          <div class="inv-group-title">${invData.buff.subTitle}</div>
+                          ${invData.buff.subItems.map(sItem => `<div class="inv-item">${sItem}</div>`).join('')}
+                      </div>
+                  ` : ''}
+              </div>
+          `;
+          invContainer.innerHTML = invHtml;
+          debugLog.push(`✅ 성공: [data/gohang/0_inventory.json] -> 로드 완료`);
+
+      } catch (error) {
+          hasError = true;
+          invContainer.innerHTML = `<div class="loading" style="color:#ef4444;">❌ 인벤토리 로드 실패</div>`;
+          debugLog.push(`❌ 실패: [data/gohang/0_inventory.json] <br>&nbsp;&nbsp;&nbsp;&nbsp;⚠️ 사유: ${error.message}`);
+      }
+
+      // 2. 주간 식단 데이터 페치 및 렌더링
+      let plans = [];
+      for (const file of jsonFiles) {
+          try {
+              const res = await fetch(file);
+              if (!res.ok) throw new Error(`HTTP 상태코드 ${res.status}`);
+              const jsonData = await res.json();
+              plans.push(jsonData);
+              debugLog.push(`✅ 성공: [${file}] -> 로드 완료`);
+          } catch (error) {
+              hasError = true;
+              debugLog.push(`❌ 실패: [${file}] <br>&nbsp;&nbsp;&nbsp;&nbsp;📍 실제 요청 주소: <a href="${file}" target="_blank" style="color:#f87171; text-decoration:underline;">${baseUrl}${file}</a><br>&nbsp;&nbsp;&nbsp;&nbsp;⚠️ 에러 사유: ${error.message}`);
+          }
+      }
+
+      // 에러 리포트 바인딩
+      if (hasError) {
+          let errorHtml = `
+              <div style="grid-column: 1 / -1; background: #1e1b4b; border: 2px solid #ef4444; padding: 20px; border-radius: 8px; font-family: monospace; font-size: 13px; color: #fecdd3; line-height: 1.6;">
+                  <h4 style="margin: 0 0 10px 0; color: #ef4444; font-size: 16px;">❌ 시스템 디버그 리포트 (0_inventory 구조 적용)</h4>
+                  <p style="margin: 0 0 15px 0; color: #cbd5e1;">현재 HTML 기준 위치: <strong>${baseUrl}</strong></p>
+                  <hr style="border: 0; border-top: 1px dashed #312e81; margin-bottom: 15px;">
+                  <div style="text-align: left;">
+                      ${debugLog.map(log => `<div style="margin-bottom: 10px;">${log}</div>`).join('')}
+                  </div>
+              </div>
+          `;
+          schedContainer.innerHTML = errorHtml;
+          return;
+      }
+
+      // 전체 성공 시 화면 드로잉
+      schedContainer.innerHTML = '';
+      plans.forEach(plan => {
+          let boxClass = "day-box";
+          if (plan.type === "thu") boxClass = "day-box box-thu";
+          if (plan.type === "sun") boxClass = "day-box box-sun";
+
+          const dayHtml = `
+              <div class="${boxClass}">
+                  <div class="day-header">
+                      <span class="day-name">${plan.day}</span>
+                      <span class="day-date">${plan.date}</span>
+                  </div>
+                  <div class="lunch-combo">
+                      <span class="text-fiber">${plan.fiber}</span>
+                      <span class="arrow-sep">▶</span>
+                      <span class="text-weapon">${plan.weapon}</span>
+                      <span class="arrow-sep">▶</span>
+                      <span class="text-buff">${plan.buff}</span>
+                  </div>
+                  ${plan.event ? `<div class="event-text">${plan.event}</div>` : ''}
+              </div>
+          `;
+          schedContainer.insertAdjacentHTML('beforeend', dayHtml);
+      });
+  }
+
+  window.addEventListener('DOMContentLoaded', loadAllData);
+</script>
+
+</body>
+</html>
