@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>스텝지 - 미련이 춤을 춰</title>
+<style>
+  :root {
+    --line: #ced4da;
+    --ink: #212529;
+    --muted: #868e96;
+    --dance: #0b4f8a;
+    --dance-bg: #f3f9ff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    background: #f4f5f7;
+    color: var(--ink);
+  }
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 16px;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+  }
+  .toolbar-title { font-weight: 700; font-size: 14px; }
+  .hint { display: block; margin-top: 2px; font-size: 12px; color: var(--muted); font-weight: 400; }
+  .actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  #status { font-size: 12px; color: #2b8a3e; min-width: 8em; text-align: right; }
+  button {
+    font: inherit;
+    font-size: 13px;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: #343a40;
+  }
+  button:hover { background: #f8f9fa; }
+  #printBtn { background: #1971c2; color: #fff; border-color: #1971c2; }
+  #printBtn:hover { background: #1864ab; }
+
+  .page {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+  .sheet-title {
+    margin: 0 0 14px;
+    font-size: 22px;
+    text-align: center;
+    outline: none;
+  }
+  .sheet-title:focus { box-shadow: inset 0 -2px 0 #1971c2; }
+
+  .step-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin: 0 0 14px;
+    background: #fff;
+    text-align: center;
+  }
+  .step-table td {
+    border: 1px solid var(--line);
+    padding: 0;
+    vertical-align: middle;
+    position: relative;
+  }
+  .label-col { width: 52px; }
+  .row-header {
+    background: #f8f9fa;
+    font-weight: 700;
+    font-size: 12px;
+    color: #495057;
+    padding: 6px 2px;
+  }
+  .count-row td { background: #f8f9fa; color: #adb5bd; font-size: 11px; padding: 4px 0; }
+  .lyrics-row .cell-text { font-size: 13px; font-weight: 600; min-height: 36px; }
+  .dance-row { background: var(--dance-bg); }
+  .dance-row .row-header { color: #1864ab; background: #e7f5ff; }
+  .dance-row .cell-text {
+    color: var(--dance);
+    font-weight: 800;
+    font-size: 14px;
+    min-height: 58px;
+  }
+  .cell-text {
+    padding: 8px 6px 16px;
+    outline: none;
+    white-space: pre-line;
+    word-break: keep-all;
+    line-height: 1.35;
+  }
+  .cell-text:focus { background: #fff9db; }
+  .dance-row .cell-text:focus { background: #fff3bf; }
+
+  .beat-badge, .cell-tools { opacity: 0; pointer-events: none; }
+  td:hover .beat-badge,
+  td:focus-within .beat-badge,
+  td:hover .cell-tools,
+  td:focus-within .cell-tools {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .beat-badge {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 10px;
+    color: #868e96;
+    font-weight: 700;
+  }
+  .cell-tools {
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2px;
+  }
+  .cell-tools button {
+    padding: 0 5px;
+    font-size: 11px;
+    line-height: 16px;
+    border-radius: 4px;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .no-print { display: none !important; }
+    .page { max-width: none; padding: 0; }
+    .sheet-title { font-size: 16px; margin-bottom: 8px; }
+    .step-table { margin-bottom: 8px; page-break-inside: avoid; }
+    .cell-text { padding: 4px 2px; }
+    .lyrics-row .cell-text { min-height: 0; font-size: 11px; }
+    .dance-row .cell-text { min-height: 0; font-size: 12px; }
+    .dance-row { background: #fff; }
+    @page { size: A4 portrait; margin: 8mm; }
+  }
+</style>
+</head>
+<body>
+  <div class="toolbar no-print">
+    <div>
+      <div class="toolbar-title">스텝지 편집</div>
+      <span class="hint">칸을 클릭해 고칩니다. 칸에 마우스를 올리면 아래 − / + 로 박자를 조절합니다. 이 브라우저에 자동 저장됩니다.</span>
+    </div>
+    <div class="actions">
+      <span id="status"></span>
+      <button type="button" id="printBtn">인쇄</button>
+      <button type="button" id="downloadBtn">HTML로 내려받기</button>
+      <button type="button" id="resetBtn">처음 내용으로</button>
+    </div>
+  </div>
+
+  <div class="page">
+    <h1 class="sheet-title" id="title" contenteditable="true" spellcheck="false"></h1>
+    <div id="sheet"></div>
+  </div>
+
+  <script type="application/json" id="sheet-data">
+{
+  "stamp": "mi-pdf-1",
+  "title": "미련이 춤을 춰",
+  "blocks": [
+    {
+      "lyrics": [
+        {"t": "빗소리 들릴 때마", "s": 4},
+        {"t": "다 - - 어김", "s": 4},
+        {"t": "없이 니 생각이", "s": 4},
+        {"t": "나 - - 지워도", "s": 4}
+      ],
+      "dance": [
+        {"t": "런닝맨", "s": 2},
+        {"t": "턴", "s": 2},
+        {"t": "찰스턴(앞뒤)", "s": 4},
+        {"t": "런닝맨", "s": 2},
+        {"t": "턴", "s": 2},
+        {"t": "찰스턴(앞뒤)", "s": 4}
+      ]
+    },
+    {
+      "lyrics": [
+        {"t": "지워~도 안 지~워", "s": 4},
+        {"t": "지는 - 바보", "s": 4},
+        {"t": "같은 이 미련", "s": 4},
+        {"t": "아 - 그 만", "s": 4}
+      ],
+      "dance": [
+        {"t": "(오) T이동 3", "s": 3},
+        {"t": "서클", "s": 1},
+        {"t": "(왼) T이동 3", "s": 3},
+        {"t": "서클", "s": 1},
+        {"t": "말레시안", "s": 4},
+        {"t": "X스텝", "s": 4}
+      ]
+    },
+    {
+      "lyrics": [
+        {"t": "해 야 지 그만", "s": 4},
+        {"t": "해 야지 수백", "s": 4},
+        {"t": "번 을 다짐 했는", "s": 4},
+        {"t": "데 - - 오늘", "s": 4}
+      ],
+      "dance": [
+        {"t": "어깨 (오)", "s": 4},
+        {"t": "어깨 (왼)", "s": 4},
+        {"t": "런닝맨", "s": 4},
+        {"t": "킥볼", "s": 2},
+        {"t": "킥볼", "s": 2}
+      ]
+    },
+    {
+      "lyrics": [
+        {"t": "밤도 또 니가", "s": 4},
+        {"t": "와서 내 가슴", "s": 4},
+        {"t": "을 흔들어 놓", "s": 4},
+        {"t": "네~~ 미련이", "s": 4}
+      ],
+      "dance": [
+        {"t": "사이드 찰스턴", "s": 4},
+        {"t": "사이드 찰스턴", "s": 4},
+        {"t": "런닝맨", "s": 4},
+        {"t": "Y스텝", "s": 2},
+        {"t": "Y스텝", "s": 2}
+      ]
+    },
+    {
+      "lyrics": [
+        {"t": "춤 을 춰 온몸을", "s": 4},
+        {"t": "흔들어 잊으려", "s": 4},
+        {"t": "할수록 더 크게", "s": 4},
+        {"t": "타올라 미련이", "s": 4}
+      ],
+      "dance": [
+        {"t": "RM힐", "s": 2},
+        {"t": "크로스 힐", "s": 2},
+        {"t": "RM힐", "s": 2},
+        {"t": "크로스 힐", "s": 2},
+        {"t": "하우스", "s": 2},
+        {"t": "하우스", "s": 2},
+        {"t": "킥볼", "s": 2},
+        {"t": "킥볼", "s": 2}
+      ]
+    },
+    {
+      "lyrics": [
+        {"t": "춤 을 춰 비트가", "s": 4},
+        {"t": "울려 퍼져 이", "s": 4},
+        {"t": "밤이 끝나도 너", "s": 4},
+        {"t": "언~ 내 안에 살", "s": 4}
+      ],
+      "dance": [
+        {"t": "RM힐", "s": 2},
+        {"t": "크로스 힐\n(더블)", "s": 2},
+        {"t": "RM힐", "s": 2},
+        {"t": "크로스 힐\n(더블)", "s": 2},
+        {"t": "크로스 힐", "s": 2},
+        {"t": "크로스킥", "s": 2},
+        {"t": "크로스 힐", "s": 2},
+        {"t": "크로스킥", "s": 2}
+      ]
+    },
+    {
+      "lyrics": [
+        {"t": "아~~~~~~~~~~~~~~~", "s": 4},
+        {"t": "~~~~~~~~~~~~~~", "s": 4},
+        {"t": "~~~~~~~~~~~~~~~", "s": 4},
+        {"t": "~~간주~~~~~~~~~~~", "s": 4}
+      ],
+      "dance": [
+        {"t": "찰스턴\n(오른발만-오른쪽대각선)", "s": 4},
+        {"t": "RM백이동 (퇴장)", "s": 4},
+        {"t": "RM백이동 (퇴장)", "s": 4},
+        {"t": "RM백이동 (퇴장)", "s": 4}
+      ]
+    }
+  ]
+}
+  </script>
+  <script>
+    const dataEl = document.getElementById("sheet-data");
+    const ORIGINAL = JSON.parse(dataEl.textContent);
+    const KEY = "stepPaper-mi:" + ORIGINAL.stamp;
+    const sheet = document.getElementById("sheet");
+    const titleEl = document.getElementById("title");
+    const statusEl = document.getElementById("status");
+
+    function validState(s) {
+      if (!s || typeof s.title !== "string" || !Array.isArray(s.blocks)) return false;
+      return s.blocks.every((b) => {
+        const sum = (cells) => cells.reduce((n, c) => n + c.s, 0);
+        return Array.isArray(b.lyrics) && Array.isArray(b.dance)
+          && sum(b.lyrics) === 16 && sum(b.dance) === 16
+          && b.lyrics.every((c) => c.s > 0) && b.dance.every((c) => c.s > 0);
+      });
+    }
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+        if (validState(saved)) return saved;
+      } catch (e) {}
+      return structuredClone(ORIGINAL);
+    }
+
+    let state = loadState();
+
+    function readText(el) {
+      return el.innerText.replace(/\r/g, "").replace(/\n+$/g, "");
+    }
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    function save(message) {
+      state.title = readText(titleEl);
+      try {
+        localStorage.setItem(KEY, JSON.stringify(state));
+        setStatus(message || "이 브라우저에 저장됨");
+      } catch (e) {
+        setStatus("저장하지 못했습니다");
+      }
+    }
+
+    function counts() {
+      const nums = [];
+      for (let i = 0; i < 4; i++) nums.push(1, 2, 3, 4);
+      return nums;
+    }
+
+    function cellHtml(blockIndex, rowKey, index, cell) {
+      return `<td colspan="${cell.s}" data-block="${blockIndex}" data-row="${rowKey}" data-index="${index}">
+        <div class="cell-text" contenteditable="true" spellcheck="false"></div>
+        <span class="beat-badge no-print">${cell.s}박</span>
+        <div class="cell-tools no-print">
+          <button type="button" data-act="dec" title="이 칸을 1박 줄입니다">−</button>
+          <button type="button" data-act="inc" title="다음 칸에서 1박 가져옵니다">+</button>
+        </div>
+      </td>`;
+    }
+
+    function render() {
+      titleEl.textContent = state.title;
+      sheet.innerHTML = state.blocks.map((block, bi) => {
+        const countCells = counts().map((n) => `<td>${n}</td>`).join("");
+        const lyricCells = block.lyrics.map((c, i) => cellHtml(bi, "lyrics", i, c)).join("");
+        const danceCells = block.dance.map((c, i) => cellHtml(bi, "dance", i, c)).join("");
+        return `<table class="step-table">
+          <colgroup>
+            <col class="label-col">
+            ${"<col>".repeat(16)}
+          </colgroup>
+          <tr class="count-row"><td class="row-header">박자</td>${countCells}</tr>
+          <tr class="lyrics-row"><td class="row-header">가사</td>${lyricCells}</tr>
+          <tr class="dance-row"><td class="row-header">안무</td>${danceCells}</tr>
+        </table>`;
+      }).join("");
+
+      sheet.querySelectorAll(".cell-text").forEach((el) => {
+        const td = el.parentElement;
+        const cell = state.blocks[td.dataset.block][td.dataset.row][td.dataset.index];
+        el.textContent = cell.t;
+      });
+    }
+
+    function adjustSpan(blockIndex, rowKey, index, delta) {
+      const cells = state.blocks[blockIndex][rowKey];
+      const cell = cells[index];
+      let message = "이 브라우저에 저장됨";
+      if (delta > 0) {
+        const next = cells[index + 1];
+        if (!next) {
+          setStatus("마지막 칸은 더 늘릴 수 없습니다");
+          return;
+        }
+        if (next.s === 1) {
+          if (next.t.trim()) cell.t = cell.t ? cell.t + "\n" + next.t : next.t;
+          cell.s += 1;
+          cells.splice(index + 1, 1);
+          message = "다음 칸을 이 칸에 합쳤습니다";
+        } else {
+          next.s -= 1;
+          cell.s += 1;
+          message = "1박 늘렸습니다";
+        }
+      } else if (cell.s <= 1) {
+        setStatus("1박보다 줄일 수 없습니다");
+        return;
+      } else {
+        cell.s -= 1;
+        if (cells[index + 1]) cells[index + 1].s += 1;
+        else cells.push({ t: "", s: 1 });
+        message = "1박 줄였습니다";
+      }
+      save(message);
+      render();
+      const again = sheet.querySelector(
+        `[data-block="${blockIndex}"][data-row="${rowKey}"][data-index="${index}"] .cell-text`
+      );
+      if (again) again.focus();
+    }
+
+    sheet.addEventListener("input", (e) => {
+      const el = e.target.closest(".cell-text");
+      if (!el) return;
+      const td = el.parentElement;
+      state.blocks[td.dataset.block][td.dataset.row][td.dataset.index].t = readText(el);
+      save();
+    });
+
+    sheet.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" || !e.target.classList.contains("cell-text")) return;
+      e.preventDefault();
+      document.execCommand("insertLineBreak");
+    });
+
+    sheet.addEventListener("paste", (e) => {
+      if (!e.target.classList.contains("cell-text")) return;
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData("text");
+      document.execCommand("insertText", false, text);
+    });
+
+    sheet.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-act]");
+      if (!btn) return;
+      const td = btn.closest("td");
+      adjustSpan(+td.dataset.block, td.dataset.row, +td.dataset.index, btn.dataset.act === "inc" ? 1 : -1);
+    });
+
+    titleEl.addEventListener("input", save);
+    titleEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") e.preventDefault();
+    });
+
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if (!confirm("처음 PDF 내용으로 되돌릴까요? 이 브라우저에 저장된 수정은 지워집니다.")) return;
+      localStorage.removeItem(KEY);
+      state = structuredClone(ORIGINAL);
+      render();
+      setStatus("처음 내용으로 되돌렸습니다");
+    });
+
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      const next = structuredClone(state);
+      next.stamp = "mi-" + Date.now();
+      const root = document.documentElement.cloneNode(true);
+      root.querySelector("#sheet").innerHTML = "";
+      root.querySelector("#status").textContent = "";
+      root.querySelector("#title").textContent = next.title;
+      root.querySelector("#sheet-data").textContent = "\n" + JSON.stringify(next, null, 2) + "\n";
+      const blob = new Blob(["<!DOCTYPE html>\n" + root.outerHTML], { type: "text/html;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "미련이 춤을 춰-스텝지.html";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      setStatus("HTML 파일을 내려받았습니다");
+    });
+
+    render();
+    if (localStorage.getItem(KEY)) setStatus("저장된 수정을 불러왔습니다");
+  </script>
+</body>
+</html>
