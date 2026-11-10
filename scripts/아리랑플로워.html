@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>아리랑 플로워 스탭지</title>
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Nanum Gothic", sans-serif;
+    }
+
+    /* A4 가로 1장 규격 (297mm x 210mm) */
+    .page-container {
+      width: 297mm;
+      height: 210mm;
+      margin: 0 auto;
+      background: white;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 6mm;
+    }
+    .page-container:last-child {
+      page-break-after: avoid;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      height: 100%;
+      border: 5px solid #000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 한 장당 무조건 4줄 균등 분할 (높이 25%씩) */
+    .step-row {
+      height: 25%;
+      display: flex;
+      align-items: center;
+      padding: 0 25px;
+      border-bottom: 4px solid #000;
+      line-height: 1;
+    }
+    .step-row:last-child {
+      border-bottom: none;
+    }
+
+    /* 좌/우 동작을 50%씩 반반 배치 */
+    .step-col {
+      width: 50%;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 0 15px;
+    }
+    .step-col:first-child {
+      border-right: 3px dashed rgba(0, 0, 0, 0.35);
+    }
+
+    /* 텍스트 스타일 */
+    .step-name {
+      color: #000;
+      font-size: 38pt;
+      font-weight: 900;
+      letter-spacing: -2px;
+      white-space: nowrap;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .sub-desc {
+      font-size: 24pt;
+      color: #c90000;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+    .count {
+      color: #d32f2f;
+      font-size: 52pt;
+      font-weight: 900;
+      margin-left: 10px;
+    }
+
+    /* 배경 컬러 */
+    .bg-orange { background-color: #ffd8a8; }
+    .bg-yellow { background-color: #ffec99; }
+    .bg-mint   { background-color: #c3fae8; }
+    .bg-blue   { background-color: #d0ebff; }
+    .bg-white  { background-color: #ffffff; }
+
+    @media print {
+      body {
+        background: transparent;
+      }
+      .page-container {
+        margin: 0 !important;
+        width: 297mm !important;
+        height: 210mm !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1페이지 (총 4줄) -->
+  <div class="page-container">
+    <div class="table-wrapper">
+
+      <!-- 1번 줄 -->
+      <div class="step-row bg-orange">
+        <div class="step-col">
+          <div class="step-name">러닝맨</div>
+          <div class="count">4</div>
+        </div>
+        <div class="step-col">
+          <div class="step-name">러닝맨대각선</div>
+          <div class="count">4</div>
+        </div>
+      </div>
+
+      <!-- 2번 줄 -->
+      <div class="step-row bg-white">
+        <div class="step-col">
+          <div class="step-name">러닝맨</div>
+          <div class="count">4</div>
+        </div>
+        <div class="step-col">
+          <div class="step-name">러닝맨크로스 더블</div>
+          <div class="count">4</div>
+        </div>
+      </div>
+
+      <!-- 3번 줄 -->
+      <div class="step-row bg-yellow">
+        <div class="step-col">
+          <div class="step-name">점핑힐</div>
+          <div class="count">4</div>
+        </div>
+        <div class="step-col">
+          <div class="step-name">말레이시안</div>
+          <div class="count">4</div>
+        </div>
+      </div>
+
+      <!-- 4번 줄 -->
+      <div class="step-row bg-white">
+        <div class="step-col">
+          <div class="step-name">T제자리양쪽</div>
+          <div class="count">4</div>
+        </div>
+        <div class="step-col">
+          <div class="step-name">T이동 <span class="sub-desc">(우측)</span></div>
+          <div class="count">4</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2페이지 (총 4줄) -->
+  <div class="page-container">
+    <div class="table-wrapper">
+
+      <!-- 5번 줄 -->
+      <div class="step-row bg-mint">
+        <div class="step-col">
+          <div class="step-name">찰스턴 <span class="sub-desc">(앞2,뒤2)</span></div>
+          <div class="count">4</div>
+        </div>
+        <div class="step-col">
+          <div class="step-name">T리버스</div>
+          <div class="count">4</div>
+        </div>
+      </div>
+
+      <!-- 6번 줄 -->
+      <div class="step-row bg-white">
+        <div class="step-col">
+          <div class="step-name">러닝맨</div>
+          <div class="count">4</div>
+        </div>
+        <div class="step-col">
+          <div class="step-name">크크W</div>
+          <div class="count">4</div>
+        </div>
+      </div>
+
+      <!-- 7번 줄 -->
+      <div class="step-row bg-blue">
+        <div class="step-col">
+          <div class="step-name">러닝맨</div>
+          <div class="count">4</div>
+        </div>
+        <div class="step-col" style="border-right: none; width: 50%;">
+          <div class="step-name">점핑힐</div>
+          <div class="count">4</div>
+        </div>
+      </div>
+
+      <!-- 8번 줄 -->
+      <div class="step-row bg-yellow">
+        <div class="step-col">
+          <div class="step-name">T제자리양쪽</div>
+          <div class="count">4</div>
+        </div>
+        <div class="step-col">
+          <div class="step-name">T리버스 <span class="sub-desc">(갈라져라)</span></div>
+          <div class="count">4</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
