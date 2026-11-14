@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>브라더 루이 스탭지</title>
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Nanum Gothic", sans-serif;
+    }
+
+    /* A4 가로 규격 (297mm x 210mm) */
+    .page-container {
+      width: 297mm;
+      height: 210mm;
+      margin: 0 auto;
+      background: white;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 6mm;
+    }
+    .page-container:last-child {
+      page-break-after: avoid;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      height: 100%;
+      border: 5px solid #000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 한 장당 무조건 4줄 균등 분할 (높이 25%씩) */
+    .step-row {
+      height: 25%;
+      display: grid;
+      grid-template-columns: 4.5fr 5.5fr;
+      border-bottom: 4px solid #000;
+      line-height: 1;
+    }
+    .step-row:last-child {
+      border-bottom: none;
+    }
+
+    .step-cell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      overflow: hidden;
+      gap: 8px;
+    }
+    .step-cell:first-child {
+      border-right: 4px solid #000;
+    }
+
+    .step-name {
+      color: #000;
+      font-size: 50pt;
+      font-weight: 900;
+      letter-spacing: -2px;
+      display: block;
+      flex: 1;
+      min-width: 0;
+      line-height: 1.05;
+      white-space: nowrap;
+    }
+    .sub-desc {
+      font-size: 42pt;
+      color: #c90000;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+    .bg-orange { background-color: #ffd8a8; }
+    .bg-yellow { background-color: #ffec99; }
+    .bg-white  { background-color: #ffffff; }
+
+    .end-row {
+      grid-template-columns: 1fr;
+      place-items: center;
+      background-color: #ffc9c9;
+    }
+    .end-text {
+      color: #c92a2a;
+      font-size: 60pt;
+      font-weight: 900;
+      letter-spacing: 12px;
+    }
+
+    @media print {
+      body {
+        background: transparent;
+      }
+      .page-container {
+        margin: 0 !important;
+        width: 297mm !important;
+        height: 210mm !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1페이지 -->
+  <div class="page-container">
+    <div class="table-wrapper">
+
+      <div class="step-row bg-orange">
+        <div class="step-cell">
+          <div class="step-name">런닝맨</div>
+        </div>
+        <div class="step-cell">
+          <div class="step-name">말레이시안</div>
+        </div>
+      </div>
+
+      <div class="step-row bg-white">
+        <div class="step-cell">
+          <div class="step-name">T스텝</div>
+        </div>
+        <div class="step-cell">
+          <div class="step-name">찰스턴</div>
+        </div>
+      </div>
+
+      <div class="step-row bg-yellow">
+        <div class="step-cell">
+          <div class="step-name">Y스텝</div>
+        </div>
+        <div class="step-cell">
+          <div class="step-name">인디언스텝</div>
+        </div>
+      </div>
+
+      <div class="step-row bg-white">
+        <div class="step-cell">
+          <div class="step-name">W스텝</div>
+        </div>
+        <div class="step-cell">
+          <div class="step-name">V스텝<span class="sub-desc">(싱싱더블)</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2페이지 -->
+  <div class="page-container">
+    <div class="table-wrapper">
+
+      <div class="step-row bg-orange">
+        <div class="step-cell">
+          <div class="step-name">러닝맨턴<span class="sub-desc">(회전)</span></div>
+        </div>
+        <div class="step-cell">
+          <div class="step-name">힐트위스트</div>
+        </div>
+      </div>
+
+      <div class="step-row bg-white">
+        <div class="step-cell">
+          <div class="step-name">점핑힐<span class="sub-desc">(싱싱더블)</span></div>
+        </div>
+        <div class="step-cell">
+          <div class="step-name">러닝맨힐<span class="sub-desc">(싱싱더블)</span></div>
+        </div>
+      </div>
+
+      <div class="step-row bg-yellow">
+        <div class="step-cell">
+          <div class="step-name">찰스턴</div>
+        </div>
+        <div class="step-cell">
+          <div class="step-name">찰스턴 사이드</div>
+        </div>
+      </div>
+
+      <div class="step-row end-row">
+        <div class="end-text"></div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
